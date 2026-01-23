@@ -1,7 +1,7 @@
-# Backend - E-Commerce Platform
+# Backend - Link Hub Management System with Smart Rules
 
 ## Overview
-This is a Node.js backend API for an e-commerce platform built for the Advitiya x JPD Hub Hackathon 2026.
+This is a Node.js backend API for a Link Hub Management Platform with intelligent rule-based link display system, built for the Advitiya x JPD Hub Hackathon 2026.
 
 ## Tech Stack
 - **Runtime**: Node.js
@@ -12,6 +12,13 @@ This is a Node.js backend API for an e-commerce platform built for the Advitiya 
 - **Validation**: Express Validator
 - **Logging**: Winston
 
+## Core Features
+- **Hub Management**: Create, update, and manage link hubs with unique slugs
+- **Smart Link Rules**: Device, time, location, and performance-based link visibility
+- **Rule Engine**: AND/OR logic for combining multiple rules
+- **Analytics**: Fire-and-forget click tracking with performance insights
+- **Public Pages**: Dynamic slug-based hub pages with rule evaluation
+
 ## Project Structure
 ```
 backend/
@@ -20,19 +27,29 @@ backend/
 │   │   ├── env.js       # Environment variables
 │   │   └── database.js  # Database connection
 │   ├── controllers/     # Request handlers
-│   │   └── userController.js
+│   │   ├── userController.js
+│   │   ├── hubController.js
+│   │   ├── linkController.js
+│   │   └── analyticsController.js
 │   ├── middleware/      # Custom middleware
 │   │   ├── auth.js      # Authentication middleware
 │   │   ├── errorHandler.js
 │   │   └── validation.js
 │   ├── models/          # Database models
 │   │   ├── User.js
-│   │   ├── Product.js
-│   │   └── Order.js
+│   │   ├── Hub.js
+│   │   ├── Link.js
+│   │   └── Analytics.js
 │   ├── routes/          # API routes
-│   │   └── users.js
+│   │   ├── users.js
+│   │   ├── hubs.js
+│   │   ├── links.js
+│   │   └── analytics.js
 │   ├── services/        # Business logic
-│   │   └── userService.js
+│   │   ├── userService.js
+│   │   ├── hubService.js
+│   │   ├── ruleEngine.js
+│   │   └── analyticsService.js
 │   ├── utils/           # Utility functions
 │   │   ├── apiResponse.js
 │   │   ├── helpers.js
@@ -98,13 +115,73 @@ GET /api/health
 ```
 Returns server health status.
 
-#### User Routes
+#### Authentication
 ```http
-GET    /api/users        # Get all users
-GET    /api/users/:id    # Get user by ID
-POST   /api/users        # Create new user
-PUT    /api/users/:id    # Update user
-DELETE /api/users/:id    # Delete user
+POST   /api/auth/register    # Register new user
+POST   /api/auth/login       # User login
+```
+
+#### Hub Management
+```http
+GET    /api/hubs             # Get all user hubs
+GET    /api/hubs/:slug       # Get hub by slug (public)
+POST   /api/hubs             # Create new hub
+PUT    /api/hubs/:id         # Update hub
+DELETE /api/hubs/:id         # Delete hub
+```
+
+#### Link Management
+```http
+GET    /api/links            # Get all links for a hub
+GET    /api/links/:id        # Get link by ID
+POST   /api/links            # Create new link
+PUT    /api/links/:id        # Update link
+DELETE /api/links/:id        # Delete link
+```
+
+#### Analytics
+```http
+POST   /api/analytics/track  # Track link click (fire-and-forget)
+GET    /api/analytics/hub/:id # Get hub analytics
+```
+
+## Rule Engine
+
+The Rule Engine supports multiple rule types with AND/OR logic:
+
+### Rule Types
+1. **Device Rules**: Show/hide links based on device type (mobile, tablet, desktop)
+2. **Time Rules**: Show/hide links based on time of day and days of week
+3. **Location Rules**: Show/hide links based on user location (country/state)
+4. **Performance Rules**: Show/hide links based on click ranking (top 5%, bottom 10%, etc.)
+
+### Rule Operators
+- **AND**: All rules must pass (default)
+- **OR**: At least one rule must pass
+
+### Example Rule Configuration
+```json
+{
+  "title": "Mobile Landing Page",
+  "url": "https://example.com/mobile",
+  "rules": [
+    {
+      "type": "device",
+      "value": "mobile",
+      "action": "show"
+    },
+    {
+      "type": "time",
+      "value": {
+        "startHour": 9,
+        "endHour": 17,
+        "daysOfWeek": [1, 2, 3, 4, 5]
+      },
+      "action": "show"
+    }
+  ],
+  "ruleOperator": "AND"
+}
 ```
 
 ## Environment Variables
@@ -154,6 +231,17 @@ The API uses a centralized error handling middleware that returns errors in the 
 - Rate limiting
 - XSS protection
 
+## Analytics Implementation
+- **Fire-and-Forget Pattern**: Click tracking doesn't block user experience
+- **Real-time Updates**: Analytics updated asynchronously
+- **Performance Metrics**: Track clicks, visits, device types, and more
+
+## Performance Optimizations
+- **Caching**: Hub data cached with node-cache (10-minute TTL)
+- **Async Operations**: Non-blocking analytics tracking
+- **Database Indexing**: Optimized queries for slug lookups
+- **Connection Pooling**: Efficient database connections
+
 ## Contributing
 1. Fork the repository
 2. Create a feature branch
@@ -166,3 +254,6 @@ MIT
 
 ## Contact
 For questions or support, please contact the development team.
+
+## Hackathon Finals - IIT Ropar 2026
+This project is built for the Advitiya x JPD Hub Hackathon Finals.
