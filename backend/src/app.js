@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const env = require('./config/env');
 const errorHandler = require('./middleware/errorHandler');
+const userRoutes = require('./routes/users');
 
 const app = express();
 
@@ -44,6 +45,9 @@ app.use((req, res) => {
     statusCode: 404,
     message: 'Route not found',
     path: req.path,
+
+                    // API Routes
+app.use('/api/users', userRoutes);
     timestamp: new Date().toISOString(),
   });
 });
