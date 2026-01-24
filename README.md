@@ -183,10 +183,10 @@ Detailed documentation is available in separate markdown files:
 
 ### For Hackathon Judges
 
-- **Live Demo**: [Coming Soon]
+- **Live Demo**: [https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/](https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/)
 - **API Documentation**: Available in Postman collection
 - **Technical Documentation**: See [CODE-TEMPLATES.md](./CODE-TEMPLATES.md.md)
-- **Deployment**: [Coming Soon]
+- **Deployment**: [GitHub Pages - Live](https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/)
 
 ---
 
