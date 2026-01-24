@@ -361,3 +361,23 @@ input:focus, select:focus {
 .dark .error-item {
   color: #fca5a5;
 }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .validation-errors {
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .error-header h4 {
+    font-size: 14px;
+  }
+
+  .error-item {
+    font-size: 12px;
+  }
+
+  .error-list {
+    gap: 6px;
+  }
+}
