@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Link Hub - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js" ></script>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <div class="brand">
+                <h1>Smart Link Hub</h1>
+                <span class="brand-subtitle">Link Hub Management System</span>
+            </div>
+            <button class="btn-logout">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <section class="analytics-bar">
+            <div class="stat-card">
+                <span class="stat-label">Total Clicks (All Time)</span>
+                <span class="stat-value">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Top Performing Link</span>
+                <span class="stat-value">-</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Active Rules</span>
+                <span class="stat-value">1 (Time-based)</span>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            
+            <div class="col-left">
+                
+                <div class="card">
+                    <h2>Add New Link</h2>
+                    <div class="form-group">
+                        <label for="linkTitle">Link Title</label>
+                        <input type="text" id="linkTitle" placeholder="e.g. My Portfolio">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkUrl">Destination URL</label>
+                        <input type="url" id="linkUrl" placeholder="https://...">
+                    </div>
+                    <button class="btn btn-primary">Add Link</button>
+                </div>
+
+                <div class="card">
+                    <h2>Your Links</h2>
+                    <div class="link-list">
+                        <div class="link-item">
+                            <div class="link-info">
+                                <h4>Project Demo Video</h4>
+                                <span>hub.link/video-demo</span>
+                            </div>
+                            <span class="status-badge">Active</span>
+                        </div>
+                        <div class="link-item">
+                            <div class="link-info">
+                                <h4>GitHub Repository</h4>
+                                <span>hub.link/git-repo</span>
+                            </div>
+                            <span class="status-badge">Active</span>
+                        </div>
+                        <div class="link-item">
+                            <div class="link-info">
+                                <h4>Documentation</h4>
+                                <span>hub.link/docs</span>
+                            </div>
+                            <span class="status-badge">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-right">
+                
+                <div class="card">
+                    <h2>Smart Rules</h2>
+                    <p style="margin-bottom: 16px;">Configure how your links behave based on user context.</p>
+                    
+                    <div class="form-group">
+                        <label for="ruleType">Select Rule Type</label>
+                        <select id="ruleType" onchange="toggleRuleConfig()">
+                            <option value="none">-- Select a Rule --</option>
+                            <option value="time">Time-based Redirect</option>
+                            <option value="location">Location-based Redirect</option>
+                            <option value="device">Device-based Redirect</option>
+                        </select>
+                    </div>
+
+                    <div id="config-time" class="rule-config-panel hidden">
+                        <h3>Time Configuration</h3>
+                        <div class="form-group">
+                            <label>Start Time (UTC)</label>
+                            <input type="time" value="09:00">
+                        </div>
+                        <div class="form-group">
+                            <label>End Time (UTC)</label>
+                            <input type="time" value="17:00">
+                        </div>
+                        <p class="helper-text">Links will only be active during this window.</p>
+                    </div>
+
+                    <div id="config-location" class="rule-config-panel hidden">
+                        <h3>Location Configuration</h3>
+                        <div class="form-group">
+                            <label>Target Country</label>
+                            <select>
+                                <option>United States</option>
+                                <option>United Kingdom</option>
+                                <option>Canada</option>
+                                <option>Germany</option>
+                                <option>Japan</option>
+                            </select>
+                        </div>
+                        <p class="helper-text">Visitors from this country will see specific content.</p>
+                    </div>
+
+                    <div id="config-device" class="rule-config-panel hidden">
+                        <h3>Device Configuration</h3>
+                        <div class="form-group">
+                            <label>Target Device</label>
+                            <select>
+                                <option>iOS (iPhone/iPad)</option>
+                                <option>Android</option>
+                                <option>Desktop (Windows/Mac)</option>
+                            </select>
+                        </div>
+                        <p class="helper-text">Redirect specific devices to app stores or specialized pages.</p>
+                    </div>
+
+                </div>
+
+                <div class="card">
+                    <h2>Actions</h2>
+                    <p style="margin-bottom: 16px;">Review and publish your current configuration.</p>
+                    <button class="btn btn-primary">Save Configuration</button>
+                    <button class="btn btn-secondary">Preview Public Link</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+   
+</body>
+</html>
