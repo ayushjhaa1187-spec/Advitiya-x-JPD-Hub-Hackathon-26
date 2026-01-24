@@ -265,3 +265,60 @@ Link.associate = function(models) {
 };
 
 module.exports = Link;
+// Add these fields to your Link schema
+
+qrCode: {
+  type: DataTypes.TEXT,
+  allowNull: true,
+  comment: 'QR code data URL for the link'
+},
+
+shortUrl: {
+  type: DataTypes.STRING(50),
+  allowNull: true,
+  unique: true,
+  comment: 'Shortened URL from URL shortening service'
+},
+
+urlShortenerProvider: {
+  type: DataTypes.ENUM('tinyurl', 'bitly', 'none'),
+  defaultValue: 'none'
+},
+
+analytics: {
+  type: DataTypes.JSON,
+  defaultValue: {
+    totalClicks: 0,
+    uniqueVisitors: 0,
+    clicksByDate: {},
+    referrers: [],
+    devices: { desktop: 0, mobile: 0, tablet: 0 },
+    browsers: {},
+    lastVisited: null
+  },
+  comment: 'Analytics data for the link hub'
+},
+
+offlineData: {
+  type: DataTypes.JSON,
+  defaultValue: {
+    cachedAt: null,
+    isOfflineAvailable: false,
+    staticHtml: null
+  }
+},
+
+themePreferences: {
+  type: DataTypes.JSON,
+  defaultValue: {
+    autoDetectTheme: true,
+    accentColor: '#22c55e',
+    darkModeEnabled: false
+  }
+},
+
+isStaticRendered: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: false,
+  comment: 'Whether the link hub has static HTML rendering'
+}
