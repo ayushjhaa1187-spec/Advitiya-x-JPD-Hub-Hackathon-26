@@ -121,8 +121,10 @@ Advitiya-x-JPD-Hub-Hackathon-26/
 
 Detailed documentation is available in separate markdown files:
 
-- **[CODE-TEMPLATES.md](./backend-code-ready.md)** - Production-ready code for multiple tech stacks (Node.js, Python, Java, Go, C#)
-- **[Backend Implementation Guide](./backend/)** - Complete backend setup and API documentation
+- **[CODE-TEMPLATES.md](./CODE-TEMPLATES.md.md)** - Production-ready code for multiple tech stacks (Node.js, Python, Java, Go, C#)
+- **[155
+- **[INTEGRATION-GUIDE.md](./INTEGRATION-GUIDE.md)** - Complete backend, frontend, and database integration guide
+- - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide and scalability considerations124
 
 ### Available API Endpoints
 
@@ -174,7 +176,7 @@ Detailed documentation is available in separate markdown files:
 
 ### For Developers
 
-1. **Read the documentation**: Start with [CODE-TEMPLATES.md](./backend-code-ready.md) for complete code examples
+1. **Read the documentation**: Start with [CODE-TEMPLATES.md](./CODE-TEMPLATES.md.md) for complete code examples
 2. **Set up your environment**: Follow the Quick Start guide above
 3. **Understand the architecture**: Review the project structure
 4. **Start coding**: Begin with implementing link management features
@@ -183,7 +185,7 @@ Detailed documentation is available in separate markdown files:
 
 - **Live Demo**: [Coming Soon]
 - **API Documentation**: Available in Postman collection
-- **Technical Documentation**: See [CODE-TEMPLATES.md](./backend-code-ready.md)
+- **Technical Documentation**: See [CODE-TEMPLATES.md](./CODE-TEMPLATES.md.md)
 - **Deployment**: [Coming Soon]
 
 ---
