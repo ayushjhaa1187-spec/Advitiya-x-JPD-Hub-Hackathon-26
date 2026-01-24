@@ -249,3 +249,115 @@ input:focus, select:focus {
     margin-top: 4px;
     font-style: italic;
 }
+
+/* ============================================
+   ERROR DISPLAY STYLING
+   ============================================ */
+
+.error-container {
+  margin-bottom: 20px;
+  display: none; /* Hidden by default */
+}
+
+.validation-errors {
+  background-color: rgba(220, 38, 38, 0.1); /* Red background */
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  border-radius: 8px;
+  padding: 16px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.error-icon {
+  color: #dc2626;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.error-header h4 {
+  margin: 0;
+  color: #dc2626;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.error-dismiss {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.error-dismiss:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+.error-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #991b1b;
+  font-size: 14px;
+}
+
+.error-bullet {
+  color: #dc2626;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.error-text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* For dark theme (your design) */
+.dark .validation-errors {
+  background-color: rgba(153, 27, 27, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.dark .error-header h4,
+.dark .error-bullet,
+.dark .error-dismiss {
+  color: #ef4444;
+}
+
+.dark .error-item {
+  color: #fca5a5;
+}
