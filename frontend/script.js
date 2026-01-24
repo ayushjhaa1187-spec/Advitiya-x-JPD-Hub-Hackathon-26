@@ -239,3 +239,91 @@ function isValidURL(string) {
     return false;
   }
 }
+// When user clicks "Add Link" button
+document.querySelector('button[class*="add"]')?.addEventListener('click', function(e) {
+  e.preventDefault();
+
+  const titleInput = document.querySelector('input[placeholder*="Portfolio"]');
+  const urlInput = document.querySelector('input[placeholder*="https"]');
+
+  const title = titleInput?.value || '';
+  const url = urlInput?.value || '';
+
+  // Clear previous errors
+  errorManager.clearErrors();
+
+  // Validate
+  const errors = validateLinkForm(title, url);
+
+  // Show errors if any
+  if (errors.length > 0) {
+    errorManager.addErrors(errors);
+    return; // Don't submit
+  }
+
+  // If no errors, proceed with adding link
+  console.log('Adding link:', { title, url });
+  // Call your API here
+  addLink(title, url);
+});
+// When user tries to save a rule
+function saveRule(ruleData) {
+  // Clear previous errors
+  errorManager.clearErrors();
+
+  // Validate
+  const errors = validateRule(ruleData);
+
+  // Show errors if any
+  if (errors.length > 0) {
+    errorManager.addErrors(errors);
+    return false; // Validation failed
+  }
+
+  // No errors, save rule
+  console.log('Saving rule:', ruleData);
+  // Call your API here
+  return true;
+}
+function addErrorWithAutoDismiss(message, delayMs = 5000) {
+  errorManager.addError(message);
+  
+  setTimeout(() => {
+    errorManager.removeError(message);
+  }, delayMs);
+}
+
+// Usage:
+addErrorWithAutoDismiss('This error will disappear in 5 seconds');
+function highlightInvalidField(fieldElement, isInvalid) {
+  if (isInvalid) {
+    fieldElement.classList.add('input-error');
+    fieldElement.style.borderColor = '#dc2626';
+  } else {
+    fieldElement.classList.remove('input-error');
+    fieldElement.style.borderColor = '';
+  }
+}
+
+// Usage:
+const titleInput = document.querySelector('input[placeholder*="Portfolio"]');
+const errors = validateLinkForm(titleInput.value, '');
+highlightInvalidField(titleInput, errors.length > 0);
+function validateAllRules(rulesArray) {
+  const allErrors = [];
+  
+  rulesArray.forEach((rule, index) => {
+    const errors = validateRule(rule);
+    errors.forEach(err => {
+      allErrors.push(`Rule ${index + 1}: ${err}`);
+    });
+  });
+
+  errorManager.clearErrors();
+  if (allErrors.length > 0) {
+    errorManager.addErrors(allErrors);
+    return false;
+  }
+
+  return true;
+}
