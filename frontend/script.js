@@ -66,13 +66,18 @@ async function createRule() {
     const type = document.getElementById('ruleType').value;
     const condition = document.getElementById('ruleCondition').value;
     const priority = parseInt(document.getElementById('rulePriority').value);
+     const ruleOperator = document.getElementById('ruleOperator').value || 'AND';
 
     if (!name || !type || !condition) {
         alert('Please fill all fields');
         return;
     }
 
-    const rule = { name, type, condition, priority, hubId: currentHubId };
+     // FIX 2 & 5: Validate rule type and time format
+ if (!validateRuleType(type)) return;
+ if (!validateTimeFormat(condition, type)) return;
+
+    const rule = { name, type, condition, priority, hubId: currentHubId, ruleOperator };
 
     if (useBackend) {
         try {
@@ -117,6 +122,7 @@ function renderRules(rules) {
                 <div class="item-title">${rule.name}</div>
                 <div class="item-text"><strong>${rule.type}:</strong> ${rule.condition}</div>
                 <div class="item-badge">Priority: ${rule.priority}/10</div>
+                 <div class="item-badge">Operator: ${rule.ruleOperator || 'AND'}</div>
             </div>
             <div class="item-actions">
                 <button class="btn btn-small btn-danger" onclick="deleteRule('${rule._id || rule.id}')">🗑️</button>
@@ -564,3 +570,77 @@ function updateBonusStats() {
 // Call updateBonusStats periodically
 setInterval(updateBonusStats, 5000);
 window.addEventListener('load', updateBonusStats);
+
+// ============ CRITICAL FIXES (Before Finals) ============
+// FIX 2: Rule Type Validation - 4 specific types
+const VALID_RULE_TYPES = [
+ 'Geo-Location',
+ 'Device-Type', 
+ 'Time-Based',
+ 'User-Behavior'
+];
+
+function validateRuleType(type) {
+ if (!VALID_RULE_TYPES.includes(type)) {
+ alert(`Invalid rule type. Please select from: ${VALID_RULE_TYPES.join(', ')}`);
+ return false;
+ }
+ return true;
+}
+
+// FIX 3: Analytics Data Consistency - Recalculate stats
+function fixAnalyticsConsistency() {
+ const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+ const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
+ 
+ // Recalculate total clicks from actual link data
+ const totalClicks = links.reduce((sum, link) => sum + (link.clicks || 0), 0);
+ 
+ // Update stats with accurate data
+ const stats = {
+ totalClicks: totalClicks,
+ totalVisits: totalClicks, // In real scenario, visits would be tracked separately
+ lastUpdated: new Date().toISOString()
+ };
+ 
+ localStorage.setItem('stats_' + currentHubId, JSON.stringify(stats));
+ return stats;
+}
+
+// FIX 4: Complete Rule Display Format
+function formatRuleDisplay(rule) {
+ return `
+ <strong>Name:</strong> ${rule.name}<br>
+ <strong>Type:</strong> ${rule.type}<br>
+ <strong>Condition:</strong> ${rule.condition}<br>
+ <strong>Priority:</strong> ${rule.priority}/10<br>
+ <strong>Operator:</strong> ${rule.ruleOperator || 'AND'}
+ `;
+}
+
+// FIX 5: Time Rule Format Validation
+function validateTimeFormat(condition, ruleType) {
+ if (ruleType === 'Time-Based') {
+ // Expected formats: "09:00-17:00", "weekday", "weekend", "business-hours"
+ const timePatterns = [
+ /^\d{2}:\d{2}-\d{2}:\d{2}$/,  // HH:MM-HH:MM format
+ /^(weekday|weekend|business-hours)$/i  // Special keywords
+ ];
+ 
+ const isValid = timePatterns.some(pattern => pattern.test(condition));
+ 
+ if (!isValid) {
+ alert('Invalid time format. Use: HH:MM-HH:MM, weekday, weekend, or business-hours');
+ return false;
+ }
+ }
+ return true;
+}
+
+// Apply fixes on load
+window.addEventListener('load', () => {
+ fixAnalyticsConsistency();
+});
+
+// Run analytics fix every 30 seconds
+setInterval(fixAnalyticsConsistency, 30000);
