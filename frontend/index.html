@@ -688,6 +688,22 @@
       }
     }
 
+	// MISSING HELPER FUNCTIONS
+function loginWith(provider) {
+	if (provider === 'google') loginWithGoogle();
+	else if (provider === 'microsoft') loginWithMicrosoft();
+	else if (provider === 'github') loginWithGitHub();
+}
+
+function saveSettings() {
+	const title = document.getElementById('hubTitleInput').value;
+	const desc = document.getElementById('hubDescInput').value;
+	if (title) document.querySelector('h1').textContent = title;
+	if (desc) document.querySelector('.subtitle').textContent = desc;
+	closeModal('settingsModal');
+	alert('Settings saved successfully!');
+}
+
     // THEME LOGIC
     const root = document.documentElement;
     const darkThemeBtn = document.getElementById('darkThemeBtn');
@@ -1241,6 +1257,60 @@
     <script src="script.js"></script>
 
 				<!-- MODALS -->
+
+				<!-- Settings Modal -->
+<div id="settingsModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h3>⚙️ Settings</h3>
+			<button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+		</div>
+		<div class="modal-body">
+			<label>Hub Title:</label>
+			<input type="text" id="hubTitleInput" placeholder="Enter hub title" />
+			<label>Hub Description:</label>
+			<textarea id="hubDescInput" placeholder="Enter description"></textarea>
+			<button onclick="saveSettings()" class="save-btn">💾 Save Settings</button>
+		</div>
+	</div>
+</div>
+
+				<!-- Auth Modal -->
+<div id="authModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h3>🔐 Login</h3>
+			<button class="modal-close" onclick="closeModal('authModal')">✕</button>
+		</div>
+		<div class="modal-body">
+			<button onclick="loginWith('google')" class="auth-btn google-btn">
+				<span>🔴</span> Login with Google
+			</button>
+			<button onclick="loginWith('microsoft')" class="auth-btn microsoft-btn">
+				<span>🟦</span> Login with Microsoft
+			</button>
+			<button onclick="loginWith('github')" class="auth-btn github-btn">
+				<span>⬛</span> Login with GitHub
+			</button>
+		</div>
+	</div>
+</div>
+
+				<!-- Usage Modal -->
+<div id="usageModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h3>📊 Usage Stats</h3>
+			<button class="modal-close" onclick="closeModal('usageModal')">✕</button>
+		</div>
+		<div class="modal-body">
+			<p>Total Hub Visits: <strong id="totalVisits">0</strong></p>
+			<p>Total Link Clicks: <strong id="totalClicks">0</strong></p>
+			<p>Active Links: <strong id="activeLinksCount">0</strong></p>
+			<p>Active Rules: <strong id="activeRulesCount">0</strong></p>
+		</div>
+	</div>
+</div>
 </body>
 </html>
 </html>
