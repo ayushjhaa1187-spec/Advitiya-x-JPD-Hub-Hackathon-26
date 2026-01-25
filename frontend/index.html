@@ -36,7 +36,100 @@
                   radial-gradient(circle at bottom right, rgba(160, 50, 255, 0.2), transparent 55%),
                   var(--hub-bg);
     }
-  </style>
+  </style
+
+        /* Charts Styling */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .chart-container {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        
+        .chart-container h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .chart-container canvas {
+            max-height: 250px;
+        }
+        
+        /* Time Filter Buttons */
+        .time-filter {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .time-filter:hover {
+            background: #00ff88;
+            color: #000;
+            border-color: #00ff88;
+        }
+        
+        .time-filter.active {
+            background: #00ff88;
+            color: #000;
+            border-color: #00ff88;
+        }
+        
+        /* Export Section */
+        .export-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        
+        .export-section h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        
+        .export-section p {
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .export-btn {
+            background: #2a2a2a;
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .export-btn:hover {
+            background: #00ff88;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+    </style>
       <!-- Chart.js for Analytics Graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
@@ -145,6 +238,46 @@
                     <div class="stat-box">
                         <div class="stat-number" id="statRules">0</div>
                         <div class="stat-label">Active Rules</div>
+                    </div>
+                </div>
+
+                <!-- Time Period Filter -->
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="time-filter active" data-period="week">📅 Week</button>
+                    <button class="time-filter" data-period="month">📆 Month</button>
+                    <button class="time-filter" data-period="all">📊 All Time</button>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Total Hub Visits</h3>
+                        <canvas id="visitsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Link Clicks</h3>
+                        <canvas id="clicksChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Top/Least Performing</h3>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Active Rules</h3>
+                        <canvas id="rulesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Export Section -->
+                <div class="export-section">
+                    <h3>📊 Export Analytics</h3>
+                    <p>Export detailed analytics reports in various formats</p>
+                    <div class="export-buttons">
+                        <button onclick="exportFullReport()" class="export-btn">📋 Full Report (CSV)</button>
+                        <button onclick="exportWeekData()" class="export-btn">📅 Last Week (JSON)</button>
+                        <button onclick="exportMonthData()" class="export-btn">📆 Last Month (CSV)</button>
+                        <button onclick="exportDemographics()" class="export-btn">👥 Demographics (HTML)</button>
+                        <button onclick="exportCustomRange()" class="export-btn">🔧 Custom Range</button>
                     </div>
                 </div>
 
@@ -917,6 +1050,142 @@
       });
     }
 
+        // Export Analytics Functions
+        function exportFullReport() {
+            const data = getFilteredAnalytics();
+            const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
+            const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId)) || [];
+            
+            let csv = 'Smart Link Hub - Full Analytics Report\n\n';
+            csv += 'Generated: ' + new Date().toLocaleString() + '\n\n';
+            csv += 'Hub ID,' + currentHubId + '\n';
+            csv += 'Total Visits,' + data.length + '\n';
+            csv += 'Total Links,' + links.length + '\n';
+            csv += 'Active Rules,' + rules.length + '\n\n';
+            
+            csv += 'Link Name,URL,Clicks,Priority\n';
+            links.forEach(link => {
+                csv += '"' + link.name + '","' + link.url + '",' + (link.clicks || 0) + ',' + link.priority + '\n';
+            });
+            
+            downloadFile(csv, 'full-report-' + Date.now() + '.csv', 'text/csv');
+            alert('\u2705 Full report exported successfully!');
+        }
+        
+        function exportWeekData() {
+            const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
+            const filtered = timeline.filter(d => d.timestamp > weekAgo);
+            
+            const exportData = {
+                period: 'Last 7 Days',
+                generated: new Date().toISOString(),
+                hubId: currentHubId,
+                totalVisits: filtered.length,
+                data: filtered
+            };
+            
+            downloadFile(JSON.stringify(exportData, null, 2), 'week-data-' + Date.now() + '.json', 'application/json');
+            alert('\u2705 Week data exported as JSON!');
+        }
+        
+        function exportMonthData() {
+            const monthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
+            const filtered = timeline.filter(d => d.timestamp > monthAgo);
+            const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
+            
+            let csv = 'Monthly Analytics Report\n\n';
+            csv += 'Period,Last 30 Days\n';
+            csv += 'Total Visits,' + filtered.length + '\n\n';
+            csv += 'Date,Visits,Clicks\n';
+            
+            const dailyData = {};
+            filtered.forEach(d => {
+                const date = d.date;
+                if (!dailyData[date]) dailyData[date] = { visits: 0, clicks: 0 };
+                dailyData[date].visits += d.visits || 0;
+                dailyData[date].clicks += d.clicks || 0;
+            });
+            
+            Object.keys(dailyData).sort().forEach(date => {
+                csv += date + ',' + dailyData[date].visits + ',' + dailyData[date].clicks + '\n';
+            });
+            
+            downloadFile(csv, 'month-report-' + Date.now() + '.csv', 'text/csv');
+            alert('\u2705 Month report exported as CSV!');
+        }
+        
+        function exportDemographics() {
+            const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
+            const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId)) || [];
+            
+            let html = '<!DOCTYPE html><html><head><title>Demographics Report</title><style>';
+            html += 'body{font-family:Arial;padding:20px;background:#0d0d0d;color:#fff;}';
+            html += 'h1{color:#00ff88;}table{width:100%;border-collapse:collapse;margin:20px 0;}';
+            html += 'th,td{border:1px solid #333;padding:12px;text-align:left;}';
+            html += 'th{background:#1a1a1a;color:#00ff88;}';
+            html += 'tr:hover{background:#1a1a1a;}';
+            html += '</style></head><body>';
+            html += '<h1>\uD83D\uDCCA Demographics & Analytics Report</h1>';
+            html += '<p>Hub ID: ' + currentHubId + '</p>';
+            html += '<p>Generated: ' + new Date().toLocaleString() + '</p>';
+            html += '<h2>\uD83D\uDD17 Links Performance</h2><table><tr><th>Name</th><th>Clicks</th><th>Priority</th></tr>';
+            
+            const sorted = links.sort((a, b) => (b.clicks || 0) - (a.clicks || 0));
+            sorted.forEach(link => {
+                html += '<tr><td>' + link.name + '</td><td>' + (link.clicks || 0) + '</td><td>' + link.priority + '</td></tr>';
+            });
+            
+            html += '</table><h2>\u2699\uFE0F Active Rules</h2><table><tr><th>Name</th><th>Type</th><th>Priority</th></tr>';
+            rules.forEach(rule => {
+                html += '<tr><td>' + rule.name + '</td><td>' + rule.type + '</td><td>' + rule.priority + '</td></tr>';
+            });
+            
+            html += '</table></body></html>';
+            
+            downloadFile(html, 'demographics-' + Date.now() + '.html', 'text/html');
+            alert('\u2705 Demographics exported as HTML!');
+        }
+        
+        function exportCustomRange() {
+            const start = prompt('Enter start date (YYYY-MM-DD):');
+            const end = prompt('Enter end date (YYYY-MM-DD):');
+            
+            if (!start || !end) {
+                alert('\u26A0\uFE0F Export cancelled');
+                return;
+            }
+            
+            const startTime = new Date(start).getTime();
+            const endTime = new Date(end).getTime();
+            const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
+            const filtered = timeline.filter(d => d.timestamp >= startTime && d.timestamp <= endTime);
+            
+            const exportData = {
+                period: start + ' to ' + end,
+                generated: new Date().toISOString(),
+                hubId: currentHubId,
+                totalVisits: filtered.length,
+                data: filtered
+            };
+            
+            downloadFile(JSON.stringify(exportData, null, 2), 'custom-range-' + Date.now() + '.json', 'application/json');
+            alert('\u2705 Custom range data exported!');
+        }
+        
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
     // Initialize and update charts
     window.addEventListener('DOMContentLoaded', () => {
       initAnalyticsTracking();
@@ -934,4 +1203,8 @@
       }
     }, 5000);
 </body>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </html>
