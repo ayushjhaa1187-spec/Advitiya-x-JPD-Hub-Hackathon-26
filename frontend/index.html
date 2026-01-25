@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Link Hub - Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+  <style>
+    .top-menu {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .top-menu-btn {
+      background: #23232b;
+      color: #ffffff;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .top-menu-btn:hover {
+      background: #333333;
+    }
+
+    :root {
+      --hub-bg: #05050a;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, rgba(60, 180, 255, 0.2), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(160, 50, 255, 0.2), transparent 55%),
+                  var(--hub-bg);
+    }
+  </style>
 </head>
 <body>
 
@@ -13,6 +45,12 @@
     <header>
         <h1>🔗 Smart Link Hub</h1>
         <p class="subtitle">Intelligent link routing with dynamic rules & real-time analytics</p>
+         <div class="top-menu">
+      <button class="top-menu-btn" onclick="openSettings()">⚙️ Settings</button>
+      <button class="top-menu-btn" onclick="openUsageStats()">📊 Usage</button>
+      <button class="top-menu-btn" onclick="openHelp()">❓ Help</button>
+      <button class="top-menu-btn" id="authBtn" onclick="toggleAuth()">Login</button>
+    </div>
         
         <div class="public-url-box">
             <span style="color: #888888; font-size: 12px;">Public Hub URL:</span>
@@ -173,10 +211,13 @@
                 <div class="theme-toggle">
                     <button class="theme-btn active" id="darkThemeBtn" onclick="setTheme('dark')">🌙 Dark</button>
                     <button class="theme-btn" id="lightThemeBtn" onclick="setTheme('light')">☀️ Light</button>
-                    <button class="theme-btn" id="autoThemeBtn" onclick="setTheme('auto')">🔄 Auto</button>
-                </div>
+            <button class="theme-btn" id="customThemeBtn" onclick="enableCustomTheme()">🎚️ Custom</button>                </div>
                 
-                <p style="color: #888888; font-size: 11px;">Auto-detects system preference</p>
+            </div>
+            
+            <div class="form-group" id="themeIntensityWrapper" style="margin-top: 8px; display: none">
+              <label for="themeIntensity">How dark do you want?</label>
+              <input type="range" id="themeIntensity" min="0" max="100" value="60" oninput="setCustomIntensity(this.value)" />
             </div>
 
             <!-- BONUS 4: EXPORTABLE ANALYTICS REPORTS -->
@@ -280,6 +321,238 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+      <!-- SETTINGS MODAL -->
+  <div class="modal" id="settingsModal" style="display: none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>⚙️ Settings</h3>
+        <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+      <p style="color: #888; font-size: 12px; margin-bottom: 12px">Customize your dashboard preferences.</p>
+      <div class="form-group">
+        <label>Theme</label>
+        <div class="theme-toggle">
+          <button class="theme-btn" onclick="setTheme('dark')">🌙 Dark</button>
+          <button class="theme-btn" onclick="setTheme('light')">☀️ Light</button>
+          <button class="theme-btn" onclick="enableCustomTheme()">🎚️ Custom</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELP MODAL -->
+  <div class="modal" id="helpModal" style="display: none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>❓ Help</h3>
+        <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
+      </div>
+      <p style="color: #ccc; font-size: 13px">
+        1. Create Smart Rules to route traffic.<br />
+        2. Add links with tags and weights.<br />
+        3. Share your Public Hub URL.<br />
+        4. Monitor Analytics to optimize performance.
+      </p>
+    </div>
+  </div>
+
+    <script src="script.js"></script>
+
+    // TOP MENU & AUTH FUNCTIONS
+    let currentUser = null;
+    let authProvider = null;
+
+    function openSettings() {
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function openHelp() {
+      document.getElementById('helpModal').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.style.display = 'none';
+    }
+
+    function openUsageStats() {
+      const analyticsSection = document.querySelector('h2');
+      if (analyticsSection) {
+        analyticsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function toggleAuth() {
+      const btn = document.getElementById('authBtn');
+      if (!currentUser) {
+        // Show login options modal
+        openAuthModal();
+      } else {
+        // Logout
+        currentUser = null;
+        authProvider = null;
+        btn.textContent = 'Login';
+        btn.style.background = '#23232b';
+      }
+    }
+
+    // AUTHENTICATION MODAL
+    function createAuthModal() {
+      const modal = document.createElement('div');
+      modal.id = 'authModal';
+      modal.className = 'modal';
+      modal.style.display = 'none';
+      modal.innerHTML = `
+        <div class="modal-content" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3>Login to Smart Link Hub</h3>
+            <button class="modal-close" onclick="closeModal('authModal')">✕</button>
+          </div>
+          <p style="color: #888; font-size: 12px; margin-bottom: 16px;">Sign in with your preferred provider</p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button onclick="loginWithGoogle()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #ffffff; color: #000; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 500;">
+              <span style="font-size: 18px;">🔵</span> Sign in with Google
+            </button>
+            <button onclick="loginWithMicrosoft()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #0078d4; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+              <span style="font-size: 18px;">🟦</span> Sign in with Microsoft
+            </button>
+            <button onclick="loginWithGitHub()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #333; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+              <span style="font-size: 18px;">⬛</span> Sign in with GitHub
+            </button>
+          </div>
+          <hr style="border: none; border-top: 1px solid #333; margin: 16px 0;">
+          <p style="color: #888; font-size: 11px; text-align: center;">We respect your privacy. Secure OAuth login.</p>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function openAuthModal() {
+      let authModal = document.getElementById('authModal');
+      if (!authModal) {
+        createAuthModal();
+        authModal = document.getElementById('authModal');
+      }
+      authModal.style.display = 'flex';
+    }
+
+    // OAUTH LOGIN FUNCTIONS
+    function loginWithGoogle() {
+      currentUser = 'user@gmail.com';
+      authProvider = 'Google';
+      updateAuthButton();
+      closeModal('authModal');
+    }
+
+    function loginWithMicrosoft() {
+      currentUser = 'user@outlook.com';
+      authProvider = 'Microsoft';
+      updateAuthButton();
+      closeModal('authModal');
+    }
+
+    function loginWithGitHub() {
+      currentUser = 'github-user';
+      authProvider = 'GitHub';
+      updateAuthButton();
+      closeModal('authModal');
+    }
+
+    function updateAuthButton() {
+      const btn = document.getElementById('authBtn');
+      if (currentUser && authProvider) {
+        btn.textContent = `${authProvider} ✓`;
+        btn.style.background = '#28a745';
+      }
+    }
+
+    // THEME LOGIC
+    const root = document.documentElement;
+    const darkThemeBtn = document.getElementById('darkThemeBtn');
+    const lightThemeBtn = document.getElementById('lightThemeBtn');
+    const customThemeBtn = document.getElementById('customThemeBtn');
+    const themeIntensityWrapper = document.getElementById('themeIntensityWrapper');
+    const themeIntensityInput = document.getElementById('themeIntensity');
+
+    function updateActiveThemeButton(mode) {
+      if (darkThemeBtn && lightThemeBtn && customThemeBtn) {
+        [darkThemeBtn, lightThemeBtn, customThemeBtn].forEach((btn) =>
+          btn.classList.remove('active')
+        );
+        if (mode === 'dark') darkThemeBtn.classList.add('active');
+        if (mode === 'light') lightThemeBtn.classList.add('active');
+        if (mode === 'custom') customThemeBtn.classList.add('active');
+      }
+    }
+
+    function applyCustomIntensity(value) {
+      const t = value / 100;
+      const r = Math.round(10 * t + 12 * (1 - t));
+      const g = Math.round(10 * t + 12 * (1 - t));
+      const b = Math.round(18 * t + 24 * (1 - t));
+      document.documentElement.style.setProperty(
+        '--hub-bg',
+        `rgb(${r}, ${g}, ${b})`
+      );
+      localStorage.setItem('themeIntensity', String(value));
+      localStorage.setItem('themeMode', 'custom');
+    }
+
+    function setTheme(mode) {
+      localStorage.setItem('themeMode', mode);
+      if (mode === 'dark') {
+        if (themeIntensityWrapper) themeIntensityWrapper.style.display = 'none';
+        root.classList.add('dark-mode');
+        root.classList.remove('light-mode');
+        document.documentElement.style.setProperty('--hub-bg', '#05050a');
+      } else if (mode === 'light') {
+        if (themeIntensityWrapper) themeIntensityWrapper.style.display = 'none';
+        root.classList.add('light-mode');
+        root.classList.remove('dark-mode');
+        document.documentElement.style.setProperty('--hub-bg', '#f5f5f5');
+      }
+      updateActiveThemeButton(mode);
+    }
+
+    function enableCustomTheme() {
+      if (customThemeBtn && themeIntensityWrapper) {
+        if (darkThemeBtn) darkThemeBtn.classList.remove('active');
+        if (lightThemeBtn) lightThemeBtn.classList.remove('active');
+        customThemeBtn.classList.add('active');
+        themeIntensityWrapper.style.display = 'block';
+        const saved = localStorage.getItem('themeIntensity') || '60';
+        themeIntensityInput.value = saved;
+        applyCustomIntensity(Number(saved));
+        updateActiveThemeButton('custom');
+      }
+    }
+
+    function setCustomIntensity(value) {
+      applyCustomIntensity(Number(value));
+    }
+
+    // Theme button event listeners
+    if (darkThemeBtn) darkThemeBtn.addEventListener('click', () => setTheme('dark'));
+    if (lightThemeBtn) lightThemeBtn.addEventListener('click', () => setTheme('light'));
+    if (customThemeBtn) customThemeBtn.addEventListener('click', enableCustomTheme);
+    if (themeIntensityInput) {
+      themeIntensityInput.addEventListener('input', (e) => {
+        applyCustomIntensity(Number(e.target.value));
+      });
+    }
+
+    // Load saved theme on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const mode = localStorage.getItem('themeMode') || 'dark';
+      const savedIntensity = localStorage.getItem('themeIntensity');
+      if (mode === 'custom' && savedIntensity) {
+        if (themeIntensityWrapper) themeIntensityWrapper.style.display = 'block';
+        themeIntensityInput.value = savedIntensity;
+        applyCustomIntensity(Number(savedIntensity));
+        updateActiveThemeButton('custom');
+      } else {
+        setTheme(mode);
+      }
+    });
 </body>
 </html>
