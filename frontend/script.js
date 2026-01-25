@@ -2,52 +2,18 @@ const API_BASE = 'http://localhost:3000/api';
 let currentHubId = localStorage.getItem('hubId') || 'hub_' + Date.now();
 let useBackend = false;
 
+// Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem('hubId', currentHubId);
     document.getElementById('publicUrl').textContent = `https://smart-link-hub.vercel.app/hub/${currentHubId}`;
-    
-    // Test backend connection
-    try {
-        const res = await fetch(`${API_BASE}/health`);
-        if (res.ok) {
-            useBackend = true;
-            console.log('✅ Connected to backend');
-        }
-    } catch (e) {
-        console.log('⚠️ Backend offline, using localStorage');
-    }
-
     await loadData();
-    setInterval(loadData, 3000);
+    setInterval(loadData, 5000); // Sync every 5s
+    setTimeout(renderAllCharts, 1000); // Initial Chart Render
 });
 
 async function loadData() {
-    if (useBackend) {
-        try {
-            const [linksRes, rulesRes, statsRes] = await Promise.all([
-                fetch(`${API_BASE}/links/${currentHubId}`),
-                fetch(`${API_BASE}/rules/${currentHubId}`),
-                fetch(`${API_BASE}/stats/${currentHubId}`)
-            ]);
-
-            if (linksRes.ok && rulesRes.ok && statsRes.ok) {
-                const links = await linksRes.json();
-                const rules = await rulesRes.json();
-                const stats = await statsRes.json();
-
-                renderLinks(links);
-                renderRules(rules);
-                updateAnalytics(stats, links, rules);
-                updatePreview(links);
-                return;
-            }
-        } catch (e) {
-            console.log('Backend error, falling back to localStorage');
-        }
-    }
-    
-    // Fallback to localStorage
-    loadFromLocal();
+    loadFromLocal(); // Default to local for speed
+    updateBonusStats();
 }
 
 function loadFromLocal() {
@@ -61,586 +27,161 @@ function loadFromLocal() {
     updatePreview(links);
 }
 
+// --- RULES LOGIC ---
 async function createRule() {
     const name = document.getElementById('ruleName').value;
     const type = document.getElementById('ruleType').value;
     const condition = document.getElementById('ruleCondition').value;
-    const priority = parseInt(document.getElementById('rulePriority').value);
-     const ruleOperator = document.getElementById('ruleOperator').value || 'AND';
+    const priority = document.getElementById('rulePriority').value;
+    const operator = document.getElementById('ruleOperator').value;
 
-    if (!name || !type || !condition) {
-        alert('Please fill all fields');
-        return;
+    if (!name || !type || !condition) return alert('Please fill all fields');
+    
+    // Validation Fixes
+    if (type === 'Time-Based' && !/^\d{2}:\d{2}-\d{2}:\d{2}$/.test(condition) && !/^(weekday|weekend)$/i.test(condition)) {
+        return alert('Invalid time format (use HH:MM-HH:MM or weekday)');
     }
 
-     // FIX 2 & 5: Validate rule type and time format
- if (!validateRuleType(type)) return;
- if (!validateTimeFormat(condition, type)) return;
-
-    const rule = { name, type, condition, priority, hubId: currentHubId, ruleOperator };
-
-    if (useBackend) {
-        try {
-            const res = await fetch(`${API_BASE}/rules`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(rule)
-            });
-            if (!res.ok) throw new Error();
-        } catch {
-            saveRuleLocal(rule);
-        }
-    } else {
-        saveRuleLocal(rule);
-    }
-
+    const rule = { id: 'rule_' + Date.now(), name, type, condition, priority, operator };
+    saveLocalItem('rules', rule);
+    
+    // Reset Form
     document.getElementById('ruleName').value = '';
-    document.getElementById('ruleType').value = '';
     document.getElementById('ruleCondition').value = '';
-    document.getElementById('rulePriority').value = '5';
-
-    await loadData();
-}
-
-function saveRuleLocal(rule) {
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    rule.id = 'rule_' + Date.now();
-    rules.push(rule);
-    localStorage.setItem('rules_' + currentHubId, JSON.stringify(rules));
+    loadData();
 }
 
 function renderRules(rules) {
-    const container = document.getElementById('rulesList');
-    if (rules.length === 0) {
-        container.innerHTML = '<div class="empty-state">No rules yet</div>';
-        return;
-    }
-
-    container.innerHTML = '<div class="item-list">' + rules.map(rule => `
-        <div class="item">
-            <div>
-                <div class="item-title">${rule.name}</div>
-                <div class="item-text"><strong>${rule.type}:</strong> ${rule.condition}</div>
-                <div class="item-badge">Priority: ${rule.priority}/10</div>
-                 <div class="item-badge">Operator: ${rule.ruleOperator || 'AND'}</div>
-            </div>
-            <div class="item-actions">
-                <button class="btn btn-small btn-danger" onclick="deleteRule('${rule._id || rule.id}')">🗑️</button>
-            </div>
-        </div>
-    `).join('') + '</div>';
-}
-
-async function deleteRule(id) {
-    if (useBackend) {
-        try {
-            await fetch(`${API_BASE}/rules/${id}`, { method: 'DELETE' });
-        } catch {
-            deleteRuleLocal(id);
-        }
-    } else {
-        deleteRuleLocal(id);
-    }
-    await loadData();
-}
-
-function deleteRuleLocal(id) {
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    const filtered = rules.filter(r => r._id !== id && r.id !== id);
-    localStorage.setItem('rules_' + currentHubId, JSON.stringify(filtered));
-}
-
-function openAddLinkModal() {
-    document.getElementById('addLinkModal').classList.add('show');
-}
-
-async function saveLink() {
-    const title = document.getElementById('modalTitle').value;
-    const url = document.getElementById('modalUrl').value;
-    const desc = document.getElementById('modalDesc').value;
-    const priority = parseInt(document.getElementById('modalPriority').value);
-
-    if (!title || !url) {
-        alert('Please fill Title and URL');
-        return;
-    }
-
-    const link = { title, url, description: desc, priority, hubId: currentHubId, clicks: 0 };
-
-    if (useBackend) {
-        try {
-            const res = await fetch(`${API_BASE}/links`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(link)
-            });
-            if (!res.ok) throw new Error();
-        } catch {
-            saveLinkLocal(link);
-        }
-    } else {
-        saveLinkLocal(link);
-    }
-
-    document.getElementById('modalTitle').value = '';
-    document.getElementById('modalUrl').value = '';
-    document.getElementById('modalDesc').value = '';
-    document.getElementById('modalPriority').value = '5';
-
-    closeModal('addLinkModal');
-    await loadData();
-}
-
-function saveLinkLocal(link) {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    link.id = 'link_' + Date.now();
-    links.push(link);
-    localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
-}
-
-function renderLinks(links) {
-    const container = document.getElementById('linksList');
-    if (links.length === 0) {
-        container.innerHTML = '<div class="empty-state">No links added</div>';
-        return;
-    }
-
-    const sorted = [...links].sort((a, b) => b.priority - a.priority);
-    container.innerHTML = '<div class="item-list">' + sorted.map(link => `
-        <div class="item">
-            <div>
-                <div class="item-title">${link.title}</div>
-                <div class="item-text" style="word-break: break-all;">${link.url}</div>
-                <div class="item-badge">Priority: ${link.priority} | ${link.clicks || 0} clicks</div>
-            </div>
-            <div class="item-actions">
-                <button class="btn btn-small" onclick="testClick('${link._id || link.id}')">Test</button>
-                <button class="btn btn-small btn-danger" onclick="deleteLink('${link._id || link.id}')">🗑️</button>
-            </div>
-        </div>
-    `).join('') + '</div>';
-}
-
-async function testClick(linkId) {
-    if (useBackend) {
-        try {
-            await fetch(`${API_BASE}/track/click/${linkId}`, { method: 'POST' });
-        } catch {}
-    } else {
-        const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-        const link = links.find(l => l._id === linkId || l.id === linkId);
-        if (link) {
-            link.clicks = (link.clicks || 0) + 1;
-            localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
-        }
-    }
-    await loadData();
-}
-
-async function deleteLink(id) {
-    if (useBackend) {
-        try {
-            await fetch(`${API_BASE}/links/${id}`, { method: 'DELETE' });
-        } catch {
-            deleteLinkLocal(id);
-        }
-    } else {
-        deleteLinkLocal(id);
-    }
-    await loadData();
-}
-
-function deleteLinkLocal(id) {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const filtered = links.filter(l => l._id !== id && l.id !== id);
-    localStorage.setItem('links_' + currentHubId, JSON.stringify(filtered));
-}
-
-function updateAnalytics(stats, links, rules) {
-    document.getElementById('statClicks').textContent = stats.totalClicks || 0;
-    document.getElementById('statVisits').textContent = stats.totalVisits || 0;
-    document.getElementById('statLinks').textContent = links.length;
-    document.getElementById('statRules').textContent = rules.length;
-
-    const sorted = [...links].sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 5);
-    const container = document.getElementById('topLinksList');
-
-    if (sorted.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: #666666; font-size: 12px; padding: 12px;">No clicks yet</div>';
-    } else {
-        container.innerHTML = sorted.map((link, idx) => `
-            <div style="background: #1a1a1a; border: 1px solid #222222; border-radius: 4px; padding: 8px; margin-bottom: 8px; display: flex; justify-content: space-between;">
-                <span style="color: #cccccc; font-size: 12px;">${idx + 1}. ${link.title}</span>
-                <span style="color: #00ff41; font-weight: bold;">${link.clicks || 0}</span>
-            </div>
-        `).join('');
-    }
-}
-
-function updatePreview(links) {
-    const sorted = [...links].sort((a, b) => b.priority - a.priority);
-    const container = document.getElementById('previewGrid');
-
-    if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Add links to preview</div>';
-        return;
-    }
-
-    container.innerHTML = sorted.map(link => `
-        <div class="link-card" onclick="testClick('${link._id || link.id}')">
-            <div class="link-card-title">${link.title}</div>
-            <div class="link-card-stat">⭐ Priority: ${link.priority}</div>
-            <div class="link-card-stat">🔗 ${link.clicks || 0} clicks</div>
+    const list = document.getElementById('rulesList');
+    if (!rules.length) return list.innerHTML = '<div class="empty-state">No rules yet</div>';
+    list.innerHTML = rules.map(r => `
+        <div class="link-card" style="text-align:left">
+            <div style="font-weight:bold; color:#00ff41">${r.name}</div>
+            <div style="font-size:12px; color:#888">${r.type}: ${r.condition} (Pri: ${r.priority})</div>
+            <button class="btn btn-small" style="margin-top:5px; border-color:red; color:red" onclick="deleteItem('rules', '${r.id}')">Delete</button>
         </div>
     `).join('');
 }
 
-function openPublicHub() {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const sorted = [...links].sort((a, b) => b.priority - a.priority);
-    const container = document.getElementById('publicGrid');
+// --- LINKS LOGIC ---
+async function saveLink() {
+    const title = document.getElementById('modalTitle').value;
+    const url = document.getElementById('modalUrl').value;
+    const priority = document.getElementById('modalPriority').value;
+    const desc = document.getElementById('modalDesc').value;
 
-    if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No links available</div>';
-    } else {
-        container.innerHTML = sorted.map(link => `
-            <div class="link-card" onclick="window.open('${link.url}', '_blank'); testClick('${link._id || link.id}');">
-                <div class="link-card-title">${link.title}</div>
-                <div class="link-card-stat">${link.description || 'Link'}</div>
-                <div style="margin-top: 8px; font-size: 11px; color: #00ff41;">→ Click</div>
+    if (!title || !url) return alert('Title and URL required');
+
+    const link = { id: 'link_' + Date.now(), title, url, priority, description: desc, clicks: 0 };
+    saveLocalItem('links', link);
+    closeModal('addLinkModal');
+    loadData();
+}
+
+function renderLinks(links) {
+    const list = document.getElementById('linksList');
+    if (!links.length) return list.innerHTML = '<div class="empty-state">No links added</div>';
+    list.innerHTML = links.sort((a,b) => b.priority - a.priority).map(l => `
+        <div class="link-card" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="font-weight:bold; color:#00ff41">${l.title}</div>
+                <div style="font-size:11px; color:#888">${l.url}</div>
             </div>
-        `).join('');
-    }
-
-    document.getElementById('publicHubModal').classList.add('show');
+            <div style="text-align:right">
+                <div style="font-size:10px;">Pri: ${l.priority}</div>
+                <div style="font-size:10px;">🖱️ ${l.clicks||0}</div>
+                <button onclick="deleteItem('links', '${l.id}')" style="background:none; border:none; cursor:pointer;">🗑️</button>
+            </div>
+        </div>
+    `).join('');
 }
 
-function copyUrl() {
-    navigator.clipboard.writeText(document.getElementById('publicUrl').textContent);
-    alert('✅ URL copied to clipboard!');
+function updatePreview(links) {
+    const grid = document.getElementById('previewGrid');
+    if (!links.length) return grid.innerHTML = '<div class="empty-state">Add links</div>';
+    grid.innerHTML = links.map(l => `<div class="link-card" onclick="trackClick('${l.id}')"><div class="link-card-title">${l.title}</div></div>`).join('');
 }
 
-function closeModal(id) {
-    document.getElementById(id).classList.remove('show');
+// --- ANALYTICS & CHARTS ---
+function updateAnalytics(stats, links, rules) {
+    document.getElementById('statClicks').textContent = stats.totalClicks || 0;
+    document.getElementById('statVisits').textContent = stats.totalVisits || 0;
+    
+    // Render Top Links List
+    const top = [...links].sort((a,b) => (b.clicks||0) - (a.clicks||0)).slice(0,3);
+    document.getElementById('topLinksList').innerHTML = top.map((l,i) => 
+        `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #333">
+            <span>${i+1}. ${l.title}</span><span style="color:#00ff41">${l.clicks||0}</span>
+        </div>`).join('');
 }
 
-function exportData() {
+function trackClick(id) {
     const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{}');
-
-    const data = { hubId: currentHubId, links, rules, stats, exportedAt: new Date().toISOString() };
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'hub-config-' + currentHubId + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// ============ BONUS FEATURES ============
-
-// BONUS 1: QR CODE GENERATOR
-function generateQRCode() {
-    const hubUrl = document.getElementById('publicUrl').textContent;
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(hubUrl)}`;
-    
-    const container = document.getElementById('qrCodeContainer');
-    container.innerHTML = `
-        <div class="qr-container">
-            <img src="${qrApiUrl}" alt="QR Code" id="qrCodeImg">
-        </div>
-    `;
-    
-    document.getElementById('downloadQRBtn').style.display = 'block';
-}
-
-function downloadQRCode() {
-    const hubUrl = document.getElementById('publicUrl').textContent;
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(hubUrl)}`;
-    
-    const a = document.createElement('a');
-    a.href = qrApiUrl;
-    a.download = 'qr-' + currentHubId + '.png';
-    a.click();
-}
-
-// BONUS 2: URL SHORTENER
-function shortenURL() {
-    const hubUrl = document.getElementById('publicUrl').textContent;
-    const shortened = 'short.link/' + currentHubId;
-    
-    const container = document.getElementById('shortenedUrlContainer');
-    container.innerHTML = `
-        <div class="url-short" onclick="copyShortenedUrl(this)">
-            ${shortened}
-        </div>
-        <p style="color: #888888; font-size: 11px; text-align: center;">Click to copy</p>
-    `;
-}
-
-function copyShortenedUrl(elem) {
-    const text = elem.textContent.trim();
-    navigator.clipboard.writeText(text);
-    alert('✅ Shortened URL copied!');
-}
-
-// BONUS 3: DARK/LIGHT MODE AUTO-DETECTION
-function setTheme(theme) {
-    if (theme === 'dark') {
-        document.body.classList.remove('light-mode');
-        localStorage.setItem('theme', 'dark');
-        document.getElementById('darkThemeBtn').classList.add('active');
-        document.getElementById('lightThemeBtn').classList.remove('active');
-        document.getElementById('autoThemeBtn').classList.remove('active');
-    } else if (theme === 'light') {
-        document.body.classList.add('light-mode');
-        localStorage.setItem('theme', 'light');
-        document.getElementById('darkThemeBtn').classList.remove('active');
-        document.getElementById('lightThemeBtn').classList.add('active');
-        document.getElementById('autoThemeBtn').classList.remove('active');
-    } else if (theme === 'auto') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (isDark) {
-            document.body.classList.remove('light-mode');
-        } else {
-            document.body.classList.add('light-mode');
-        }
-        localStorage.setItem('theme', 'auto');
-        document.getElementById('darkThemeBtn').classList.remove('active');
-        document.getElementById('lightThemeBtn').classList.remove('active');
-        document.getElementById('autoThemeBtn').classList.add('active');
+    const link = links.find(l => l.id === id);
+    if(link) {
+        link.clicks = (link.clicks || 0) + 1;
+        localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
+        
+        // Update Total Stats
+        const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{"totalClicks":0}');
+        stats.totalClicks++;
+        localStorage.setItem('stats_' + currentHubId, JSON.stringify(stats));
+        loadData();
     }
 }
 
-// Initialize theme on load
-window.addEventListener('load', () => {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-});
+// Generic Helper for LocalStorage
+function saveLocalItem(type, item) {
+    const items = JSON.parse(localStorage.getItem(type + '_' + currentHubId) || '[]');
+    items.push(item);
+    localStorage.setItem(type + '_' + currentHubId, JSON.stringify(items));
+}
 
-// BONUS 4: EXPORTABLE ANALYTICS REPORTS
-function exportAnalyticsCSV() {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{}');
+function deleteItem(type, id) {
+    const items = JSON.parse(localStorage.getItem(type + '_' + currentHubId) || '[]');
+    const filtered = items.filter(i => i.id !== id);
+    localStorage.setItem(type + '_' + currentHubId, JSON.stringify(filtered));
+    loadData();
+}
 
-    let csv = 'Smart Link Hub Analytics Report\n';
-    csv += 'Generated: ' + new Date().toISOString() + '\n\n';
-    csv += 'SUMMARY\n';
-    csv += 'Total Clicks,' + (stats.totalClicks || 0) + '\n';
-    csv += 'Total Visits,' + (stats.totalVisits || 0) + '\n';
-    csv += 'Active Links,' + links.length + '\n';
-    csv += 'Active Rules,' + rules.length + '\n\n';
+// --- CHART RENDERER ---
+let visitsChart, clicksChart;
+function renderAllCharts() {
+    const ctx1 = document.getElementById('visitsChart');
+    const ctx2 = document.getElementById('clicksChart');
+    if(!ctx1 || !ctx2) return;
 
-    csv += 'LINKS\n';
-    csv += 'Title,URL,Priority,Clicks\n';
-    links.forEach(link => {
-        csv += `"${link.title}","${link.url}",${link.priority},${link.clicks || 0}\n`;
+    if(visitsChart) visitsChart.destroy();
+    visitsChart = new Chart(ctx1, {
+        type: 'line', data: { labels: ['M','T','W','T','F','S','S'], datasets: [{ label: 'Visits', data: [10,20,15,30,25,40,35], borderColor: '#00ff41' }] },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
     });
-
-    csv += '\nRULES\n';
-    csv += 'Name,Type,Condition,Priority\n';
-    rules.forEach(rule => {
-        csv += `"${rule.name}","${rule.type}","${rule.condition}",${rule.priority}\n`;
-    });
-
-    downloadFile(csv, 'analytics-' + currentHubId + '.csv', 'text/csv');
 }
 
-function exportAnalyticsJSON() {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{}');
+// --- UTILS & MODALS ---
+function openSettings() { document.getElementById('settingsModal').classList.add('show'); }
+function openHelp() { document.getElementById('helpModal').classList.add('show'); }
+function openAddLinkModal() { document.getElementById('addLinkModal').classList.add('show'); }
+function openPublicHub() { 
+    document.getElementById('publicHubModal').classList.add('show'); 
+    document.getElementById('publicGrid').innerHTML = document.getElementById('previewGrid').innerHTML;
+}
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function toggleAuth() { document.getElementById('authModal').classList.add('show'); }
+function loginWith(provider) { alert('Logged in with ' + provider); closeModal('authModal'); document.getElementById('authBtn').textContent = 'Logout'; }
 
-    const report = {
-        hubId: currentHubId,
-        generatedAt: new Date().toISOString(),
-        summary: {
-            totalClicks: stats.totalClicks || 0,
-            totalVisits: stats.totalVisits || 0,
-            activeLinks: links.length,
-            activeRules: rules.length
-        },
-        links,
-        rules,
-        stats
-    };
-
-    downloadFile(JSON.stringify(report, null, 2), 'analytics-' + currentHubId + '.json', 'application/json');
+function saveCustomization() {
+    const title = document.getElementById('hubTitle').value;
+    if(title) document.querySelector('h1').textContent = '🔗 ' + title;
+    closeModal('settingsModal');
 }
 
-function exportAnalyticsHTML() {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{}');
-
-    let html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Analytics Report - ${currentHubId}</title>
-            <style>
-                body { font-family: Arial; background: #000; color: #fff; padding: 20px; }
-                h1 { color: #00ff41; }
-                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                th, td { padding: 10px; text-align: left; border-bottom: 1px solid #222; }
-                th { background: #0a0a0a; color: #00ff41; }
-                tr:hover { background: #0f0f0f; }
-            </style>
-        </head>
-        <body>
-            <h1>🔗 Smart Link Hub - Analytics Report</h1>
-            <p>Generated: ${new Date().toLocaleString()}</p>
-            <p>Hub ID: ${currentHubId}</p>
-
-            <h2>Summary</h2>
-            <table>
-                <tr><th>Metric</th><th>Value</th></tr>
-                <tr><td>Total Clicks</td><td>${stats.totalClicks || 0}</td></tr>
-                <tr><td>Total Visits</td><td>${stats.totalVisits || 0}</td></tr>
-                <tr><td>Active Links</td><td>${links.length}</td></tr>
-                <tr><td>Active Rules</td><td>${rules.length}</td></tr>
-            </table>
-
-            <h2>Links</h2>
-            <table>
-                <tr><th>Title</th><th>URL</th><th>Priority</th><th>Clicks</th></tr>
-                ${links.map(link => `<tr><td>${link.title}</td><td>${link.url}</td><td>${link.priority}</td><td>${link.clicks || 0}</td></tr>`).join('')}
-            </table>
-
-            <h2>Rules</h2>
-            <table>
-                <tr><th>Name</th><th>Type</th><th>Condition</th><th>Priority</th></tr>
-                ${rules.map(rule => `<tr><td>${rule.name}</td><td>${rule.type}</td><td>${rule.condition}</td><td>${rule.priority}</td></tr>`).join('')}
-            </table>
-        </body>
-        </html>
-    `;
-
-    downloadFile(html, 'analytics-' + currentHubId + '.html', 'text/html');
+function setTheme(mode) {
+    if(mode === 'light') document.body.classList.add('light-mode');
+    else document.body.classList.remove('light-mode');
 }
 
-function downloadFile(content, filename, type) {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// BONUS 5: OFFLINE FALLBACK
-function testOfflineMode() {
-    const container = document.getElementById('offlineModeContainer');
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-    const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-
-    const storageSize = JSON.stringify(links).length + JSON.stringify(rules).length;
-
-    container.innerHTML = `
-        <div style="background: #1a1a1a; border: 1px solid #00ff41; border-radius: 6px; padding: 12px;">
-            <p style="color: #00ff41; margin-bottom: 8px;">✅ Offline Capabilities:</p>
-            <ul style="color: #888888; font-size: 12px; margin-left: 20px;">
-                <li>✓ All data stored in localStorage</li>
-                <li>✓ Links: ${links.length} items (${storageSize} bytes)</li>
-                <li>✓ Rules: ${rules.length} items</li>
-                <li>✓ Works without internet connection</li>
-                <li>✓ Syncs automatically when online</li>
-            </ul>
-        </div>
-    `;
-}
-
-// Update bonus stats
 function updateBonusStats() {
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
     const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-    
-    const storageSize = (JSON.stringify(links).length + JSON.stringify(rules).length) / 1024;
-    
-    document.getElementById('bonusHubId').textContent = currentHubId;
-    document.getElementById('bonusStorage').textContent = storageSize.toFixed(2) + ' KB';
-    document.getElementById('bonusRulesEval').textContent = rules.length + ' active';
+    document.getElementById('bonusRulesEval').textContent = rules.length;
 }
-
-// Call updateBonusStats periodically
-setInterval(updateBonusStats, 5000);
-window.addEventListener('load', updateBonusStats);
-
-// ============ CRITICAL FIXES (Before Finals) ============
-// FIX 2: Rule Type Validation - 4 specific types
-const VALID_RULE_TYPES = [
- 'Geo-Location',
- 'Device-Type', 
- 'Time-Based',
- 'User-Behavior'
-];
-
-function validateRuleType(type) {
- if (!VALID_RULE_TYPES.includes(type)) {
- alert(`Invalid rule type. Please select from: ${VALID_RULE_TYPES.join(', ')}`);
- return false;
- }
- return true;
-}
-
-// FIX 3: Analytics Data Consistency - Recalculate stats
-function fixAnalyticsConsistency() {
- const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
- const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
- 
- // Recalculate total clicks from actual link data
- const totalClicks = links.reduce((sum, link) => sum + (link.clicks || 0), 0);
- 
- // Update stats with accurate data
- const stats = {
- totalClicks: totalClicks,
- totalVisits: totalClicks, // In real scenario, visits would be tracked separately
- lastUpdated: new Date().toISOString()
- };
- 
- localStorage.setItem('stats_' + currentHubId, JSON.stringify(stats));
- return stats;
-}
-
-// FIX 4: Complete Rule Display Format
-function formatRuleDisplay(rule) {
- return `
- <strong>Name:</strong> ${rule.name}<br>
- <strong>Type:</strong> ${rule.type}<br>
- <strong>Condition:</strong> ${rule.condition}<br>
- <strong>Priority:</strong> ${rule.priority}/10<br>
- <strong>Operator:</strong> ${rule.ruleOperator || 'AND'}
- `;
-}
-
-// FIX 5: Time Rule Format Validation
-function validateTimeFormat(condition, ruleType) {
- if (ruleType === 'Time-Based') {
- // Expected formats: "09:00-17:00", "weekday", "weekend", "business-hours"
- const timePatterns = [
- /^\d{2}:\d{2}-\d{2}:\d{2}$/,  // HH:MM-HH:MM format
- /^(weekday|weekend|business-hours)$/i  // Special keywords
- ];
- 
- const isValid = timePatterns.some(pattern => pattern.test(condition));
- 
- if (!isValid) {
- alert('Invalid time format. Use: HH:MM-HH:MM, weekday, weekend, or business-hours');
- return false;
- }
- }
- return true;
-}
-
-// Apply fixes on load
-window.addEventListener('load', () => {
- fixAnalyticsConsistency();
-});
-
-// Run analytics fix every 30 seconds
-setInterval(fixAnalyticsConsistency, 30000);
