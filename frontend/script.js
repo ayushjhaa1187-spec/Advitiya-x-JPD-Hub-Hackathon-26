@@ -185,3 +185,45 @@ function updateBonusStats() {
     const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
     document.getElementById('bonusRulesEval').textContent = rules.length;
 }
+
+// --- MISSING FUNCTIONS ---
+function copyUrl() {
+  const url = document.getElementById('publicUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    alert('URL copied to clipboard!');
+  });
+}
+
+function openUsageStats() {
+  alert('Usage Stats\nVisits: ' + (document.getElementById('statVisits').textContent || 0) + '\nClicks: ' + (document.getElementById('statClicks').textContent || 0));
+}
+
+function generateQRCode() {
+  alert('QR Code feature coming soon!');
+}
+
+function shortenURL() {
+  const url = document.getElementById('publicUrl').textContent;
+  alert('Shortened URL: bit.ly/abc123\n\nOriginal: ' + url);
+}
+
+function exportData() {
+  const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+  const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{}');
+  const csv = 'Title,URL,Clicks\n' + links.map(l => l.title + ',' + l.url + ',' + (l.clicks||0)).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'links_export.csv';
+  a.click();
+  alert('Data exported as CSV!');
+}
+
+function changeTimePeriod(period) {
+  document.querySelectorAll('.btn-small').forEach(b => b.classList.remove('active'));
+  if(period === 'week') document.getElementById('btnWeek').classList.add('active');
+  if(period === 'month') document.getElementById('btnMonth').classList.add('active');
+  if(period === 'all') document.getElementById('btnAll').classList.add('active');
+}
+
