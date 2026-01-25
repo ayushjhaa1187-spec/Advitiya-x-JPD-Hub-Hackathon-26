@@ -5,237 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Link Hub - Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-  <style>
-	  .section {
-    margin-bottom: 20px;
-}
-    .top-menu {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      margin-bottom: 12px;
-    }
-
-    .top-menu-btn {
-      background: #23232b;
-      color: #ffffff;
-      border: 1px solid #333;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .top-menu-btn:hover {
-      background: #333333;
-    }
-
-      .dashboard {
-	padding: 20px;
-	max-width: 100%;
-	margin: 0 auto;
-}
-
-	  #hubPreview {
-	order: -1;
-	flex: 0 0 50%;
-	margin-left: -999px !important;}
-
-    :root {
-      --hub-bg: #05050a;
-    }
-
-    285
-      
-      background: radial-gradient(circle at top left, rgba(60, 180, 255, 0.2), transparent 60%),
-                  radial-gradient(circle at bottom right, rgba(160, 50, 255, 0.2), transparent 55%),
-                  var(--hub-bg);
-    }
-  </style
-
-        /* Charts Styling */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .chart-container {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #333;
-        }
-        
-        .chart-container h3 {
-            color: #00ff88;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-        
-        .chart-container canvas {
-            max-height: 250px;
-        }
-        
-        /* Time Filter Buttons */
-        .time-filter {
-            background: #2a2a2a;
-            color: #fff;
-            border: 1px solid #333;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .time-filter:hover {
-            background: #00ff88;
-            color: #000;
-            border-color: #00ff88;
-        }
-        
-        .time-filter.active {
-            background: #00ff88;
-            color: #000;
-            border-color: #00ff88;
-        }
-        
-        /* Export Section */
-        .export-section {
-            margin: 30px 0;
-            padding: 25px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            border: 1px solid #333;
-            	box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
-        }
-        
-        .export-section h3 {
-            color: #00ff88;
-            margin-bottom: 10px;
-        }
-        
-        .export-section p {
-            color: #888;
-            margin-bottom: 20px;
-        }
-        
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            	justify-content: center;
-				margin: 20px 0;
-	padding: 15px;
-	row-gap: 12px;
-            	align-items: center;
-        }
-        
-.export-btn {
-            background: #00ff88 !important;
-            color: #000 !important;
-            border: 2px solid #00ff88 !important;
-            padding: 12px 24px !important;
-            border-radius: 8px !important;
-            cursor: pointer !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3) !important;
-        }
-        
-        .export-btn:hover {
-            background: #00cc6f !important;
-            color: #000 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.5) !important;
-        }
-        
-        .export-btn:active {
-            transform: translateY(0) !important;
-            box-shadow: 0 1px 4px rgba(0, 255, 136, 0.3) !important;
-        }
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
-        }
-    </style>
-      <!-- Chart.js for Analytics Graphs -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
 <div class="container">
-
     <header>
         <h1>🔗 Smart Link Hub</h1>
         <p class="subtitle">Intelligent link routing with dynamic rules & real-time analytics</p>
-         <div class="top-menu">
-      <button class="top-menu-btn" onclick="openSettings()">⚙️ Settings</button>
-      <button class="top-menu-btn" onclick="openUsageStats()">📊 Usage</button>
-      <button class="top-menu-btn" onclick="openHelp()">❓ Help</button>
-      <button class="top-menu-btn" id="authBtn" onclick="toggleAuth()">Login</button>
-    </div>
+        
+        <div class="top-menu">
+            <button class="top-menu-btn" onclick="openSettings()">⚙️ Settings</button>
+            <button class="top-menu-btn" onclick="openUsageStats()">📊 Usage</button>
+            <button class="top-menu-btn" onclick="openHelp()">❓ Help</button>
+            <button class="top-menu-btn" id="authBtn" onclick="toggleAuth()">Login</button>
+        </div>
         
         <div class="public-url-box">
             <span style="color: #888888; font-size: 12px;">Public Hub URL:</span>
-            <div class="url-text" id="publicUrl">https://smart-link-hub.vercel.app/hub/YOUR_HUB_ID</div>
+            <div class="url-text" id="publicUrl">https://smart-link-hub.vercel.app/hub/...</div>
             <button class="copy-btn" onclick="copyUrl()">📋 Copy</button>
         </div>
     </header>
 
     <div class="main-grid">
 
-        <!-- LEFT: RULES & LINKS -->
-        <div>
-
-            <!-- RULES SECTION -->
-            <div class="section" style="margin-bottom: 24px;">
-                <h2>⚙️ Smart Rules (Rule-Based Display)</h2>
-
+        <div class="left-panel">
+            
+            <div class="section">
+                <h2>⚙️ Smart Rules</h2>
                 <div class="form-group">
                     <label>Rule Name</label>
                     <input type="text" id="ruleName" placeholder="e.g., 'Peak Hours'">
                 </div>
-
                 <div class="form-group">
                     <label>Rule Type</label>
                     <select id="ruleType">
                         <option value="">-- Select Type --</option>
-                <option value="Time-Based">⏰ Time-Based</option>
-                <option value="Device-Type">📱 Device-Type</option>
-                <option value="Geo-Location">🌍 Geo-Location</option>
-                <option value="User-Behavior">👤 User-Behavior</option> 
+                        <option value="Time-Based">⏰ Time-Based</option>
+                        <option value="Device-Type">📱 Device-Type</option>
+                        <option value="Geo-Location">🌍 Geo-Location</option>
+                        <option value="User-Behavior">👤 User-Behavior</option> 
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Condition</label>
-                    <input type="text" id="ruleCondition" placeholder="e.g., '9-17' or 'mobile' or 'IN' or '>100'">
+                    <input type="text" id="ruleCondition" placeholder="e.g., '9-17' or 'mobile'">
                 </div>
-
                 <div class="form-group">
                     <label>Priority (1-10)</label>
                     <input type="number" id="rulePriority" min="1" max="10" value="5">
                 </div>
-
-                            <div class="form-group">
-                <label>Rule Combination Operator</label>
-                <select id="ruleOperator">
-                    <option value="AND" selected>✅ AND (All conditions must match)</option>
-                    <option value="OR">🔀 OR (Any condition can match)</option>
-                </select>
-            </div>
-
+                <div class="form-group">
+                    <label>Operator</label>
+                    <select id="ruleOperator">
+                        <option value="AND">✅ AND</option>
+                        <option value="OR">🔀 OR</option>
+                    </select>
+                </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="createRule()">✅ Add Rule</button>
-
                 <div id="rulesList" style="margin-top: 16px;">
                     <div class="empty-state">No rules yet</div>
                 </div>
             </div>
 
-            <!-- MANAGE LINKS -->
+            <div class="section">
+                <h2>👁️ Hub Preview</h2>
+                <div style="background: #1a1a1a; border: 1px solid #222222; border-radius: 6px; padding: 16px; min-height: 300px;">
+                    <div class="links-grid" id="previewGrid">
+                        <div class="empty-state" style="grid-column: 1/-1;">Add links to preview</div>
+                    </div>
+                </div>
+                <div class="btn-group" style="margin-top: 16px; width: 100%;">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="openPublicHub()">🌐 View Hub</button>
+                    <button class="btn" style="flex: 1;" onclick="exportData()">📥 Export</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right-panel">
+            
             <div class="section">
                 <h2>🔗 Manage Links</h2>
                 <button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" onclick="openAddLinkModal()">+ Add Link</button>
@@ -244,1059 +94,137 @@
                 </div>
             </div>
 
-        </div>
-<!-- RIGHT: ANALYTICS & GRAPHS -->
-<div class="section">
-  <h2>📊 Analytics</h2>
-  
-  <!-- Time Period Selector -->
-  <div style="margin-bottom: 16px; display: flex; gap: 8px;">
-    <button class="btn btn-small" onclick="changeTimePeriod('week')" id="btnWeek">📅 Week</button>
-    <button class="btn btn-small active" onclick="changeTimePeriod('month')" id="btnMonth">📆 Month</button>
-    <button class="btn btn-small" onclick="changeTimePeriod('all')" id="btnAll">🕐 All Time</button>
-  </div>
-
-  <!-- Summary Cards -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-value" id="statClicks">0</div>
-      <div class="stat-label">TOTAL CLICKS</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statVisits">0</div>
-      <div class="stat-label">HUB VISITS</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statLinks">0</div>
-      <div class="stat-label">ACTIVE LINKS</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statRules">0</div>
-      <div class="stat-label">ACTIVE RULES</div>
-    </div>
-  </div>
-
-  <!-- Charts Grid -->
-  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px;">
-    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📈 Visits Trend</h3>
-      anvas id="visitsChart" height="200"></canvas>
-    </div>
-    
-    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">👆 Clicks Trend</h3>
-      anvas id="clicksChart" height="200"></canvas>
-    </div>
-    
-    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">🏆 Top Performing Links</h3>
-      anvas id="topLinksChart" height="200"></canvas>
-    </div>
-    
-    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📉 Least Performing Links</h3>
-      anvas id="leastLinksChart" height="200"></canvas>
-    </div>
-  </div>
-
-  <!-- Top Links List -->
-  <div style="margin-top: 20px;">
-    <h3 style="font-size: 14px; color: #00ff00; margin-bottom: 8px;">🏅 Top Links</h3>
-    <div id="topLinksList"></div>
-  </div>
-</div>
-
-          <div class="left-column">
-    
-    <div class="dashboard-grid"> <div class="left-panel">
-        <div class="section">
-            <h2>⚙️ Smart Rules</h2>
-            </div>
-
-        <div class="section">
-            <h2>👁️ Hub Preview</h2>
-            </div>
-    </div>
-
-    <div class="right-panel">
-        <div class="section">
-            <h2>🔗 Manage Links</h2>
-            <button class="btn btn-primary" style="width: 100%;">+ ADD LINK</button>
-            </div>
-
-        <div class="section">
-            <h2>📊 Analytics</h2>
-            </div>
-    </div>
-
-</div>
-        <div style="background: #1a1a1a; border: 1px solid #222222; border-radius: 6px; padding: 16px; min-height: 300px;">
-            <div class="links-grid" id="previewGrid">
-                <div class="empty-state" style="grid-column: 1/-1;">Add links to preview</div>
-            </div>
-        </div>
-        <div class="btn-group" style="margin-top: 16px;">
-            <button class="btn btn-primary" style="flex: 1;" onclick="openPublicHub()">🌐 View Hub</button>
-            <button class="btn" style="flex: 1;" onclick="exportData()">📥 Export</button>
-        </div>
-    </div>
-</div>
-
-<div class="right-column">
-    <div class="section">
-        <h2>📊 Analytics</h2>
-        </div>
-</div>
-
-    <!-- ============ BONUS FEATURES SECTION ============ -->
-    <div style="margin-top: 40px; border-top: 2px solid #00ff41; padding-top: 30px;">
-
-        <!-- BONUS FEATURES HEADER -->
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="color: #00ff41; font-size: 24px; margin-bottom: 8px;">🎁 Extra Features</h2>
-            <p style="color: #888888; font-size: 13px;">Advanced capabilities for enhanced link sharing & analytics</p>
-        </div>
-
-        <div class="main-grid">
-
-            <!-- BONUS 1: QR CODE GENERATOR -->
-            <div class="bonus-section">
-                <h2>📱 QR Code Generator</h2>
-                <p style="color: #888888; font-size: 12px; margin-bottom: 16px;">Generate QR codes for your hub URL - scan with any phone!</p>
-                
-                <button class="btn btn-primary" style="width: 100%;" onclick="generateQRCode()">🔲 Generate QR Code</button>
-                
-                <div id="qrCodeContainer"></div>
-                
-                <button class="btn" style="width: 100%; margin-top: 12px;" onclick="downloadQRCode()" id="downloadQRBtn" style="display: none;">⬇️ Download QR Code</button>
-            </div>
-
-            <!-- BONUS 2: URL SHORTENER -->
-            <div class="bonus-section">
-                <h2>🔗 URL Shortener</h2>
-                <p style="color: #888888; font-size: 12px; margin-bottom: 16px;">Create short, shareable versions of your hub URL</p>
-                
-                <button class="btn btn-primary" style="width: 100%;" onclick="shortenURL()">✂️ Shorten Hub URL</button>
-                
-                <div id="shortenedUrlContainer" style="margin-top: 12px;"></div>
-            </div>
-
-            <!-- BONUS 3: DARK/LIGHT MODE AUTO-DETECTION -->
-            <div class="bonus-section">
-                <h2>🌗 Theme Toggle</h2>
-                <p style="color: #888888; font-size: 12px; margin-bottom: 16px;">Switch between dark and light themes</p>
-                
-                <div class="theme-toggle">
-                    <button class="theme-btn active" id="darkThemeBtn" onclick="setTheme('dark')">🌙 Dark</button>
-                    <button class="theme-btn" id="lightThemeBtn" onclick="setTheme('light')">☀️ Light</button>
-            <button class="theme-btn" id="customThemeBtn" onclick="enableCustomTheme()">🎚️ Custom</button>                </div>
-                
-            </div>
-            
-            <div class="form-group" id="themeIntensityWrapper" style="margin-top: 8px; display: none">
-              <label for="themeIntensity">How dark do you want?</label>
-              <input type="range" id="themeIntensity" min="0" max="100" value="60" oninput="setCustomIntensity(this.value)" />
-            </div>
-
-            <!-- BONUS 4: EXPORTABLE ANALYTICS REPORTS -->
-            <div class="bonus-section">
-                <h2>📊 Analytics Reports</h2>
-                <p style="color: #888888; font-size: 12px; margin-bottom: 16px;">Export detailed reports in multiple formats</p>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="exportAnalyticsCSV()" style="flex: 1;">📈 CSV</button>
-                    <button class="btn btn-primary" onclick="exportAnalyticsJSON()" style="flex: 1;">📋 JSON</button>
-                    <button class="btn btn-primary" onclick="exportAnalyticsHTML()" style="flex: 1;">📄 HTML</button>
+            <div class="section">
+                <h2>📊 Analytics</h2>
+                <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+                    <button class="btn btn-small" onclick="changeTimePeriod('week')" id="btnWeek">📅 Week</button>
+                    <button class="btn btn-small active" onclick="changeTimePeriod('month')" id="btnMonth">📆 Month</button>
+                    <button class="btn btn-small" onclick="changeTimePeriod('all')" id="btnAll">🕐 All</button>
                 </div>
-                
-                <div id="analyticsReportContainer" style="margin-top: 16px;"></div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statClicks">0</div>
+                        <div class="stat-label">CLICKS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statVisits">0</div>
+                        <div class="stat-label">VISITS</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                    <div class="chart-container">
+                        <h3>📈 Visits</h3>
+                        <canvas id="visitsChart" height="150"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>👆 Clicks</h3>
+                        <canvas id="clicksChart" height="150"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>🏆 Top</h3>
+                        <canvas id="topLinksChart" height="150"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>📉 Low</h3>
+                        <canvas id="leastLinksChart" height="150"></canvas>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3>🏅 Top Links</h3>
+                    <div id="topLinksList"></div>
+                </div>
             </div>
 
-            <!-- BONUS 5: OFFLINE FALLBACK / STATIC RENDERING -->
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; border-top: 2px solid #00ff41; padding-top: 30px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #00ff41;">🎁 Extra Features</h2>
+        </div>
+        <div class="main-grid" style="grid-template-columns: repeat(3, 1fr);">
             <div class="bonus-section">
-                <h2>📴 Offline Mode</h2>
-                <p style="color: #888888; font-size: 12px; margin-bottom: 16px;">App works completely offline - all data syncs when back online</p>
-                
-                <button class="btn btn-primary" style="width: 100%;" onclick="testOfflineMode()">🔌 Test Offline</button>
-                
-                <div id="offlineModeContainer" style="margin-top: 12px;"></div>
-                
-                <p style="color: #888888; font-size: 11px; margin-top: 12px;">✅ Status: <span id="offlineStatus">Online (localStorage enabled)</span></p>
+                <h2>📱 QR Code</h2>
+                <button class="btn btn-primary" style="width: 100%;" onclick="generateQRCode()">Generate</button>
+                <div id="qrCodeContainer"></div>
             </div>
-
-            <!-- BONUS STATS -->
+            <div class="bonus-section">
+                <h2>🔗 Shortener</h2>
+                <button class="btn btn-primary" style="width: 100%;" onclick="shortenURL()">Shorten</button>
+                <div id="shortenedUrlContainer" style="margin-top: 10px;"></div>
+            </div>
             <div class="bonus-section">
                 <h2>⭐ Stats</h2>
-                <p style="color: #888888; font-size: 12px; margin-bottom: 16px;">Additional metrics for your hub</p>
-                
                 <table class="report-table">
-                    <tr>
-                        <th>Metric</th>
-                        <th>Value</th>
-                    </tr>
-                    <tr>
-                        <td>Hub ID</td>
-                        <td id="bonusHubId">-</td>
-                    </tr>
-                    <tr>
-                        <td>Storage Used</td>
-                        <td id="bonusStorage">-</td>
-                    </tr>
-                    <tr>
-                        <td>Data Synced</td>
-                        <td id="bonusSync">Just now</td>
-                    </tr>
-                    <tr>
-                        <td>Rules Evaluated</td>
-                        <td id="bonusRulesEval">-</td>
-                    </tr>
+                    <tr><td>Storage</td><td id="bonusStorage">-</td></tr>
+                    <tr><td>Rules</td><td id="bonusRulesEval">-</td></tr>
                 </table>
             </div>
-
         </div>
-
     </div>
 
 </div>
 
-<!-- MODALS -->
 <div id="addLinkModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h3>➕ Add Link</h3>
             <button class="modal-close" onclick="closeModal('addLinkModal')">✕</button>
         </div>
-        <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="modalTitle" placeholder="Link title">
+        <div class="form-group"><label>Title</label><input type="text" id="modalTitle"></div>
+        <div class="form-group"><label>URL</label><input type="url" id="modalUrl"></div>
+        <div class="form-group"><label>Priority</label><input type="number" id="modalPriority" value="5"></div>
+        <div class="form-group"><label>Description</label><textarea id="modalDesc"></textarea></div>
+        <button class="btn btn-primary" style="width:100%" onclick="saveLink()">Save</button>
+    </div>
+</div>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>⚙️ Settings</h3>
+            <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
         </div>
         <div class="form-group">
-            <label>URL</label>
-            <input type="url" id="modalUrl" placeholder="https://example.com">
+            <label>Hub Title</label>
+            <input type="text" id="hubTitle" placeholder="My Link Hub">
         </div>
         <div class="form-group">
-            <label>Description</label>
-            <textarea id="modalDesc" placeholder="Brief description" rows="2"></textarea>
+            <label>Theme</label>
+            <div class="theme-toggle">
+                <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
+                <button class="theme-btn" onclick="setTheme('light')">☀️</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Priority (1-10)</label>
-            <input type="number" id="modalPriority" min="1" max="10" value="5">
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="saveLink()" style="flex: 1;">Save</button>
-            <button class="btn" onclick="closeModal('addLinkModal')" style="flex: 1;">Cancel</button>
-        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="saveCustomization()">Save</button>
+    </div>
+</div>
+
+<div id="helpModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>❓ Help</h3><button class="modal-close" onclick="closeModal('helpModal')">✕</button></div>
+        <p>1. Create Rules<br>2. Add Links<br>3. Share Hub</p>
     </div>
 </div>
 
 <div id="publicHubModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3>🌐 Public Hub</h3>
-            <button class="modal-close" onclick="closeModal('publicHubModal')">✕</button>
-        </div>
+        <div class="modal-header"><h3>🌐 Public Hub</h3><button class="modal-close" onclick="closeModal('publicHubModal')">✕</button></div>
         <div class="links-grid" id="publicGrid"></div>
     </div>
 </div>
 
-      <!-- SETTINGS MODAL -->
-  <div class="modal" id="settingsModal" style="display: none">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>⚙️ Settings</h3>
-        <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
-      </div>
-      <p style="color: #888; font-size: 12px; margin-bottom: 12px">Customize your dashboard preferences.</p>
-      <div class="form-group">
-        <label>Theme</label>
-        <div class="theme-toggle">
-          <button class="theme-btn" onclick="setTheme('dark')">🌙 Dark</button>
-          <button class="theme-btn" onclick="setTheme('light')">☀️ Light</button>
-          <button class="theme-btn" onclick="enableCustomTheme()">🎚️ Custom</button>
-        </div>
-      </div>
-              <hr style="border: none; border-top: 1px solid #333; margin: 16px 0;">
-      
-      <div class="form-group">
-        <label for="hubTitle">Hub Title</label>
-        <input type="text" id="hubTitle" placeholder="e.g., My Link Hub" value="Smart Link Hub" />
-      </div>
-
-      <div class="form-group">
-        <label for="hubDescription">Hub Description</label>
-        <textarea id="hubDescription" placeholder="e.g., Share your curated links" style="width: 100%; height: 60px; padding: 8px; border: 1px solid #555; border-radius: 4px; background: #1a1a1f; color: #fff; font-size: 12px;">Intelligent link routing with dynamic rules & real-time analytics</textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Theme Customization</label>
-        <div style="display: flex; gap: 8px; margin-top: 8px;">
-          <div>
-            <label for="accentColor" style="font-size: 11px;">Accent Color</label>
-            <input type="color" id="accentColor" value="#00ff00" style="width: 100%; height: 40px; cursor: pointer;" />
-          </div>
-          <div>
-            <label for="bgColor" style="font-size: 11px;">Background</label>
-            <input type="color" id="bgColor" value="#05050a" style="width: 100%; height: 40px; cursor: pointer;" />
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top: 16px; padding: 12px; background: #23232b; border-radius: 4px; border-left: 3px solid #00ff00;">
-        <button onclick="saveCustomization()" style="width: 100%; padding: 8px; background: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">💾 Save Customization</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- HELP MODAL -->
-  <div class="modal" id="helpModal" style="display: none">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>❓ Help</h3>
-        <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
-      </div>
-      <p style="color: #ccc; font-size: 13px">
-        1. Create Smart Rules to route traffic.<br />
-        2. Add links with tags and weights.<br />
-        3. Share your Public Hub URL.<br />
-        4. Monitor Analytics to optimize performance.
-      </p>
-    </div>
-  </div>
-
-    <script src="script.js"></script>
-
-    // TOP MENU & AUTH FUNCTIONS
-    let currentUser = null;
-    let authProvider = null;
-
-    function openSettings() {
-      document.getElementById('settingsModal').style.display = 'flex';
-    }
-
-    function openHelp() {
-      document.getElementById('helpModal').style.display = 'flex';
-    }
-
-    function closeModal(id) {
-      const m = document.getElementById(id);
-      if (m) m.style.display = 'none';
-    }
-
-    function openUsageStats() {
-      const analyticsSection = document.querySelector('h2');
-      if (analyticsSection) {
-        analyticsSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function toggleAuth() {
-      const btn = document.getElementById('authBtn');
-      if (!currentUser) {
-        // Show login options modal
-        openAuthModal();
-      } else {
-        // Logout
-        currentUser = null;
-        authProvider = null;
-        btn.textContent = 'Login';
-        btn.style.background = '#23232b';
-      }
-    }
-
-    // AUTHENTICATION MODAL
-    function createAuthModal() {
-      const modal = document.createElement('div');
-      modal.id = 'authModal';
-      modal.className = 'modal';
-      modal.style.display = 'none';
-      modal.innerHTML = `
-        <div class="modal-content" style="max-width: 400px;">
-          <div class="modal-header">
-            <h3>Login to Smart Link Hub</h3>
-            <button class="modal-close" onclick="closeModal('authModal')">✕</button>
-          </div>
-          <p style="color: #888; font-size: 12px; margin-bottom: 16px;">Sign in with your preferred provider</p>
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="loginWithGoogle()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #ffffff; color: #000; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 500;">
-              <span style="font-size: 18px;">🔵</span> Sign in with Google
-            </button>
-            <button onclick="loginWithMicrosoft()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #0078d4; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
-              <span style="font-size: 18px;">🟦</span> Sign in with Microsoft
-            </button>
-            <button onclick="loginWithGitHub()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: #333; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
-              <span style="font-size: 18px;">⬛</span> Sign in with GitHub
-            </button>
-          </div>
-          <hr style="border: none; border-top: 1px solid #333; margin: 16px 0;">
-          <p style="color: #888; font-size: 11px; text-align: center;">We respect your privacy. Secure OAuth login.</p>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-
-    function openAuthModal() {
-      let authModal = document.getElementById('authModal');
-      if (!authModal) {
-        createAuthModal();
-        authModal = document.getElementById('authModal');
-      }
-      authModal.style.display = 'flex';
-    }
-
-    // OAUTH LOGIN FUNCTIONS
-    function loginWithGoogle() {
-      currentUser = 'user@gmail.com';
-      authProvider = 'Google';
-      updateAuthButton();
-      closeModal('authModal');
-    }
-
-    function loginWithMicrosoft() {
-      currentUser = 'user@outlook.com';
-      authProvider = 'Microsoft';
-      updateAuthButton();
-      closeModal('authModal');
-    }
-
-    function loginWithGitHub() {
-      currentUser = 'github-user';
-      authProvider = 'GitHub';
-      updateAuthButton();
-      closeModal('authModal');
-    }
-
-    function updateAuthButton() {
-      const btn = document.getElementById('authBtn');
-      if (currentUser && authProvider) {
-        btn.textContent = `${authProvider} ✓`;
-        btn.style.background = '#28a745';
-      }
-    }
-
-	// MISSING HELPER FUNCTIONS
-function loginWith(provider) {
-	if (provider === 'google') loginWithGoogle();
-	else if (provider === 'microsoft') loginWithMicrosoft();
-	else if (provider === 'github') loginWithGitHub();
-}
-
-function saveSettings() {
-	const title = document.getElementById('hubTitleInput').value;
-	const desc = document.getElementById('hubDescInput').value;
-	if (title) document.querySelector('h1').textContent = title;
-	if (desc) document.querySelector('.subtitle').textContent = desc;
-	closeModal('settingsModal');
-	alert('Settings saved successfully!');
-}
-
-    // THEME LOGIC
-    const root = document.documentElement;
-    const darkThemeBtn = document.getElementById('darkThemeBtn');
-    const lightThemeBtn = document.getElementById('lightThemeBtn');
-    const customThemeBtn = document.getElementById('customThemeBtn');
-    const themeIntensityWrapper = document.getElementById('themeIntensityWrapper');
-    const themeIntensityInput = document.getElementById('themeIntensity');
-
-    function updateActiveThemeButton(mode) {
-      if (darkThemeBtn && lightThemeBtn && customThemeBtn) {
-        [darkThemeBtn, lightThemeBtn, customThemeBtn].forEach((btn) =>
-          btn.classList.remove('active')
-        );
-        if (mode === 'dark') darkThemeBtn.classList.add('active');
-        if (mode === 'light') lightThemeBtn.classList.add('active');
-        if (mode === 'custom') customThemeBtn.classList.add('active');
-      }
-    }
-
-    function applyCustomIntensity(value) {
-      const t = value / 100;
-      const r = Math.round(10 * t + 12 * (1 - t));
-      const g = Math.round(10 * t + 12 * (1 - t));
-      const b = Math.round(18 * t + 24 * (1 - t));
-      document.documentElement.style.setProperty(
-        '--hub-bg',
-        `rgb(${r}, ${g}, ${b})`
-      );
-      localStorage.setItem('themeIntensity', String(value));
-      localStorage.setItem('themeMode', 'custom');
-    }
-
-    function setTheme(mode) {
-      localStorage.setItem('themeMode', mode);
-      if (mode === 'dark') {
-        if (themeIntensityWrapper) themeIntensityWrapper.style.display = 'none';
-        root.classList.add('dark-mode');
-        root.classList.remove('light-mode');
-        document.documentElement.style.setProperty('--hub-bg', '#05050a');
-      } else if (mode === 'light') {
-        if (themeIntensityWrapper) themeIntensityWrapper.style.display = 'none';
-        root.classList.add('light-mode');
-        root.classList.remove('dark-mode');
-        document.documentElement.style.setProperty('--hub-bg', '#f5f5f5');
-      }
-      updateActiveThemeButton(mode);
-    }
-
-    function enableCustomTheme() {
-      if (customThemeBtn && themeIntensityWrapper) {
-        if (darkThemeBtn) darkThemeBtn.classList.remove('active');
-        if (lightThemeBtn) lightThemeBtn.classList.remove('active');
-        customThemeBtn.classList.add('active');
-        themeIntensityWrapper.style.display = 'block';
-        const saved = localStorage.getItem('themeIntensity') || '60';
-        themeIntensityInput.value = saved;
-        applyCustomIntensity(Number(saved));
-        updateActiveThemeButton('custom');
-      }
-    }
-
-    function setCustomIntensity(value) {
-      applyCustomIntensity(Number(value));
-    }
-
-    // Theme button event listeners
-    if (darkThemeBtn) darkThemeBtn.addEventListener('click', () => setTheme('dark'));
-    if (lightThemeBtn) lightThemeBtn.addEventListener('click', () => setTheme('light'));
-    if (customThemeBtn) customThemeBtn.addEventListener('click', enableCustomTheme);
-    if (themeIntensityInput) {
-      themeIntensityInput.addEventListener('input', (e) => {
-        applyCustomIntensity(Number(e.target.value));
-      });
-    }
-
-    // Load saved theme on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      const mode = localStorage.getItem('themeMode') || 'dark';
-      const savedIntensity = localStorage.getItem('themeIntensity');
-      if (mode === 'custom' && savedIntensity) {
-        if (themeIntensityWrapper) themeIntensityWrapper.style.display = 'block';
-        themeIntensityInput.value = savedIntensity;
-        applyCustomIntensity(Number(savedIntensity));
-        updateActiveThemeButton('custom');
-      } else {
-        setTheme(mode);
-      }
-    });
-    
-    // CUSTOMIZATION FUNCTIONS
-    function saveCustomization() {
-      const title = document.getElementById('hubTitle').value;
-      const description = document.getElementById('hubDescription').value;
-      const accentColor = document.getElementById('accentColor').value;
-      const bgColor = document.getElementById('bgColor').value;
-
-      // Save to localStorage
-      localStorage.setItem('hubTitle', title);
-      localStorage.setItem('hubDescription', description);
-      localStorage.setItem('accentColor', accentColor);
-      localStorage.setItem('bgColor', bgColor);
-
-      // Apply immediately
-      applyCustomization();
-
-      // Show confirmation
-      alert('✅ Customization saved successfully!');
-      closeModal('settingsModal');
-    }
-
-    function applyCustomization() {
-      // Apply title
-      const title = localStorage.getItem('hubTitle') || 'Smart Link Hub';
-      const titleElement = document.querySelector('h1');
-      if (titleElement) titleElement.textContent = '🔗 ' + title;
-      document.title = title + ' - Dashboard';
-
-      // Apply description
-      const description = localStorage.getItem('hubDescription') || 'Intelligent link routing with dynamic rules & real-time analytics';
-      const descElement = document.querySelector('.subtitle');
-      if (descElement) descElement.textContent = description;
-
-      // Apply accent color
-      const accentColor = localStorage.getItem('accentColor') || '#00ff00';
-      document.documentElement.style.setProperty('--accent-color', accentColor);
-      
-      // Update all green elements
-      const style = document.createElement('style');
-      style.textContent = `
-        h1 { color: ${accentColor} !important; }
-        h2 { color: ${accentColor} !important; }
-        .btn-primary, button[style*="background: #00ff00"] {
-          background: ${accentColor} !important;
-        }
-        input[type="checkbox"]:checked + label::before {
-          background: ${accentColor} !important;
-        }
-      `;
-      document.head.appendChild(style);
-
-      // Apply background color
-      const bgColor = localStorage.getItem('bgColor');
-      if (bgColor) {
-        document.documentElement.style.setProperty('--hub-bg', bgColor);
-      }
-    }
-
-    function loadCustomization() {
-      // Load values into settings form
-      const titleInput = document.getElementById('hubTitle');
-      const descInput = document.getElementById('hubDescription');
-      const accentInput = document.getElementById('accentColor');
-      const bgInput = document.getElementById('bgColor');
-
-      if (titleInput) titleInput.value = localStorage.getItem('hubTitle') || 'Smart Link Hub';
-      if (descInput) descInput.value = localStorage.getItem('hubDescription') || 'Intelligent link routing with dynamic rules & real-time analytics';
-      if (accentInput) accentInput.value = localStorage.getItem('accentColor') || '#00ff00';
-      if (bgInput) bgInput.value = localStorage.getItem('bgColor') || '#05050a';
-
-      // Apply customization
-      applyCustomization();
-    }
-
-    // Load customization on page load
-    window.addEventListener('DOMContentLoaded', loadCustomization);
-    
-    // ============ ENHANCED ANALYTICS WITH CHARTS ============
-    let currentTimePeriod = 'month';
-    let chartsInitialized = false;
-
-    // Initialize analytics tracking
-    function initAnalyticsTracking() {
-      const key = 'analytics_timeline_' + currentHubId;
-      if (!localStorage.getItem(key)) {
-        localStorage.setItem(key, JSON.stringify([]));
-      }
-      trackCurrentDay();
-    }
-
-    // Track current day analytics
-    function trackCurrentDay() {
-      const key = 'analytics_timeline_' + currentHubId;
-      const timeline = JSON.parse(localStorage.getItem(key) || '[]');
-      const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-      const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{"totalClicks":0,"totalVisits":0}');
-      
-      const today = new Date().toISOString().split('T')[0];
-      const totalClicks = links.reduce((sum, link) => sum + (link.clicks || 0), 0);
-      
-      const existingDay = timeline.find(d => d.date === today);
-      if (existingDay) {
-        existingDay.clicks = totalClicks;
-        existingDay.visits = (existingDay.visits || 0) + 1;
-      } else {
-        timeline.push({
-          date: today,
-          clicks: totalClicks,
-          visits: 1,
-          timestamp: Date.now()
-        });
-      }
-      
-      // Keep only last 90 days
-      const cutoff = Date.now() - (90 * 24 * 60 * 60 * 1000);
-      const filtered = timeline.filter(d => d.timestamp > cutoff);
-      localStorage.setItem(key, JSON.stringify(filtered));
-    }
-
-    // Change time period
-    function changeTimePeriod(period) {
-      currentTimePeriod = period;
-      
-      ['btnWeek', 'btnMonth', 'btnAll'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.classList.remove('active');
-      });
-      
-      const activeBtn = document.getElementById('btn' + period.charAt(0).toUpperCase() + period.slice(1));
-      if (activeBtn) activeBtn.classList.add('active');
-      
-      renderAllCharts();
-    }
-
-    // Get filtered data by time period
-    function getFilteredAnalytics() {
-      const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId) || '[]');
-      const now = Date.now();
-      let filtered = timeline;
-      
-      if (currentTimePeriod === 'week') {
-        const weekAgo = now - (7 * 24 * 60 * 60 * 1000);
-        filtered = timeline.filter(d => d.timestamp > weekAgo);
-      } else if (currentTimePeriod === 'month') {
-        const monthAgo = now - (30 * 24 * 60 * 60 * 1000);
-        filtered = timeline.filter(d => d.timestamp > monthAgo);
-      }
-      
-      return filtered.sort((a, b) => a.timestamp - b.timestamp);
-    }
-
-    // Render all charts
-    function renderAllCharts() {
-      if (typeof Chart === 'undefined') {
-        console.log('Chart.js not loaded yet');
-        return;
-      }
-      
-      const data = getFilteredAnalytics();
-      const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-      
-      renderVisitsChart(data);
-      renderClicksChart(data);
-      renderTopLinksChart(links);
-      renderLeastLinksChart(links);
-    }
-
-    // Render Visits Trend Chart
-    function renderVisitsChart(data) {
-      const ctx = document.getElementById('visitsChart');
-      if (!ctx) return;
-      
-      if (visitsChartInstance) visitsChartInstance.destroy();
-      
-      visitsChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.map(d => d.date.split('-').slice(1).join('/')),
-          datasets: [{
-            label: 'Hub Visits',
-            data: data.map(d => d.visits || 0),
-            borderColor: '#00ff00',
-            backgroundColor: 'rgba(0, 255, 0, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: '#ffffff' } }
-          },
-          scales: {
-            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
-            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
-          }
-        }
-      });
-    }
-
-    // Render Clicks Trend Chart
-    function renderClicksChart(data) {
-      const ctx = document.getElementById('clicksChart');
-      if (!ctx) return;
-      
-      if (clicksChartInstance) clicksChartInstance.destroy();
-      
-      clicksChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.map(d => d.date.split('-').slice(1).join('/')),
-          datasets: [{
-            label: 'Total Clicks',
-            data: data.map(d => d.clicks || 0),
-            borderColor: '#00bfff',
-            backgroundColor: 'rgba(0, 191, 255, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: '#ffffff' } }
-          },
-          scales: {
-            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
-            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
-          }
-        }
-      });
-    }
-
-    // Render Top Links Chart
-    function renderTopLinksChart(links) {
-      const ctx = document.getElementById('topLinksChart');
-      if (!ctx) return;
-      
-      if (topLinksChartInstance) topLinksChartInstance.destroy();
-      
-      const sorted = [...links].sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 5);
-      
-      topLinksChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: sorted.map(l => l.title.substring(0, 15)),
-          datasets: [{
-            label: 'Clicks',
-            data: sorted.map(l => l.clicks || 0),
-            backgroundColor: ['#00ff00', '#00dd00', '#00bb00', '#009900', '#007700']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
-            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
-          }
-        }
-      });
-    }
-
-    // Render Least Links Chart
-    function renderLeastLinksChart(links) {
-      const ctx = document.getElementById('leastLinksChart');
-      if (!ctx) return;
-      
-      if (leastLinksChartInstance) leastLinksChartInstance.destroy();
-      
-      const sorted = [...links].sort((a, b) => (a.clicks || 0) - (b.clicks || 0)).slice(0, 5);
-      
-      leastLinksChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: sorted.map(l => l.title.substring(0, 15)),
-          datasets: [{
-            label: 'Clicks',
-            data: sorted.map(l => l.clicks || 0),
-            backgroundColor: ['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', '#ffcccc']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
-            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
-          }
-        }
-      });
-    }
-
-        // Export Analytics Functions
-        function exportFullReport() {
-            alert('📥 Downloading Full Report...')
-            const data = getFilteredAnalytics();
-            const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
-            const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId)) || [];
-            
-            let csv = 'Smart Link Hub - Full Analytics Report\n\n';
-            csv += 'Generated: ' + new Date().toLocaleString() + '\n\n';
-            csv += 'Hub ID,' + currentHubId + '\n';
-            csv += 'Total Visits,' + data.length + '\n';
-            csv += 'Total Links,' + links.length + '\n';
-            csv += 'Active Rules,' + rules.length + '\n\n';
-            
-            csv += 'Link Name,URL,Clicks,Priority\n';
-            links.forEach(link => {
-                csv += '"' + link.name + '","' + link.url + '",' + (link.clicks || 0) + ',' + link.priority + '\n';
-            });
-            
-            downloadFile(csv, 'full-report-' + Date.now() + '.csv', 'text/csv');
-            alert('\u2705 Full report exported successfully!');
-        }
-        
-        function exportWeekData() {
-            alert('📥 Downloading Week Data...')
-            const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-            const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
-            const filtered = timeline.filter(d => d.timestamp > weekAgo);
-            
-            const exportData = {
-                period: 'Last 7 Days',
-                generated: new Date().toISOString(),
-                hubId: currentHubId,
-                totalVisits: filtered.length,
-                data: filtered
-            };
-            
-            downloadFile(JSON.stringify(exportData, null, 2), 'week-data-' + Date.now() + '.json', 'application/json');
-            alert('\u2705 Week data exported as JSON!');
-        }
-        
-        function exportMonthData() {
-            alert('📥 Downloading Month Report...')
-            const monthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-            const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
-            const filtered = timeline.filter(d => d.timestamp > monthAgo);
-            const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
-            
-            let csv = 'Monthly Analytics Report\n\n';
-            csv += 'Period,Last 30 Days\n';
-            csv += 'Total Visits,' + filtered.length + '\n\n';
-            csv += 'Date,Visits,Clicks\n';
-            
-            const dailyData = {};
-            filtered.forEach(d => {
-                const date = d.date;
-                if (!dailyData[date]) dailyData[date] = { visits: 0, clicks: 0 };
-                dailyData[date].visits += d.visits || 0;
-                dailyData[date].clicks += d.clicks || 0;
-            });
-            
-            Object.keys(dailyData).sort().forEach(date => {
-                csv += date + ',' + dailyData[date].visits + ',' + dailyData[date].clicks + '\n';
-            });
-            
-            downloadFile(csv, 'month-report-' + Date.now() + '.csv', 'text/csv');
-            alert('\u2705 Month report exported as CSV!');
-        }
-        
-        function exportDemographics() {
-            alert('📥 Downloading Demographics Report...')
-            const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
-            const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId)) || [];
-            
-            let html = '<!DOCTYPE html><html><head><title>Demographics Report</title><style>';
-            html += 'body{font-family:Arial;padding:20px;background:#0d0d0d;color:#fff;}';
-            html += 'h1{color:#00ff88;}table{width:100%;border-collapse:collapse;margin:20px 0;}';
-            html += 'th,td{border:1px solid #333;padding:12px;text-align:left;}';
-            html += 'th{background:#1a1a1a;color:#00ff88;}';
-            html += 'tr:hover{background:#1a1a1a;}';
-            html += '</style></head><body>';
-            html += '<h1>\uD83D\uDCCA Demographics & Analytics Report</h1>';
-            html += '<p>Hub ID: ' + currentHubId + '</p>';
-            html += '<p>Generated: ' + new Date().toLocaleString() + '</p>';
-            html += '<h2>\uD83D\uDD17 Links Performance</h2><table><tr><th>Name</th><th>Clicks</th><th>Priority</th></tr>';
-            
-            const sorted = links.sort((a, b) => (b.clicks || 0) - (a.clicks || 0));
-            sorted.forEach(link => {
-                html += '<tr><td>' + link.name + '</td><td>' + (link.clicks || 0) + '</td><td>' + link.priority + '</td></tr>';
-            });
-            
-            html += '</table><h2>\u2699\uFE0F Active Rules</h2><table><tr><th>Name</th><th>Type</th><th>Priority</th></tr>';
-            rules.forEach(rule => {
-                html += '<tr><td>' + rule.name + '</td><td>' + rule.type + '</td><td>' + rule.priority + '</td></tr>';
-            });
-            
-            html += '</table></body></html>';
-            
-            downloadFile(html, 'demographics-' + Date.now() + '.html', 'text/html');
-            alert('\u2705 Demographics exported as HTML!');
-        }
-        
-        function exportCustomRange() {
-            alert('📥 Downloading Custom Range Data...')
-            const start = prompt('Enter start date (YYYY-MM-DD):');
-            const end = prompt('Enter end date (YYYY-MM-DD):');
-            
-            if (!start || !end) {
-                alert('\u26A0\uFE0F Export cancelled');
-                return;
-            }
-            
-            const startTime = new Date(start).getTime();
-            const endTime = new Date(end).getTime();
-            const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
-            const filtered = timeline.filter(d => d.timestamp >= startTime && d.timestamp <= endTime);
-            
-            const exportData = {
-                period: start + ' to ' + end,
-                generated: new Date().toISOString(),
-                hubId: currentHubId,
-                totalVisits: filtered.length,
-                data: filtered
-            };
-            
-            downloadFile(JSON.stringify(exportData, null, 2), 'custom-range-' + Date.now() + '.json', 'application/json');
-            alert('\u2705 Custom range data exported!');
-        }
-        
-        function downloadFile(content, filename, contentType) {
-            const blob = new Blob([content], { type: contentType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-    // Initialize and update charts
-    window.addEventListener('DOMContentLoaded', () => {
-      initAnalyticsTracking();
-      setTimeout(() => {
-        renderAllCharts();
-        chartsInitialized = true;
-      }, 500);
-    });
-
-    // Auto-refresh charts every 5 seconds
-    setInterval(() => {
-      if (chartsInitialized) {
-        trackCurrentDay();
-        renderAllCharts();
-      }
-    }, 5000);
-				
-    </script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
-
-				<!-- MODALS -->
-
-				<!-- Settings Modal -->
-<div id="settingsModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h3>⚙️ Settings</h3>
-			<button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
-		</div>
-		<div class="modal-body">
-			<label>Hub Title:</label>
-			<input type="text" id="hubTitleInput" placeholder="Enter hub title" />
-			<label>Hub Description:</label>
-			<textarea id="hubDescInput" placeholder="Enter description"></textarea>
-			<button onclick="saveSettings()" class="save-btn">💾 Save Settings</button>
-		</div>
-	</div>
-</div>
-
-				<!-- Auth Modal -->
 <div id="authModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h3>🔐 Login</h3>
-			<button class="modal-close" onclick="closeModal('authModal')">✕</button>
-		</div>
-		<div class="modal-body">
-			<button onclick="loginWith('google')" class="auth-btn google-btn">
-				<span>🔴</span> Login with Google
-			</button>
-			<button onclick="loginWith('microsoft')" class="auth-btn microsoft-btn">
-				<span>🟦</span> Login with Microsoft
-			</button>
-			<button onclick="loginWith('github')" class="auth-btn github-btn">
-				<span>⬛</span> Login with GitHub
-			</button>
-		</div>
-	</div>
+    <div class="modal-content">
+        <div class="modal-header"><h3>🔐 Login</h3><button class="modal-close" onclick="closeModal('authModal')">✕</button></div>
+        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="loginWith('google')">Google</button>
+        <button class="btn" style="width:100%" onclick="loginWith('github')">GitHub</button>
+    </div>
 </div>
 
-				<!-- Usage Modal -->
-<div id="usageModal" class="modal">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h3>📊 Usage Stats</h3>
-			<button class="modal-close" onclick="closeModal('usageModal')">✕</button>
-		</div>
-		<div class="modal-body">
-			<p>Total Hub Visits: <strong id="totalVisits">0</strong></p>
-			<p>Total Link Clicks: <strong id="totalClicks">0</strong></p>
-			<p>Active Links: <strong id="activeLinksCount">0</strong></p>
-			<p>Active Rules: <strong id="activeRulesCount">0</strong></p>
-		</div>
-	</div>
-</div>
+<script src="script.js"></script>
 </body>
-</html>
 </html>
