@@ -1052,6 +1052,7 @@
 
         // Export Analytics Functions
         function exportFullReport() {
+            alert('📥 Downloading Full Report...')
             const data = getFilteredAnalytics();
             const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
             const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId)) || [];
@@ -1073,6 +1074,7 @@
         }
         
         function exportWeekData() {
+            alert('📥 Downloading Week Data...')
             const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
             const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
             const filtered = timeline.filter(d => d.timestamp > weekAgo);
@@ -1090,6 +1092,7 @@
         }
         
         function exportMonthData() {
+            alert('📥 Downloading Month Report...')
             const monthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
             const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId)) || [];
             const filtered = timeline.filter(d => d.timestamp > monthAgo);
@@ -1117,6 +1120,7 @@
         }
         
         function exportDemographics() {
+            alert('📥 Downloading Demographics Report...')
             const links = JSON.parse(localStorage.getItem('links_' + currentHubId)) || [];
             const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId)) || [];
             
@@ -1149,6 +1153,7 @@
         }
         
         function exportCustomRange() {
+            alert('📥 Downloading Custom Range Data...')
             const start = prompt('Enter start date (YYYY-MM-DD):');
             const end = prompt('Enter end date (YYYY-MM-DD):');
             
