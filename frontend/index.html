@@ -242,110 +242,68 @@
             </div>
 
         </div>
+<!-- RIGHT: ANALYTICS & GRAPHS -->
+<div class="section">
+  <h2>📊 Analytics</h2>
+  
+  <!-- Time Period Selector -->
+  <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+    <button class="btn btn-small" onclick="changeTimePeriod('week')" id="btnWeek">📅 Week</button>
+    <button class="btn btn-small active" onclick="changeTimePeriod('month')" id="btnMonth">📆 Month</button>
+    <button class="btn btn-small" onclick="changeTimePeriod('all')" id="btnAll">🕐 All Time</button>
+  </div>
 
-        <!-- RIGHT: ANALYTICS & PREVIEW -->
-        <div>
+  <!-- Summary Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="statClicks">0</div>
+      <div class="stat-label">TOTAL CLICKS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statVisits">0</div>
+      <div class="stat-label">HUB VISITS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statLinks">0</div>
+      <div class="stat-label">ACTIVE LINKS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statRules">0</div>
+      <div class="stat-label">ACTIVE RULES</div>
+    </div>
+  </div>
 
-            <!-- ANALYTICS -->
-            <div class="section" style="margin-bottom: 24px;">
-                <h2>📊 Analytics</h2>
+  <!-- Charts Grid -->
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px;">
+    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📈 Visits Trend</h3>
+      anvas id="visitsChart" height="200"></canvas>
+    </div>
+    
+    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">👆 Clicks Trend</h3>
+      anvas id="clicksChart" height="200"></canvas>
+    </div>
+    
+    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">🏆 Top Performing Links</h3>
+      anvas id="topLinksChart" height="200"></canvas>
+    </div>
+    
+    <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+      <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📉 Least Performing Links</h3>
+      anvas id="leastLinksChart" height="200"></canvas>
+    </div>
+  </div>
 
-                <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-number" id="statClicks">0</div>
-                        <div class="stat-label">Total Clicks</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="statVisits">0</div>
-                        <div class="stat-label">Hub Visits</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="statLinks">0</div>
-                        <div class="stat-label">Active Links</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="statRules">0</div>
-                        <div class="stat-label">Active Rules</div>
-                    </div>
-                </div>
+  <!-- Top Links List -->
+  <div style="margin-top: 20px;">
+    <h3 style="font-size: 14px; color: #00ff00; margin-bottom: 8px;">🏅 Top Links</h3>
+    <div id="topLinksList"></div>
+  </div>
+</div>
 
-                <!-- Time Period Filter -->
-                <div style="text-align: center; margin: 20px 0;">
-                    <button class="time-filter active" data-period="week">📅 Week</button>
-                    <button class="time-filter" data-period="month">📆 Month</button>
-                    <button class="time-filter" data-period="all">📊 All Time</button>
-                </div>
-
-                <!-- Charts Grid -->
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <h3>Total Hub Visits</h3>
-                        <canvas id="visitsChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Link Clicks</h3>
-                        <canvas id="clicksChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Top/Least Performing</h3>
-                        <canvas id="performanceChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Active Rules</h3>
-                        <canvas id="rulesChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Export Section -->
-                <div class="export-section">
-                    <h3>📊 Export Analytics</h3>
-                    <p>Export detailed analytics reports in various formats</p>
-                    <div class="export-buttons">
-                        <button onclick="exportFullReport()" class="export-btn">📋 Full Report (CSV)</button>
-                        <button onclick="exportWeekData()" class="export-btn">📅 Last Week (JSON)</button>
-                        <button onclick="exportMonthData()" class="export-btn">📆 Last Month (CSV)</button>
-                        <button onclick="exportDemographics()" class="export-btn">👥 Demographics (HTML)</button>
-                        <button onclick="exportCustomRange()" class="export-btn">🔧 Custom Range</button>
-                    </div>
-                </div>
-
-                <h3 style="color: #00ff41; font-size: 13px; margin-bottom: 12px;">🏆 Top Links</h3>
-                <div id="topLinksList">
-                    <div style="text-align: center; color: #666666; font-size: 12px; padding: 12px;">No data yet</div>
-                    
-            <!-- Time Period Selector -->
-            <div style="margin: 20px 0; display: flex; gap: 8px;">
-              <button class="btn btn-small" onclick="changeTimePeriod('week')" id="btnWeek">📅 Week</button>
-              <button class="btn btn-small active" onclick="changeTimePeriod('month')" id="btnMonth">📆 Month</button>
-              <button class="btn btn-small" onclick="changeTimePeriod('all')" id="btnAll">🕐 All Time</button>
-            </div>
-
-            <!-- Analytics Charts Grid -->
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px;">
-              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📈 Hub Visits Trend</h3>
-                <canvas id="visitsChart" height="180"></canvas>
-              </div>
-              
-              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">👆 Total Clicks Trend</h3>
-                <canvas id="clicksChart" height="180"></canvas>
-              </div>
-              
-              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">🏆 Top Performing Links</h3>
-                <canvas id="topLinksChart" height="180"></canvas>
-              </div>
-              
-              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
-                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📉 Least Performing Links</h3>
-                <canvas id="leastLinksChart" height="180"></canvas>
-              </div>
-            </div>
-                </div>
-            </div>
-
-            <!-- PREVIEW -->
+                    <!-- PREVIEW -->
             <div class="section">
                 <h2>👁️ Hub Preview</h2>
                 <div style="background: #1a1a1a; border: 1px solid #222222; border-radius: 6px; padding: 16px; min-height: 300px;">
@@ -1251,6 +1209,7 @@ function saveSettings() {
         renderAllCharts();
       }
     }, 5000);
+				
     </script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
