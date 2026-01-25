@@ -37,6 +37,8 @@
                   var(--hub-bg);
     }
   </style>
+      <!-- Chart.js for Analytics Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -149,6 +151,36 @@
                 <h3 style="color: #00ff41; font-size: 13px; margin-bottom: 12px;">🏆 Top Links</h3>
                 <div id="topLinksList">
                     <div style="text-align: center; color: #666666; font-size: 12px; padding: 12px;">No data yet</div>
+                    
+            <!-- Time Period Selector -->
+            <div style="margin: 20px 0; display: flex; gap: 8px;">
+              <button class="btn btn-small" onclick="changeTimePeriod('week')" id="btnWeek">📅 Week</button>
+              <button class="btn btn-small active" onclick="changeTimePeriod('month')" id="btnMonth">📆 Month</button>
+              <button class="btn btn-small" onclick="changeTimePeriod('all')" id="btnAll">🕐 All Time</button>
+            </div>
+
+            <!-- Analytics Charts Grid -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px;">
+              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📈 Hub Visits Trend</h3>
+                <canvas id="visitsChart" height="180"></canvas>
+              </div>
+              
+              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">👆 Total Clicks Trend</h3>
+                <canvas id="clicksChart" height="180"></canvas>
+              </div>
+              
+              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">🏆 Top Performing Links</h3>
+                <canvas id="topLinksChart" height="180"></canvas>
+              </div>
+              
+              <div style="background: #1a1a1f; padding: 16px; border-radius: 8px; border: 1px solid #00ff00;">
+                <h3 style="font-size: 14px; margin-bottom: 12px; color: #00ff00;">📉 Least Performing Links</h3>
+                <canvas id="leastLinksChart" height="180"></canvas>
+              </div>
+            </div>
                 </div>
             </div>
 
@@ -660,5 +692,246 @@
 
     // Load customization on page load
     window.addEventListener('DOMContentLoaded', loadCustomization);
+    
+    // ============ ENHANCED ANALYTICS WITH CHARTS ============
+    let currentTimePeriod = 'month';
+    let chartsInitialized = false;
+
+    // Initialize analytics tracking
+    function initAnalyticsTracking() {
+      const key = 'analytics_timeline_' + currentHubId;
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, JSON.stringify([]));
+      }
+      trackCurrentDay();
+    }
+
+    // Track current day analytics
+    function trackCurrentDay() {
+      const key = 'analytics_timeline_' + currentHubId;
+      const timeline = JSON.parse(localStorage.getItem(key) || '[]');
+      const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+      const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{"totalClicks":0,"totalVisits":0}');
+      
+      const today = new Date().toISOString().split('T')[0];
+      const totalClicks = links.reduce((sum, link) => sum + (link.clicks || 0), 0);
+      
+      const existingDay = timeline.find(d => d.date === today);
+      if (existingDay) {
+        existingDay.clicks = totalClicks;
+        existingDay.visits = (existingDay.visits || 0) + 1;
+      } else {
+        timeline.push({
+          date: today,
+          clicks: totalClicks,
+          visits: 1,
+          timestamp: Date.now()
+        });
+      }
+      
+      // Keep only last 90 days
+      const cutoff = Date.now() - (90 * 24 * 60 * 60 * 1000);
+      const filtered = timeline.filter(d => d.timestamp > cutoff);
+      localStorage.setItem(key, JSON.stringify(filtered));
+    }
+
+    // Change time period
+    function changeTimePeriod(period) {
+      currentTimePeriod = period;
+      
+      ['btnWeek', 'btnMonth', 'btnAll'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+      
+      const activeBtn = document.getElementById('btn' + period.charAt(0).toUpperCase() + period.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+      
+      renderAllCharts();
+    }
+
+    // Get filtered data by time period
+    function getFilteredAnalytics() {
+      const timeline = JSON.parse(localStorage.getItem('analytics_timeline_' + currentHubId) || '[]');
+      const now = Date.now();
+      let filtered = timeline;
+      
+      if (currentTimePeriod === 'week') {
+        const weekAgo = now - (7 * 24 * 60 * 60 * 1000);
+        filtered = timeline.filter(d => d.timestamp > weekAgo);
+      } else if (currentTimePeriod === 'month') {
+        const monthAgo = now - (30 * 24 * 60 * 60 * 1000);
+        filtered = timeline.filter(d => d.timestamp > monthAgo);
+      }
+      
+      return filtered.sort((a, b) => a.timestamp - b.timestamp);
+    }
+
+    // Render all charts
+    function renderAllCharts() {
+      if (typeof Chart === 'undefined') {
+        console.log('Chart.js not loaded yet');
+        return;
+      }
+      
+      const data = getFilteredAnalytics();
+      const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+      
+      renderVisitsChart(data);
+      renderClicksChart(data);
+      renderTopLinksChart(links);
+      renderLeastLinksChart(links);
+    }
+
+    // Render Visits Trend Chart
+    function renderVisitsChart(data) {
+      const ctx = document.getElementById('visitsChart');
+      if (!ctx) return;
+      
+      if (visitsChartInstance) visitsChartInstance.destroy();
+      
+      visitsChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.date.split('-').slice(1).join('/')),
+          datasets: [{
+            label: 'Hub Visits',
+            data: data.map(d => d.visits || 0),
+            borderColor: '#00ff00',
+            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#ffffff' } }
+          },
+          scales: {
+            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
+            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
+          }
+        }
+      });
+    }
+
+    // Render Clicks Trend Chart
+    function renderClicksChart(data) {
+      const ctx = document.getElementById('clicksChart');
+      if (!ctx) return;
+      
+      if (clicksChartInstance) clicksChartInstance.destroy();
+      
+      clicksChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.date.split('-').slice(1).join('/')),
+          datasets: [{
+            label: 'Total Clicks',
+            data: data.map(d => d.clicks || 0),
+            borderColor: '#00bfff',
+            backgroundColor: 'rgba(0, 191, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#ffffff' } }
+          },
+          scales: {
+            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
+            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
+          }
+        }
+      });
+    }
+
+    // Render Top Links Chart
+    function renderTopLinksChart(links) {
+      const ctx = document.getElementById('topLinksChart');
+      if (!ctx) return;
+      
+      if (topLinksChartInstance) topLinksChartInstance.destroy();
+      
+      const sorted = [...links].sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 5);
+      
+      topLinksChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sorted.map(l => l.title.substring(0, 15)),
+          datasets: [{
+            label: 'Clicks',
+            data: sorted.map(l => l.clicks || 0),
+            backgroundColor: ['#00ff00', '#00dd00', '#00bb00', '#009900', '#007700']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
+            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
+          }
+        }
+      });
+    }
+
+    // Render Least Links Chart
+    function renderLeastLinksChart(links) {
+      const ctx = document.getElementById('leastLinksChart');
+      if (!ctx) return;
+      
+      if (leastLinksChartInstance) leastLinksChartInstance.destroy();
+      
+      const sorted = [...links].sort((a, b) => (a.clicks || 0) - (b.clicks || 0)).slice(0, 5);
+      
+      leastLinksChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sorted.map(l => l.title.substring(0, 15)),
+          datasets: [{
+            label: 'Clicks',
+            data: sorted.map(l => l.clicks || 0),
+            backgroundColor: ['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', '#ffcccc']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { ticks: { color: '#888' }, grid: { color: '#333' } },
+            x: { ticks: { color: '#888' }, grid: { color: '#333' } }
+          }
+        }
+      });
+    }
+
+    // Initialize and update charts
+    window.addEventListener('DOMContentLoaded', () => {
+      initAnalyticsTracking();
+      setTimeout(() => {
+        renderAllCharts();
+        chartsInitialized = true;
+      }, 500);
+    });
+
+    // Auto-refresh charts every 5 seconds
+    setInterval(() => {
+      if (chartsInitialized) {
+        trackCurrentDay();
+        renderAllCharts();
+      }
+    }, 5000);
 </body>
 </html>
