@@ -1,54 +1,29 @@
-const env = require('./config/env');
-const app = require('./app');
-const db = require('./config/database');
+const express = require('express');
+const cors = require('cors');
+const { initDB } = require('./database');
+const apiRoutes = require('./routes');
 
-const PORT = env.PORT;
+require('dotenv').config();
 
-// Test database connection on startup
-db.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Database connection failed:', err.message);
-  } else {
-    console.log('Database connected successfully at:', res.rows[0].now);
-  }
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Initialize DB
+initDB();
+
+// Routes
+app.use('/api', apiRoutes);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ statusCode: 500, message: err.message || 'Server Error' });
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  console.log(`\n===================================`);
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${env.NODE_ENV}`);
-  console.log(`API URL: http://localhost:${PORT}/api`);
-  console.log(`Health Check: http://localhost:${PORT}/api/health`);
-  console.log(`===================================\n`);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    db.pool.end(() => {
-      console.log('Database pool closed');
-      process.exit(0);
-    });
-  });
-});
-
-process.on('SIGINT', () => {
-  console.log('SIGINT signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    db.pool.end(() => {
-      console.log('Database pool closed');
-      process.exit(0);
-    });
-  });
-});
-
-// Unhandled rejection
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-module.exports = server;
