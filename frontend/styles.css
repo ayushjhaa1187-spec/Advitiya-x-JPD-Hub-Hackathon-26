@@ -10,8 +10,8 @@ body { background: #000000; color: #ffffff; font-family: 'Segoe UI', Roboto, san
     margin-bottom: 24px;
     align-items: start; /* Prevents stretching */
 }
-.left-panel { display: flex; flex-direction: column; gap: 24px; }
-.right-panel { display: flex; flex-direction: column; gap: 24px; }
+.left-panel { display: flex; flex-direction: column; gap: 24px;  order: 2;}
+.right-panel { display: flex; flex-direction: column; gap: 24px;  order: 1;}
 
 /* Responsive */
 @media (max-width: 900px) {
