@@ -193,7 +193,7 @@ Detailed documentation is available in separate markdown files:
 ## 🤝 Contributors
 
 - **Ayush Jha** ([@ayushjhaa1187-spec](https://github.com/ayushjhaa1187-spec))
-- Team Members: [Add team member names]
+- Team Members: Janvhi Chauhan
 
 ---
 
