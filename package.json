@@ -4,8 +4,11 @@
   "description": "Link Hub Management System with Smart Rules - Full Stack Application",
   "private": true,
   "scripts": {
-    "build": "cd backend && npm install && npm run build",
-    "start": "cd backend && npm start"
+    "build": "cd backend && npm install && npm run build && cd ../frontend && npm install && npm run build",
+    "start": "cd backend && npm start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev"
   },
   "keywords": [
     "link-management",
@@ -18,15 +21,15 @@
   ],
   "author": "Ayush Jha, Jahnvi Chauhan",
   "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  },
   "engines": {
     "node": "18.x"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26/issues"
   },
   "homepage": "https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26#readme"
 }
