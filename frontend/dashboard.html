@@ -1,69 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Smart Link Hub</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>Smart Link Hub – Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <ul class="nav-container">
-            <li class="nav-logo"><a href="dashboard.html">SmartLinkHub</a></li>
-            <li class="nav-menu">
-                <ul class="nav-items">
-                    <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
-                    <li><a href="analytics.html" class="nav-link">Analytics</a></li>
-                    <li><a href="links.html" class="nav-link">Links</a></li>
-                    <li><a href="settings.html" class="nav-link">Settings</a></li>
-                </ul>
-            </li>
-            <li><a href="login.html" class="nav-link" id="authNav">Logout</a></li>
-        </ul>
-    </nav>
+  <!-- navbar here -->
+  <nav class="navbar">
+    <div class="logo">Smart Link Hub</div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="public-hub.html">Public Page</a>
+    </div>
+    <button id="authBtn" onclick="toggleAuth()">Login</button>
+  </nav>
 
-    <!-- Main Content -->
-    <main class="dashboard-container">
-        <section class="dashboard-header">
-            <h1>Welcome to Dashboard</h1>
-            <p>Manage and track your links efficiently</p>
-        </section>
+  <main>
+    <section class="hero">
+      <h1>Link Hub Dashboard</h1>
+      <p>Your smart rules-powered link hub.</p>
+      <div class="public-url-row">
+        <span id="publicUrl"></span>
+        <button onclick="copyUrl()">Copy</button>
+        <button id="genQRBtn" onclick="generateQRCode()">Generate QR Code</button>
+        <button id="downloadQRBtn" style="display:none;" onclick="downloadQRCode()">Download QR</button>
+      </div>
+      <div id="qrCodeContainer" style="display:none;"></div>
+    </section>
 
-        <section class="dashboard-stats">
-            <div class="stat-card">
-                <h3>Total Links</h3>
-                <p class="stat-number" id="totalLinks">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Total Clicks</h3>
-                <p class="stat-number" id="totalClicks">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Avg CTR</h3>
-                <p class="stat-number" id="avgCTR">0%</p>
-            </div>
-        </section>
+    <section class="stats-row">
+      <div class="card">
+        <i class="fa-solid fa-chart-line"></i>
+        <span id="statVisits">0</span>
+        <small>Total Visits</small>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-bullseye"></i>
+        <span id="statClicks">0</span>
+        <small>Total Clicks</small>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-percent"></i>
+        <span id="statConversion">0%</span>
+        <small>Conversion</small>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-chart-column"></i>
+        <span id="statAvgCTR">0%</span>
+        <small>Avg CTR</small>
+      </div>
+    </section>
 
-        <section class="dashboard-links">
-            <h2>Your Links</h2>
-            <div id="linksList" class="links-list"></div>
-        </section>
-    </main>
+    <section class="links-section">
+      <div class="section-header">
+        <h2>Managed Links</h2>
+        <button onclick="openAddLinkModal()">+ Add Link</button>
+      </div>
+      <div id="linksList"></div>
+    </section>
 
-    <script src="script.js"></script>
-    <script>
-        // Initialize dashboard
-        function initializeDashboard() {
-            const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
-            document.querySelectorAll('.nav-item').forEach(item => {
-                const link = item.querySelector('.nav-link');
-                if (link && link.getAttribute('href') === currentPage) {
-                    link.classList.add('active');
-                }
-            });
-        }
-        initializeDashboard();
-    </script>
+    <section class="quick-links-section">
+      <div class="section-header">
+        <h2>Quick Shortcuts</h2>
+        <button onclick="addQuickLink()">+ Add Quick Link</button>
+      </div>
+      <div id="quickLinksList" class="quick-links-row"></div>
+    </section>
+
+    <section class="extras-section">
+      <h2>Smart Automations</h2>
+      <div class="extras-actions">
+        <button onclick="openSettings()">Settings</button>
+        <button onclick="openUsageStats()">Usage Stats</button>
+        <button onclick="openHelp()">Help</button>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
