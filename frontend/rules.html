@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules - Smart Link Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .rule-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .rule-type-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .rule-type-btn:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        .rule-type-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .rule-form {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .device-type-dropdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .device-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .device-option:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        .device-option.selected {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        .device-option i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .rules-list {
+            display: grid;
+            gap: 15px;
+        }
+        .rule-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .rule-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .rule-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .rule-icon {
+            font-size: 18px;
+            color: #667eea;
+            margin-right: 10px;
+        }
+        .auth-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .auth-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .auth-buttons-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .auth-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .auth-btn i {
+            font-size: 18px;
+        }
+        .google-btn {
+            border-color: #db4437;
+            color: #db4437;
+        }
+        .google-btn:hover {
+            background: #f5f5f5;
+        }
+        .github-btn {
+            border-color: #333;
+            color: #333;
+        }
+        .github-btn:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <ul class="nav-container">
+            <li class="nav-logo"><a href="dashboard.html">SmartLinkHub</a></li>
+            <li class="nav-menu">
+                <ul class="nav-items">
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="analytics.html" class="nav-link">Analytics</a></li>
+                    <li><a href="links.html" class="nav-link">Links</a></li>
+                    <li><a href="rules.html" class="nav-link active">Rules</a></li>
+                </ul>
+            </li>
+            <li><a href="login.html" class="nav-link" id="authNav">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="links-container">
+        <section class="links-header">
+            <h1>⚙️ Rules & Redirects</h1>
+            <p>Create custom rules for link redirection based on device, time, and more</p>
+        </section>
+
+        <!-- Rule Type Selection -->
+        <div class="rule-type-selector">
+            <button class="rule-type-btn active" onclick="selectRuleType('device')">🖥️ Device Type</button>
+            <button class="rule-type-btn" onclick="selectRuleType('time')">📅 Time-Based</button>
+            <button class="rule-type-btn" onclick="selectRuleType('analytics')">📊 Analytics</button>
+        </div>
+
+        <!-- Rule Form -->
+        <div class="rule-form">
+            <div class="form-group">
+                <label>Rule Name</label>
+                <input type="text" placeholder="e.g., Mobile Users Redirect">
+            </div>
+
+            <!-- Device Type Dropdown -->
+            <div class="form-group" id="deviceTypeForm" style="display: block;">
+                <label>Select Device Type</label>
+                <div class="device-type-dropdown">
+                    <div class="device-option" onclick="selectDevice(this, 'desktop')">
+                        <i class="fas fa-desktop"></i>
+                        <span>Desktop</span>
+                    </div>
+                    <div class="device-option" onclick="selectDevice(this, 'mobile')">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Mobile</span>
+                    </div>
+                    <div class="device-option" onclick="selectDevice(this, 'tablet')">
+                        <i class="fas fa-tablet-alt"></i>
+                        <span>Tablet</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time-Based Rules -->
+            <div class="form-group" id="timeBasedForm" style="display: none;">
+                <label><i class="fas fa-calendar-alt"></i> Start Time</label>
+                <input type="datetime-local">
+                <label style="margin-top: 15px;"><i class="fas fa-calendar-alt"></i> End Time</label>
+                <input type="datetime-local">
+            </div>
+
+            <!-- Analytics Options -->
+            <div class="form-group" id="analyticsForm" style="display: none;">
+                <label><i class="fas fa-chart-line"></i> Track Analytics</label>
+                <input type="checkbox" id="trackAnalytics" checked> Enable tracking for this rule
+                <div style="margin-top: 15px;">
+                    <label><i class="fas fa-tachometer-alt"></i> Performance Threshold</label>
+                    <input type="number" placeholder="e.g., 100 clicks" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Redirect URL</label>
+                <input type="url" placeholder="https://example.com/target">
+            </div>
+
+            <button class="btn-primary" style="width: 100%; padding: 15px;">Create Rule</button>
+        </div>
+
+        <!-- Active Rules -->
+        <h2>Active Rules</h2>
+        <div class="rules-list">
+            <div class="rule-card">
+                <div class="rule-card-header">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-mobile-alt rule-icon"></i>
+                        <span class="rule-card-title">Mobile Users</span>
+                    </div>
+                    <span style="color: #667eea; font-weight: 600;">Device: Mobile</span>
+                </div>
+                <p style="color: #666; margin: 10px 0;">Redirects mobile users to: https://m.example.com</p>
+                <p style="color: #999; font-size: 12px;">📊 Clicks: 245 | Last used: 2 hours ago</p>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-card-header">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-calendar-alt rule-icon"></i>
+                        <span class="rule-card-title">Weekend Campaign</span>
+                    </div>
+                    <span style="color: #667eea; font-weight: 600;">Time-Based</span>
+                </div>
+                <p style="color: #666; margin: 10px 0;">Active on weekends, redirects to: https://example.com/weekend</p>
+                <p style="color: #999; font-size: 12px;">📊 Clicks: 412 | Status: Active</p>
+            </div>
+
+            <div class="rule-card">
+                <div class="rule-card-header">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-chart-line rule-icon"></i>
+                        <span class="rule-card-title">Analytics Tracking</span>
+                    </div>
+                    <span style="color: #667eea; font-weight: 600;">Analytics</span>
+                </div>
+                <p style="color: #666; margin: 10px 0;">Tracks performance metrics for all clicks</p>
+                <p style="color: #999; font-size: 12px;">📊 Tracked: 1,250 events | Avg CTR: 3.5%</p>
+            </div>
+        </div>
+
+        <!-- OAuth Authentication Section -->
+        <div class="auth-section">
+            <h2>Sign Up or Connect Account</h2>
+            <p style="color: #666; margin-bottom: 20px;">Create a new account or connect your existing account</p>
+            <div class="auth-buttons-group">
+                <button class="auth-btn google-btn" onclick="initiateGoogleAuth()">
+                    <i class="fab fa-google"></i>
+                    Sign Up with Google
+                </button>
+                <button class="auth-btn github-btn" onclick="initiateGithubAuth()">
+                    <i class="fab fa-github"></i>
+                    Sign Up with GitHub
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Rule Type Selection
+        function selectRuleType(type) {
+            document.querySelectorAll('.rule-type-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('deviceTypeForm').style.display = type === 'device' ? 'block' : 'none';
+            document.getElementById('timeBasedForm').style.display = type === 'time' ? 'block' : 'none';
+            document.getElementById('analyticsForm').style.display = type === 'analytics' ? 'block' : 'none';
+        }
+
+        // Device Selection
+        function selectDevice(element, deviceType) {
+            document.querySelectorAll('.device-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            console.log('Selected device:', deviceType);
+        }
+
+        // OAuth Functions
+        function initiateGoogleAuth() {
+            alert('Google OAuth flow initiated. In production, this would redirect to Google\'s OAuth endpoint.');
+            console.log('Google Auth initiated');
+            // In production: window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?...';
+        }
+
+        function initiateGithubAuth() {
+            alert('GitHub OAuth flow initiated. In production, this would redirect to GitHub\'s OAuth endpoint.');
+            console.log('GitHub Auth initiated');
+            // In production: window.location.href = 'https://github.com/login/oauth/authorize?...';
+        }
+    </script>
+</body>
+</html>
