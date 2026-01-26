@@ -3,8 +3,7 @@
 
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000'
-  : 'https://your-app.vercel.app'; // Replace with your Vercel URL
-
+  : 'https://advitiya.jpdlab.co.in'; // Production URL
 class APIService {
   constructor() {
     this.token = localStorage.getItem('authToken');
