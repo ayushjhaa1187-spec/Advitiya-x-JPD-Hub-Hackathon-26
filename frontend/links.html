@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links - Smart Link Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <ul class="nav-container">
+            <li class="nav-logo"><a href="dashboard.html">SmartLinkHub</a></li>
+            <li class="nav-menu">
+                <ul class="nav-items">
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="analytics.html" class="nav-link">Analytics</a></li>
+                    <li><a href="links.html" class="nav-link active">Links</a></li>
+                    <li><a href="settings.html" class="nav-link">Settings</a></li>
+                </ul>
+            </li>
+            <li><a href="login.html" class="nav-link" id="authNav">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="links-container">
+        <section class="links-header">
+            <h1>Manage Your Links</h1>
+            <p>Create, edit, and track your custom links</p>
+        </section>
+
+        <section class="links-actions">
+            <button id="createLinkBtn" class="btn-primary">+ Create New Link</button>
+        </section>
+
+        <section class="links-list-section">
+            <h2>Your Links</h2>
+            <div id="linksList" class="links-list"></div>
+        </section>
+    </main>
+
+    <!-- QR Code Modal -->
+    <div id="qrModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="qrTitle">Generate QR Code</h2>
+                <button id="closeQRBtn" class="close-btn">Close QR Code</button>
+            </div>
+            <div id="qrCode" class="qr-code-container"></div>
+            <button id="downloadQRBtn" class="btn-secondary">Download QR Code</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // QR Code functionality
+        let currentQRUrl = '';
+        const qrModal = document.getElementById('qrModal');
+        const closeQRBtn = document.getElementById('closeQRBtn');
+        const qrCodeDiv = document.getElementById('qrCode');
+
+        function generateQRCode(url) {
+            currentQRUrl = url;
+            qrCodeDiv.innerHTML = ''; // Clear previous QR code
+            
+            // Generate QR code in color
+            new QRCode(qrCodeDiv, {
+                text: url,
+                width: 256,
+                height: 256,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Show modal
+            qrModal.style.display = 'flex';
+            document.getElementById('qrTitle').textContent = 'Close QR Code';
+        }
+
+        closeQRBtn.addEventListener('click', function() {
+            qrModal.style.display = 'none';
+        });
+
+        // Create link button
+        document.getElementById('createLinkBtn')?.addEventListener('click', function() {
+            // Show create link form
+            alert('Create Link functionality to be implemented');
+        });
+    </script>
+</body>
+</html>
