@@ -1,1 +1,123 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Smart Link Hub - Dashboard</title><link rel="stylesheet" href="styles.css"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script></head><body><div class="container"><header><h1>🔗 Smart Link Hub</h1><p class="subtitle">Intelligent link routing with dynamic rules & real-time analytics</p><div class="top-menu"><button class="top-menu-btn" onclick="openSettings()">⚙️ Settings</button><button class="top-menu-btn" onclick="openUsageStats()">📊 Usage</button><button class="top-menu-btn" onclick="openHelp()">❓ Help</button><button class="top-menu-btn" id="authBtn" onclick="toggleAuth()">Login</button></div><div class="public-url-box"><span style="color: #888888; font-size: 12px;">Public Hub URL:</span><div class="url-text" id="publicUrl" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">https://smart-link-hub.vercel.app/hub/...</div><button class="copy-btn" onclick="copyUrl()">📋 Copy</button></div></header><div class="tab-navigation"><button class="tab-btn active" onclick="switchTab('home')" id="homeTab">🏠 Home</button><button class="tab-btn" onclick="switchTab('analytics')" id="analyticsTab">📊 Analytics & Insights</button><button class="tab-btn" onclick="switchTab('extra')" id="extraTab">Extra Features</button></div><div id="homeTab-content" class="tab-content active"><div class="main-grid"><div class="left-panel"><div class="section"><h2>⚡ Quick Links</h2><div class="quick-links-container" id="quickLinksContainer"><div class="empty-state">No quick links yet</div></div><button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="addQuickLink()">+ Add Quick Link</button></div><div class="section"><h2>⚙️ Smart Rules</h2><div id="rulesList"><div class="empty-state">No rules yet</div></div></div></div><div class="right-panel"><div class="section"><h2>🔗 Manage Links</h2><button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" onclick="openAddLinkModal()">+ Add Link</button><div id="linksList" class="item-list"><div class="empty-state">No links added</div></div></div></div></div></div><div id="analyticsTab-content" class="tab-content"><div class="analytics-container"><div class="section"><h2>📊 Analytics & Insights</h2><div class="stats-grid"><div class="stat-card"><div class="stat-value" id="statClicks">0</div><div class="stat-label">CLICKS</div></div><div class="stat-card"><div class="stat-value" id="statVisits">0</div><div class="stat-label">VISITS</div></div><div class="stat-card"><div class="stat-value" id="statConversion">0%</div><div class="stat-label">CONVERSION</div></div><div class="stat-card" style="min-width: 0;"><div class="stat-value" id="statAvgCTR" style="word-break: break-all; font-size: 1.5rem;">0%</div><div class="stat-label">AVG CTR</div></div></div></div><div class="section"><h2>📊 Detailed Graphs</h2><div class="charts-grid"><div class="chart-container"><h3>📨 Visits</h3><canvas id="visitsChart"></canvas></div><div class="chart-container"><h3>👆 Clicks</h3><canvas id="clicksChart"></canvas></div></div></div></div></div><div id="extraTab-content" class="tab-content"><div style="text-align: center; margin-bottom: 30px;"><h2 style="color: #00ff41;">Extra Features</h2><p style="color: #888;">Advanced capabilities for enhanced link sharing & analytics</p></div><div class="features-grid"><div class="feature-section"><h3>🟘 QR Code</h3><p>Generate QR codes for your hub URL</p><button class="btn btn-primary" style="width: 100%;" onclick="generateQRCode()" id="genQRBtn">Generate QR Code</button><div id="qrCodeContainer" style="margin-top: 10px; text-align: center; display: none; background: #fff; padding: 10px; border-radius: 4px;"></div><button class="btn" style="width: 100%; margin-top: 10px; display: none;" id="downloadQRBtn" onclick="downloadQRCode()">Download QR Code</button></div></div></div></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Link Hub - Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+.btn-primary { background-color: #00ff41 !important; color: #000 !important; border: none !important; }
+.btn-primary:hover { background-color: #00cc34 !important; }
+.btn { background-color: #00ff41 !important; color: #000 !important; }
+.stat-value { word-break: break-all; font-size: 1.5rem; }
+.copy-btn { background-color: #00ff41 !important; color: #000 !important; border: 1px solid #00ff41 !important; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🔗 Smart Link Hub</h1>
+<p class="subtitle">Intelligent link routing with dynamic rules & real-time analytics</p>
+<div class="top-menu">
+<button class="top-menu-btn" onclick="openSettings()">⚙️ Settings</button>
+<button class="top-menu-btn" onclick="openUsageStats()">📊 Usage</button>
+<button class="top-menu-btn" onclick="openHelp()">❓ Help</button>
+<button class="top-menu-btn" id="authBtn" onclick="toggleAuth()">Login</button>
+</div>
+<div class="public-url-box">
+<span style="color: #888888; font-size: 12px;">Public Hub URL:</span>
+<div class="url-text" id="publicUrl" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">https://smart-link-hub.vercel.app/hub/...</div>
+<button class="copy-btn" onclick="copyUrl()">📋 Copy</button>
+</div>
+</header>
+<div class="tab-navigation">
+<button class="tab-btn active" onclick="switchTab('home')" id="homeTab">🏠 Home</button>
+<button class="tab-btn" onclick="switchTab('analytics')" id="analyticsTab">📊 Analytics & Insights</button>
+<button class="tab-btn" onclick="switchTab('extra')" id="extraTab">Extra Features</button>
+</div>
+<div id="homeTab-content" class="tab-content active">
+<div class="main-grid">
+<div class="left-panel">
+<div class="section">
+<h2>⚡ Quick Links</h2>
+<div class="quick-links-container" id="quickLinksContainer">
+<div class="empty-state">No quick links yet</div>
+</div>
+<button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="addQuickLink()">+ Add Quick Link</button>
+</div>
+<div class="section">
+<h2>⚙️ Smart Rules</h2>
+<div id="rulesList">
+<div class="empty-state">No rules yet</div>
+</div>
+</div>
+</div>
+<div class="right-panel">
+<div class="section">
+<h2>🔗 Manage Links</h2>
+<button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" onclick="openAddLinkModal()">+ Add Link</button>
+<div id="linksList" class="item-list">
+<div class="empty-state">No links added</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="analyticsTab-content" class="tab-content">
+<div class="analytics-container">
+<div class="section">
+<h2>📊 Analytics & Insights</h2>
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-value" id="statClicks">0</div>
+<div class="stat-label">CLICKS</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="statVisits">0</div>
+<div class="stat-label">VISITS</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="statConversion">0%</div>
+<div class="stat-label">CONVERSION</div>
+</div>
+<div class="stat-card" style="min-width: 0;">
+<div class="stat-value" id="statAvgCTR" style="word-break: break-all; font-size: 1.5rem;">0%</div>
+<div class="stat-label">AVG CTR</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h2>📊 Detailed Graphs</h2>
+<div class="charts-grid">
+<div class="chart-container">
+<h3>📨 Visits</h3>
+<canvas id="visitsChart"></canvas>
+</div>
+<div class="chart-container">
+<h3>👆 Clicks</h3>
+<canvas id="clicksChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="extraTab-content" class="tab-content">
+<div style="text-align: center; margin-bottom: 30px;">
+<h2 style="color: #00ff41;">Extra Features</h2>
+<p style="color: #888;">Advanced capabilities for enhanced link sharing & analytics</p>
+</div>
+<div class="features-grid">
+<div class="feature-section">
+<h3>🟘 QR Code</h3>
+<p>Generate QR codes for your hub URL</p>
+<button class="btn btn-primary" style="width: 100%;" onclick="generateQRCode()" id="genQRBtn">Generate QR Code</button>
+<div id="qrCodeContainer" style="margin-top: 10px; text-align: center; display: none; background: #fff; padding: 10px; border-radius: 4px;"></div>
+<button class="btn" style="width: 100%; margin-top: 10px; display: none;" id="downloadQRBtn" onclick="downloadQRCode()">Download QR Code</button>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
