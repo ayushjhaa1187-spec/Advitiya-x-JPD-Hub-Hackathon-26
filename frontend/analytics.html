@@ -85,6 +85,36 @@
                 chart.style.overflow = 'hidden';
             });
         }
+function getCurrentStats() {
+  return JSON.parse(localStorage.getItem('stats_' + currentHubId) ||
+    '{"totalClicks":0,"totalVisits":0,"avgCTR":0}');
+}
+
+function exportAnalyticsCSV() {
+  const stats = getCurrentStats();
+  const csv = 'metric,value\n' +
+    `totalClicks,${stats.totalClicks || 0}\n` +
+    `totalVisits,${stats.totalVisits || 0}\n` +
+    `avgCTR,${stats.avgCTR || 0}\n`;
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'analytics.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportAnalyticsJSON() {
+  const stats = getCurrentStats();
+  const blob = new Blob([JSON.stringify(stats, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'analytics.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
         // Initialize on page load
         if (document.readyState === 'loading') {
