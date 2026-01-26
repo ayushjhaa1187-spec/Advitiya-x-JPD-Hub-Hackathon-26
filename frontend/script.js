@@ -156,6 +156,141 @@ function downloadQRCode(){
     link.click();
   }
 }
+// ========================================
+// RULE MANAGEMENT FUNCTIONS
+// ========================================
+
+// Show/hide rule options based on selection
+function showRuleOptions() {
+    const ruleType = document.getElementById('ruleType').value;
+    
+    // Hide all options first
+    document.getElementById('deviceTypeDiv').style.display = 'none';
+    document.getElementById('locationDiv').style.display = 'none';
+    document.getElementById('timeDiv').style.display = 'none';
+    
+    // Show selected option
+    if (ruleType === 'device') {
+        document.getElementById('deviceTypeDiv').style.display = 'block';
+    } else if (ruleType === 'location') {
+        document.getElementById('locationDiv').style.display = 'block';
+    } else if (ruleType === 'time') {
+        document.getElementById('timeDiv').style.display = 'block';
+    }
+}
+
+// Add new rule
+function addRule() {
+    const ruleType = document.getElementById('ruleType').value;
+    
+    // Validate rule type is selected
+    if (!ruleType) {
+        alert('❌ Please select a rule type');
+        return;
+    }
+    
+    let ruleData = {
+        type: ruleType,
+        createdAt: new Date().toLocaleDateString(),
+        id: 'rule-' + Date.now()
+    };
+    
+    // Collect specific data based on rule type
+    if (ruleType === 'device') {
+        const device = document.getElementById('deviceType').value;
+        if (!device) {
+            alert('❌ Please select a device');
+            return;
+        }
+        ruleData.device = device;
+    } else if (ruleType === 'location') {
+        const location = document.getElementById('locationInput').value.trim();
+        if (!location) {
+            alert('❌ Please enter a location');
+            return;
+        }
+        ruleData.location = location;
+    } else if (ruleType === 'time') {
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+        if (!startTime || !endTime) {
+            alert('❌ Please select both start and end times');
+            return;
+        }
+        ruleData.startTime = startTime;
+        ruleData.endTime = endTime;
+    }
+    
+    // Save to localStorage
+    let rules = JSON.parse(localStorage.getItem('rules') || '[]');
+    rules.push(ruleData);
+    localStorage.setItem('rules', JSON.stringify(rules));
+    
+    // Show success
+    alert(`✅ ${ruleType.toUpperCase()} rule added successfully!`);
+    
+    // Reset form
+    document.getElementById('ruleType').value = '';
+    document.getElementById('deviceType').value = '';
+    document.getElementById('locationInput').value = '';
+    document.getElementById('startTime').value = '';
+    document.getElementById('endTime').value = '';
+    showRuleOptions();
+    
+    // Refresh rules display
+    displayRules();
+}
+
+// Display all rules
+function displayRules() {
+    const rulesList = document.getElementById('rulesList');
+    const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+    
+    if (rules.length === 0) {
+        rulesList.innerHTML = '<div class="empty-state">No rules yet</div>';
+        return;
+    }
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+    
+    rules.forEach((rule, index) => {
+        let ruleLabel = '';
+        
+        if (rule.type === 'device') {
+            ruleLabel = `🖥️ Device: ${rule.device}`;
+        } else if (rule.type === 'location') {
+            ruleLabel = `📍 Location: ${rule.location}`;
+        } else if (rule.type === 'time') {
+            ruleLabel = `⏰ Time: ${rule.startTime} - ${rule.endTime}`;
+        }
+        
+        html += `
+            <div style="background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px solid #222222; display: flex; justify-content: space-between; align-items: center;">
+                <div style="color: #00ff41; font-size: 12px;">${ruleLabel}</div>
+                <button class="btn btn-small" onclick="deleteRule('${rule.id}')" style="background: #ff3333; border: 1px solid #ff3333; color: #fff;">🗑️ Delete</button>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    rulesList.innerHTML = html;
+}
+
+// Delete rule
+function deleteRule(ruleId) {
+    if (confirm('❌ Are you sure you want to delete this rule?')) {
+        let rules = JSON.parse(localStorage.getItem('rules') || '[]');
+        rules = rules.filter(r => r.id !== ruleId);
+        localStorage.setItem('rules', JSON.stringify(rules));
+        displayRules();
+        alert('✅ Rule deleted');
+    }
+}
+
+// Load rules on page load
+document.addEventListener('DOMContentLoaded', () => {
+    displayRules();
+});
 
 // RENDERERS
 let linksState = [];
@@ -338,7 +473,7 @@ function updateAnalytics(stats,links){
   if(ctrEl)ctrEl.textContent=(stats?.avgCTR||'0')+'%';
 }
 // ========================================
-// BUTTON FUNCTIONS (Copy-Paste at END)
+//        BUTTON FUNCTIONS 
 // ========================================
 
 // Settings Button
