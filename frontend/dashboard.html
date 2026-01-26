@@ -1,86 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Smart Link Hub – Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <title>Link Hub – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Icons (calendar, stats, etc.) -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <!-- navbar here -->
+  <!-- NAVBAR (shared across pages) -->
   <nav class="navbar">
-    <div class="logo">Smart Link Hub</div>
-    <div class="nav-links">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="analytics.html">Analytics</a>
-      <a href="public-hub.html">Public Page</a>
+    <div class="navbar-logo">LinkHub</div>
+    <ul class="navbar-links">
+      <li><a href="./dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="./analysis.html">Analysis</a></li>
+      <li><a href="./public.html">Public Page</a></li>
+    </ul>
+    <div class="navbar-auth">
+      <button id="btn-google-signup" class="btn secondary">
+        <i class="ri-google-fill"></i> Sign up with Google
+      </button>
     </div>
-    <button id="authBtn" onclick="toggleAuth()">Login</button>
   </nav>
 
-  <main>
-    <section class="hero">
-      <h1>Link Hub Dashboard</h1>
-      <p>Your smart rules-powered link hub.</p>
-      <div class="public-url-row">
-        <span id="publicUrl"></span>
-        <button onclick="copyUrl()">Copy</button>
-        <button id="genQRBtn" onclick="generateQRCode()">Generate QR Code</button>
-        <button id="downloadQRBtn" style="display:none;" onclick="downloadQRCode()">Download QR</button>
+  <main class="main">
+    <!-- STATS CARDS -->
+    <section class="stats">
+      <div class="stat-card">
+        <i class="ri-link-m"></i>
+        <div>
+          <p>Total Links</p>
+          <h2 id="stat-total-links">0</h2>
+        </div>
       </div>
-      <div id="qrCodeContainer" style="display:none;"></div>
-    </section>
-
-    <section class="stats-row">
-      <div class="card">
-        <i class="fa-solid fa-chart-line"></i>
-        <span id="statVisits">0</span>
-        <small>Total Visits</small>
+      <div class="stat-card">
+        <i class="ri-bar-chart-2-line"></i>
+        <div>
+          <p>Today Clicks</p>
+          <h2 id="stat-today-clicks">0</h2>
+        </div>
       </div>
-      <div class="card">
-        <i class="fa-solid fa-bullseye"></i>
-        <span id="statClicks">0</span>
-        <small>Total Clicks</small>
-      </div>
-      <div class="card">
-        <i class="fa-solid fa-percent"></i>
-        <span id="statConversion">0%</span>
-        <small>Conversion</small>
-      </div>
-      <div class="card">
-        <i class="fa-solid fa-chart-column"></i>
-        <span id="statAvgCTR">0%</span>
-        <small>Avg CTR</small>
+      <div class="stat-card">
+        <i class="ri-smartphone-line"></i>
+        <div>
+          <p>Active Rules</p>
+          <h2 id="stat-active-rules">0</h2>
+        </div>
       </div>
     </section>
 
-    <section class="links-section">
-      <div class="section-header">
-        <h2>Managed Links</h2>
-        <button onclick="openAddLinkModal()">+ Add Link</button>
+    <!-- ADD LINK + RULES -->
+    <section class="panel">
+      <header class="panel-header">
+        <h1>Manage Links & Rules</h1>
+        <p>Control your smart link hub with simple actions.</p>
+      </header>
+
+      <div class="panel-body">
+        <!-- Add Link Form -->
+        <form id="form-add-link" class="form-inline">
+          <input type="url" id="input-link-url" placeholder="Paste link URL" required />
+          <input type="text" id="input-link-title" placeholder="Title (optional)" />
+          <button type="submit" class="btn primary">Add Link</button>
+        </form>
+
+        <!-- Rule Builder -->
+        <div class="rule-builder">
+          <h2>Smart Rules</h2>
+
+          <div class="rule-row">
+            <label for="select-device-type">Device type</label>
+            <!-- 2) DEVICE TYPE DROPDOWN -->
+            <select id="select-device-type">
+              <option value="">Select device type</option>
+              <option value="mobile">Mobile</option>
+              <option value="desktop">Desktop</option>
+              <option value="tablet">Tablet</option>
+            </select>
+          </div>
+
+          <div class="rule-row">
+            <label for="input-date-from">
+              Active from
+              <i class="ri-calendar-line"></i>
+            </label>
+            <input type="date" id="input-date-from" />
+          </div>
+
+          <div class="rule-row">
+            <label for="input-date-to">
+              Active until
+              <i class="ri-calendar-line"></i>
+            </label>
+            <input type="date" id="input-date-to" />
+          </div>
+
+          <button id="btn-save-rule" class="btn secondary">Save Rule</button>
+        </div>
       </div>
-      <div id="linksList"></div>
     </section>
 
-    <section class="quick-links-section">
-      <div class="section-header">
-        <h2>Quick Shortcuts</h2>
-        <button onclick="addQuickLink()">+ Add Quick Link</button>
-      </div>
-      <div id="quickLinksList" class="quick-links-row"></div>
-    </section>
+    <!-- LINKS TABLE -->
+    <section class="panel">
+      <header class="panel-header">
+        <!-- 5) CHANGE EXTRA FEATURES HEADING -->
+        <h2>Smart Link Actions</h2>
+      </header>
 
-    <section class="extras-section">
-      <h2>Smart Automations</h2>
-      <div class="extras-actions">
-        <button onclick="openSettings()">Settings</button>
-        <button onclick="openUsageStats()">Usage Stats</button>
-        <button onclick="openHelp()">Help</button>
+      <div class="panel-body">
+        <table class="table" id="table-links">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>URL</th>
+              <th>Device</th>
+              <th>Active Range</th>
+              <th>Clicks</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-links">
+            <!-- Rows will be injected by JS -->
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
+
+  <script src="./js/dashboard.js"></script>
 </body>
 </html>
