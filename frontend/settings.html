@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Smart Link Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <ul class="nav-container">
+            <li class="nav-logo"><a href="dashboard.html">SmartLinkHub</a></li>
+            <li class="nav-menu">
+                <ul class="nav-items">
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="analytics.html" class="nav-link">Analytics</a></li>
+                    <li><a href="links.html" class="nav-link">Links</a></li>
+                    <li><a href="settings.html" class="nav-link active">Settings</a></li>
+                </ul>
+            </li>
+            <li><a href="login.html" class="nav-link" id="authNav">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="settings-container">
+        <section class="settings-header">
+            <h1>Settings</h1>
+            <p>Manage your account and application preferences</p>
+        </section>
+
+        <section class="settings-sections">
+            <div class="settings-card">
+                <h3>Account Settings</h3>
+                <div class="setting-item">
+                    <label>Username:</label>
+                    <input type="text" id="username" placeholder="Your username">
+                </div>
+                <div class="setting-item">
+                    <label>Email:</label>
+                    <input type="email" id="email" placeholder="Your email">
+                </div>
+                <button class="btn-secondary">Save Account Settings</button>
+            </div>
+
+            <div class="settings-card">
+                <h3>Application Preferences</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="darkMode">
+                        Dark Mode
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="notifications" checked>
+                        Enable Notifications
+                    </label>
+                </div>
+                <button class="btn-secondary">Save Preferences</button>
+            </div>
+
+            <div class="settings-card">
+                <h3>Security</h3>
+                <div class="setting-item">
+                    <label>Change Password:</label>
+                    <input type="password" id="newPassword" placeholder="New password">
+                </div>
+                <button class="btn-secondary">Update Password</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Settings functionality
+        document.querySelectorAll('.btn-secondary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Settings update functionality to be implemented');
+            });
+        });
+    </script>
+</body>
+</html>
