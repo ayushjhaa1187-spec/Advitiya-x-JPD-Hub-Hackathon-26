@@ -337,3 +337,53 @@ function updateAnalytics(stats,links){
   }
   if(ctrEl)ctrEl.textContent=(stats?.avgCTR||'0')+'%';
 }
+// ========================================
+// BUTTON FUNCTIONS (Copy-Paste at END)
+// ========================================
+
+// Settings Button
+function openSettings() {
+    alert('⚙️ Opening Settings Page...');
+    // Later change to: window.location.href = './settings.html';
+}
+
+// Usage Stats Button
+function openUsageStats() {
+    alert('📊 Opening Usage Statistics...');
+    // Later change to: window.location.href = './usage.html';
+}
+
+// Help Button
+function openHelp() {
+    alert('❓ Opening Help & Support...');
+    // Later change to: window.location.href = './help.html';
+}
+
+// Login/Logout Toggle
+let isLoggedIn = false;
+
+function toggleAuth() {
+    const btn = document.getElementById('authBtn');
+    
+    if (isLoggedIn) {
+        // Logout
+        alert('✅ You have logged out!');
+        btn.textContent = 'Login';
+        isLoggedIn = false;
+        localStorage.removeItem('userLoggedIn');
+    } else {
+        // Login
+        alert('✅ Welcome! You are logged in!');
+        btn.textContent = '👤 Logout';
+        isLoggedIn = true;
+        localStorage.setItem('userLoggedIn', 'true');
+    }
+}
+
+// Check if user was previously logged in
+window.addEventListener('load', () => {
+    if (localStorage.getItem('userLoggedIn') === 'true') {
+        isLoggedIn = true;
+        document.getElementById('authBtn').textContent = '👤 Logout';
+    }
+});
