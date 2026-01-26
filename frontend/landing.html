@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Link Hub - Your All-in-One Link Management Platform</title>
+    <meta name="description" content="Create smart links, track analytics, generate QR codes. The ultimate link management platform for creators and businesses.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #10B981;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 3rem;
+            opacity: 0.95;
+        }
+
+        .shortener-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .shortener-form {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .shortener-form input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .shortener-form button {
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .shortener-form button:hover {
+            background: var(--primary-dark);
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-link {
+            color: var(--primary);
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        /* Features */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #6B7280;
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: #6B7280;
+        }
+
+        /* CTA */
+        .cta {
+            background: var(--dark);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--light);
+            padding: 3rem 2rem 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .shortener-form { flex-direction: column; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">🔗 Smart Link Hub</a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#">Pricing</a>
+                <a href="login.html" class="btn btn-secondary">Sign In</a>
+                <a href="auth.html" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>One Smart Link.<br>Unlimited Possibilities.</h1>
+        <p>Create, manage, and track your links with ease. Free forever.</p>
+        
+        <div class="shortener-box">
+            <form class="shortener-form" id="shortener-form">
+                <input type="url" id="url-input" placeholder="Enter or paste your long URL..." required>
+                <button type="submit">Shorten It</button>
+            </form>
+            <div id="result">
+                <p><strong>Your short link:</strong></p>
+                <a href="#" class="result-link" id="short-link" target="_blank"></a>
+                <button onclick="copyLink()" style="margin-top:1rem" class="btn btn-primary">Copy Link</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <h2 class="section-title">Everything You Need</h2>
+        <p class="section-subtitle">Powerful features for modern link management</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Shorten links in milliseconds with our optimized infrastructure</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Analytics</h3>
+                <p>Track clicks, locations, devices, and more with detailed analytics</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Reliable</h3>
+                <p>Your links are protected with enterprise-grade security</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📄</div>
+                <h3>QR Codes</h3>
+                <p>Auto-generate QR codes for every link you create</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Custom Links</h3>
+                <p>Create branded short links with custom slugs</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>No Limits</h3>
+                <p>Unlimited links, clicks, and analytics. Forever free.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2>Ready to Get Started?</h2>
+        <p style="margin-bottom: 2rem; opacity: 0.9">Join thousands of users managing their links smarter</p>
+        <a href="auth.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Create Free Account</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Smart Link Hub. Made for Advitiya x JPD Hub Hackathon.</p>
+        <p style="margin-top: 0.5rem; color: #6B7280;">All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // Link Shortener Functionality
+        document.getElementById('shortener-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const urlInput = document.getElementById('url-input');
+            const resultDiv = document.getElementById('result');
+            const shortLink = document.getElementById('short-link');
+            
+            try {
+                // Simple mock for now - will connect to backend later
+                const shortCode = Math.random().toString(36).substring(2, 8);
+                const shortUrl = `${window.location.origin}/${shortCode}`;
+                
+                shortLink.href = shortUrl;
+                shortLink.textContent = shortUrl;
+                resultDiv.style.display = 'block';
+                
+                // TODO: Connect to actual backend API
+                // const response = await fetch('/api/shorten', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ url: urlInput.value })
+                // });
+                // const data = await response.json();
+                // shortLink.href = data.shortUrl;
+                // shortLink.textContent = data.shortUrl;
+                
+            } catch (error) {
+                alert('Error shortening link. Please try again.');
+            }
+        });
+        
+        function copyLink() {
+            const shortLink = document.getElementById('short-link');
+            navigator.clipboard.writeText(shortLink.textContent);
+            alert('Link copied to clipboard!');
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
