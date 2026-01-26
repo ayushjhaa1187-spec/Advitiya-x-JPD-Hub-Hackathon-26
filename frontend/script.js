@@ -30,8 +30,7 @@ function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
     document.getElementById(tabName)?.classList.add('active');
-        document.querySelector(`[onclick*="switchTab('${tabName}']`).classList.add('active');
-}
+const tabMap = { 'home': 'homeTab', 'analytics': 'analyticsTab', 'features': 'extraTab' }; document.getElementById(tabMap[tabName])?.classList.add('active');}
 
 function switchAnalyticsTab(tabName) {
     document.querySelectorAll('.analytics-content').forEach(el => el.classList.remove('active'));
