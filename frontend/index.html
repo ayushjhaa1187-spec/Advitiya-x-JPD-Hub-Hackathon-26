@@ -1,187 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Link Hub - Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    .btn-primary { background-color: #00ff41 !important; color: #000 !important; border: none !important; }
-    .btn-primary:hover { background-color: #00cc34 !important; }
-    .btn { background-color: #00ff41 !important; color: #000 !important; }
-    .stat-value { word-break: break-all; font-size: 1.5rem; }
-    .copy-btn { background-color: #00ff41 !important; color: #000 !important; border: 1px solid #00ff41 !important; }
-    #downloadQRBtn { display: none; margin-top: 10px; width: 100%; }
-    .extra-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #00ff41; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Link Hub - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        .btn-primary { background-color: #00ff41 !important; color: #000 !important; border: none !important; }
+        .btn-primary:hover { background-color: #00cc34 !important; }
+        .btn { background-color: #00ff41 !important; color: #000 !important; word-break: break-all; font-size: 1.5rem; }
+        .copy-btn { background-color: #00ff41 !important; color: #000 !important; border: 1px solid #00ff41 !important; }
+        #downloadQRBtn { display: none; margin-top: 10px; width: 100%; }
+        .extra-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #00ff41; }
+        .analytics-tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 2px solid #00ff41; }
+        .analytics-tab { padding: 10px 20px; cursor: pointer; border: none; background: none; color: #888; font-size: 1.1rem; transition: all 0.3s; }
+        .analytics-tab.active { color: #00ff41; border-bottom: 3px solid #00ff41; margin-bottom: -2px; }
+        .analytics-content { display: none; }
+        .analytics-content.active { display: block; }
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .feature-card { border: 2px solid #00ff41; border-radius: 10px; padding: 20px; }
+        .toggle-switch { display: inline-flex; align-items: center; gap: 10px; margin: 10px 0; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: 0.4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: 0.4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00ff41; }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🔗 Smart Link Hub</h1>
-      <p class="subtitle">Intelligent link routing with dynamic rules & real-time analytics</p>
-      <div class="top-menu">
-        <button class="top-menu-btn" onclick="openSettings()">⚙️ Settings</button>
-        <button class="top-menu-btn" onclick="openUsageStats()">📊 Usage</button>
-        <button class="top-menu-btn" onclick="openHelp()">❓ Help</button>
-        <button class="top-menu-btn" id="authBtn" onclick="toggleAuth()">Login</button>
-      </div>
-      <div class="public-url-box">
-        <span style="color: #888888; font-size: 12px;">Public Hub URL:</span>
-        <div class="url-text" id="publicUrl" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Loading...</div>
-        <button class="copy-btn" onclick="copyUrl()">📋 Copy</button>
-      </div>
-    </header>
-
-    <div class="tab-navigation">
-      <button class="tab-btn active" onclick="switchTab('home')" id="homeTab">🏠 Home</button>
-      <button class="tab-btn" onclick="switchTab('analytics')" id="analyticsTab">📊 Analytics & Insights</button>
-      <button class="tab-btn" onclick="switchTab('extra')" id="extraTab">✨ Extra Features</button>
-    </div>
-
-    <!-- Home Tab -->
-    <div id="homeTab-content" class="tab-content active">
-      <div class="main-grid">
-        <div class="left-panel">
-          <div class="section">
-            <h2>⚡ Quick Links</h2>
-            <div class="quick-links-container" id="quickLinksContainer">
-              <div class="empty-state">No quick links yet</div>
-            </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="addQuickLink()">+ Add Quick Link</button>
-          </div>
-
-          <div class="section">
-            <h2>⚙️ Smart Rules</h2>
-            <div id="rulesList">
-              <div class="empty-state">No rules yet</div>
+    <div class="container">
+        <header>
+            <h1>🔗 Smart Link Hub</h1>
+            <p>Intelligent link routing with dynamic rules & real-time analytics</p>
+        </header>
+        
+        <div class="top-section">
+            <div class="url-section">
+                <label>Public Hub URL:</label>
+                <p id="publicUrl">Loading...</p>
+                <button class="copy-btn" onclick="copyURL()">📋 Copy</button>
             </div>
             
-            <div style="margin-top: 16px; padding: 12px; background: #0a0a0a; border-radius: 4px; border: 1px solid #222222;">
-              <h4 style="color: #00ff41; margin-bottom: 12px;">➕ Add New Rule</h4>
-              
-              <div style="margin-bottom: 12px;">
-                <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">RULE TYPE:</label>
-                <select id="ruleType" onchange="showRuleOptions()" style="width: 100%; padding: 10px; background: #000; border: 1px solid #222; color: #fff; border-radius: 4px;">
-                  <option value="">-- Select Rule Type --</option>
-                  <option value="device">🖥️ Device Type</option>
-                  <option value="location">📍 Location Based</option>
-                  <option value="time">⏰ Time Based</option>
-                </select>
-              </div>
-
-              <div id="deviceTypeDiv" style="display: none; margin-bottom: 12px;">
-                <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">SELECT DEVICE:</label>
-                <select id="deviceType" style="width: 100%; padding: 10px; background: #000; border: 1px solid #222; color: #fff; border-radius: 4px;">
-                  <option value="mobile">📱 Mobile</option>
-                  <option value="tablet">📲 Tablet</option>
-                  <option value="desktop">💻 Desktop</option>
-                </select>
-              </div>
-
-              <div id="locationDiv" style="display: none; margin-bottom: 12px;">
-                <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">LOCATION:</label>
-                <input type="text" id="locationInput" placeholder="Enter city/country" style="width: 100%; padding: 10px; background: #000; border: 1px solid #222; color: #fff; border-radius: 4px;">
-              </div>
-
-              <div id="timeDiv" style="display: none; margin-bottom: 12px;">
-                <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">TIME RANGE:</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  <input type="time" id="startTime" style="width: 100%; padding: 8px; background: #000; border: 1px solid #222; color: #fff; border-radius: 4px;">
-                  <input type="time" id="endTime" style="width: 100%; padding: 8px; background: #000; border: 1px solid #222; color: #fff; border-radius: 4px;">
+            <div class="button-group">
+                <button onclick="goSettings()" class="nav-btn">⚙️ Settings</button>
+                <button onclick="goUsage()" class="nav-btn">📊 Usage</button>
+                <button onclick="goHelp()" class="nav-btn">❓ Help</button>
+                <button onclick="goLogin()" class="nav-btn">Login</button>
+            </div>
+        </div>
+        
+        <nav class="tabs">
+            <button class="tab active" onclick="switchTab('home')">🏠 Home</button>
+            <button class="tab" onclick="switchTab('analytics')">📈 Analytics & Insights</button>
+            <button class="tab" onclick="switchTab('features')">⭐ Extra Features</button>
+        </nav>
+        
+        <!-- Home Tab -->
+        <div id="home" class="tab-content active">
+            <div class="section">
+                <h2>⚡ Quick Links</h2>
+                <p id="quickLinksMsg" class="empty-msg">No quick links yet</p>
+                <div id="quickLinksList"></div>
+                <button class="btn" onclick="addQuickLink()">+ Add Quick Link</button>
+            </div>
+            
+            <div class="section">
+                <h2>🔗 Manage Links</h2>
+                <button class="btn" onclick="addNewLink()">+ Add Link</button>
+                <p id="linksMsg" class="empty-msg">No links added</p>
+                <div id="linksList"></div>
+            </div>
+            
+            <div class="section">
+                <h2>⚙️ Smart Rules</h2>
+                <p id="rulesMsg" class="empty-msg">No rules yet</p>
+                <div id="rulesList"></div>
+                
+                <div id="addRuleForm" style="display: none; border: 2px solid #00ff41; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3>+ Add New Rule</h3>
+                    <label>RULE TYPE:</label>
+                    <select id="ruleType" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41;">
+                        <option>-- Select Rule Type --</option>
+                        <option value="device">Device Type</option>
+                        <option value="location">Location</option>
+                        <option value="time">Time Based</option>
+                    </select>
+                    <button class="btn" onclick="addRule()">✅ Add Rule</button>
                 </div>
-              </div>
-
-              <button class="btn btn-primary" onclick="addRule()" style="width: 100%; margin-top: 8px;">✅ Add Rule</button>
+                <button class="btn" onclick="toggleRuleForm()">+ Add New Rule</button>
             </div>
-          </div>
         </div>
-
-        <div class="right-panel">
-          <div class="section">
-            <h2>🔗 Manage Links</h2>
-            <button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" onclick="openAddLinkModal()">+ Add Link</button>
-            <div id="linksList" class="item-list">
-              <div class="empty-state">No links added</div>
+        
+        <!-- Analytics & Insights Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="analytics-tabs">
+                <button class="analytics-tab active" onclick="switchAnalyticsTab('stats')">📊 Stats</button>
+                <button class="analytics-tab" onclick="switchAnalyticsTab('report')">📋 Analysis Report</button>
             </div>
-          </div>
+            
+            <!-- Stats Content -->
+            <div id="stats" class="analytics-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Links</h3>
+                        <p class="stat-value" id="statTotalLinks">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Clicks</h3>
+                        <p class="stat-value" id="statTotalClicks">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Rules</h3>
+                        <p class="stat-value" id="statRules">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Month</h3>
+                        <p class="stat-value" id="statMonth">0</p>
+                    </div>
+                </div>
+                <div style="margin-top: 30px;">
+                    <h3>Click Trends</h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Analysis Report Content -->
+            <div id="report" class="analytics-content">
+                <div class="report-section">
+                    <h3>Performance Overview</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                <div class="report-section">
+                    <h3>Top Links</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Link</th>
+                                <th>Clicks</th>
+                                <th>CTR</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topLinksBody">
+                            <tr><td colspan="3">No data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn" onclick="exportAnalytics()">📥 Export Report</button>
+            </div>
         </div>
-      </div>
+        
+        <!-- Extra Features Tab -->
+        <div id="features" class="tab-content">
+            <div class="extra-header">
+                <h2>🌟 Extra Features</h2>
+                <p>Powerful tools for advanced link management</p>
+            </div>
+            
+            <div class="feature-grid">
+                <!-- QR Code Generator -->
+                <div class="feature-card">
+                    <h3>📱 QR Code Generator</h3>
+                    <input type="text" id="qrInput" placeholder="Enter URL" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41;">
+                    <button class="btn" onclick="generateQR()">Generate QR</button>
+                    <div id="qrCodeContainer" style="margin-top: 20px; display: none;">
+                        <div id="qrcode"></div>
+                        <button class="btn" id="downloadQRBtn" onclick="downloadQR()">📥 Download QR</button>
+                    </div>
+                </div>
+                
+                <!-- URL Shortener -->
+                <div class="feature-card">
+                    <h3>🔗 URL Shortener</h3>
+                    <input type="text" id="urlInput" placeholder="Enter long URL" style="width: 100%; padding: 10px; margin: 10px 0; background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41;">
+                    <button class="btn" onclick="shortenURL()">Shorten URL</button>
+                    <div id="shortenedContainer" style="margin-top: 10px; display: none;">
+                        <input type="text" id="shortenedURL" readonly style="width: 100%; padding: 10px; background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41;">
+                        <button class="btn" onclick="copyShortenedURL()">📋 Copy</button>
+                    </div>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <div class="feature-card">
+                    <h3>🎨 Theme Settings</h3>
+                    <div class="toggle-switch">
+                        <span>Dark Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle" checked onchange="toggleTheme()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p id="themeInfo" style="margin-top: 10px; color: #888;">Current: Dark Mode</p>
+                </div>
+                
+                <!-- Offline Mode -->
+                <div class="feature-card">
+                    <h3>📴 Offline Mode</h3>
+                    <div class="toggle-switch">
+                        <span>Enable Offline</span>
+                        <label class="switch">
+                            <input type="checkbox" id="offlineToggle" onchange="toggleOffline()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p id="offlineInfo" style="margin-top: 10px; color: #888;">Offline mode: Disabled</p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Analytics Tab -->
-    <div id="analyticsTab-content" class="tab-content">
-      <div class="analytics-container">
-        <div class="section">
-          <h2>📊 Analytics Overview</h2>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div style="font-size: 28px;">👆</div>
-              <div class="stat-value" id="statClicks">0</div>
-              <div class="stat-label">CLICKS</div>
-            </div>
-            <div class="stat-card">
-              <div style="font-size: 28px;">👁️</div>
-              <div class="stat-value" id="statVisits">0</div>
-              <div class="stat-label">VISITS</div>
-            </div>
-            <div class="stat-card">
-              <div style="font-size: 28px;">📈</div>
-              <div class="stat-value" id="statConversion">0%</div>
-              <div class="stat-label">CONVERSION</div>
-            </div>
-            <div class="stat-card">
-              <div style="font-size: 28px;">⚡</div>
-              <div class="stat-value" id="statAvgCTR">0%</div>
-              <div class="stat-label">AVG CTR</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>📈 Detailed Graphs</h2>
-          <div class="charts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="chart-container">
-              <h3>📨 Visits Over Time</h3>
-              <canvas id="visitsChart" height="250"></canvas>
-            </div>
-            <div class="chart-container">
-              <h3>👆 Clicks Over Time</h3>
-              <canvas id="clicksChart" height="250"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>📥 Export Analytics</h2>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-            <button class="btn btn-primary" onclick="exportReport('csv')">📊 Export CSV</button>
-            <button class="btn btn-primary" onclick="exportReport('json')">📄 Export JSON</button>
-            <button class="btn btn-primary" onclick="exportReport('html')">🌐 Export HTML</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Extra Features Tab -->
-    <div id="extraTab-content" class="tab-content">
-      <div class="extra-header">
-        <h2 style="color: #00ff41; font-size: 32px;">✨ Extra Features</h2>
-        <p style="color: #888;">🚀 Advanced capabilities for enhanced link sharing</p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-section">
-          <h3>🔳 QR Code</h3>
-          <p>Generate QR codes for your hub URL</p>
-          <button class="btn btn-primary" style="width: 100%;" onclick="generateQRCode()" id="genQRBtn">Generate QR Code</button>
-          <div id="qrCodeContainer" style="margin-top: 10px; text-align: center; display: none; background: #fff; padding: 10px; border-radius: 4px;"></div>
-          <button class="btn" id="downloadQRBtn" onclick="downloadQRCode()">💾 Download QR Code</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="script.js"></script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
