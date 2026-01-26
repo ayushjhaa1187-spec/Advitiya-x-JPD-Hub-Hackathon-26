@@ -1,29 +1,18 @@
 const express = require('express');
 const cors = require('cors');
-const { initDB } = require('./database');
-const apiRoutes = require('./routes');
-
-require('dotenv').config();
+const rateLimit = require('express-rate-limit');
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Initialize DB
-initDB();
+const limiter = rateLimit({ windowMs: 60000, max: 100 });
+app.use('/api/', limiter);
 
-// Routes
-app.use('/api', apiRoutes);
+// API Routes
+app.post('/api/hubs', (req, res) => { /* Create hub */ });
+app.get('/api/hubs/:id', (req, res) => { /* Get hub */ });
+app.post('/api/hubs/:id/links', (req, res) => { /* Add link */ });
+app.get('/api/hubs/:id/analytics', (req, res) => { /* Get analytics */ });
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ statusCode: 500, message: err.message || 'Server Error' });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(3000, () => console.log('Server running on port 3000'));
