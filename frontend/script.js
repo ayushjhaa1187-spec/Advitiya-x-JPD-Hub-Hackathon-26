@@ -10,7 +10,7 @@ let visitsChart=null,clicksChart=null;
 
 let isLoggedIn=false;
 
-let chartsInitialized=false;
+// ✅ REMOVED chartsInitialized flag - allows chart recreation
 
 
 
@@ -86,88 +86,164 @@ function switchTab(tabName){
 
 
 
+// ✅ FIXED: Destroy old charts before creating new ones
 function renderAllCharts(){
-
-  if(chartsInitialized)return;
-
-  chartsInitialized=true;
 
   const ctx1=document.getElementById('visitsChart');
 
   const ctx2=document.getElementById('clicksChart');
 
-  if(!ctx1||!ctx2)return;
+  
 
-  // ✅ FIXED: Added animation: false to stop infinite loop
+  if(!ctx1||!ctx2){
+
+    console.error('Chart canvas elements not found in HTML');
+
+    return;
+
+  }
+
+  
+
+  // ✅ DESTROY old charts if they exist (prevents duplication)
+  if(visitsChart){
+
+    visitsChart.destroy();
+
+    visitsChart=null;
+
+  }
+
+  if(clicksChart){
+
+    clicksChart.destroy();
+
+    clicksChart=null;
+
+  }
+
+  
+
+  // ✅ Chart configuration with animation disabled
   const chartConfig={
 
     responsive:true,
 
     maintainAspectRatio:false,
 
-    animation:false,
+    animation:false,  // ✅ CRITICAL: Stops infinite animation
 
-    plugins:{legend:{display:false}},
+    plugins:{
 
-    scales:{x:{display:false},y:{display:false}}
+      legend:{display:false},
+
+      tooltip:{enabled:true}
+
+    },
+
+    scales:{
+
+      x:{display:false},
+
+      y:{display:false}
+
+    }
 
   };
 
-  visitsChart=new Chart(ctx1,{
+  
 
-    type:'line',
+  // ✅ Create Visits Chart
+  try{
 
-    data:{
+    visitsChart=new Chart(ctx1,{
 
-      labels:['M','T','W','T','F','S','S'],
+      type:'line',
 
-      datasets:[{
+      data:{
 
-        label:'Visits',
+        labels:['M','T','W','T','F','S','S'],
 
-        data:[10,20,15,30,25,40,35],
+        datasets:[{
 
-        borderColor:'#00ff41',
+          label:'Visits',
 
-        backgroundColor:'rgba(0,255,65,0.1)',
+          data:[10,20,15,30,25,40,35],
 
-        tension:0.4
+          borderColor:'#00ff41',
 
-      }]
+          backgroundColor:'rgba(0,255,65,0.1)',
 
-    },
+          tension:0.4,
 
-    options:chartConfig
+          fill:true,
 
-  });
+          borderWidth:2,
 
-  clicksChart=new Chart(ctx2,{
+          pointRadius:4,
 
-    type:'line',
+          pointBackgroundColor:'#00ff41'
 
-    data:{
+        }]
 
-      labels:['M','T','W','T','F','S','S'],
+      },
 
-      datasets:[{
+      options:chartConfig
 
-        label:'Clicks',
+    });
 
-        data:[8,15,12,25,20,35,30],
+  }catch(err){
 
-        borderColor:'#00ff41',
+    console.error('Error creating visits chart:',err);
 
-        backgroundColor:'rgba(0,255,65,0.1)',
+  }
 
-        tension:0.4
+  
 
-      }]
+  // ✅ Create Clicks Chart
+  try{
 
-    },
+    clicksChart=new Chart(ctx2,{
 
-    options:chartConfig
+      type:'line',
 
-  });
+      data:{
+
+        labels:['M','T','W','T','F','S','S'],
+
+        datasets:[{
+
+          label:'Clicks',
+
+          data:[8,15,12,25,20,35,30],
+
+          borderColor:'#00ff41',
+
+          backgroundColor:'rgba(0,255,65,0.1)',
+
+          tension:0.4,
+
+          fill:true,
+
+          borderWidth:2,
+
+          pointRadius:4,
+
+          pointBackgroundColor:'#00ff41'
+
+        }]
+
+      },
+
+      options:chartConfig
+
+    });
+
+  }catch(err){
+
+    console.error('Error creating clicks chart:',err);
+
+  }
 
 }
 
@@ -221,7 +297,7 @@ function copyUrl(){
 
       const originalText=btn.textContent;
 
-      btn.textContent='Copied!';
+      btn.textContent='✅ Copied!';
 
       btn.style.borderColor='#00ff41';
 
@@ -265,14 +341,11 @@ function downloadQRCode(){
 
 // ========================================
 
-// Show/hide rule options based on selection
 function showRuleOptions() {
 
     const ruleType = document.getElementById('ruleType').value;
 
     
-
-    // Hide all options first
 
     document.getElementById('deviceTypeDiv').style.display = 'none';
 
@@ -281,8 +354,6 @@ function showRuleOptions() {
     document.getElementById('timeDiv').style.display = 'none';
 
     
-
-    // Show selected option
 
     if (ruleType === 'device') {
 
@@ -302,14 +373,11 @@ function showRuleOptions() {
 
 
 
-// Add new rule
 function addRule() {
 
     const ruleType = document.getElementById('ruleType').value;
 
     
-
-    // Validate rule type is selected
 
     if (!ruleType) {
 
@@ -332,8 +400,6 @@ function addRule() {
     };
 
     
-
-    // Collect specific data based on rule type
 
     if (ruleType === 'device') {
 
@@ -385,8 +451,6 @@ function addRule() {
 
     
 
-    // Save to localStorage
-
     let rules = JSON.parse(localStorage.getItem('rules_'+currentHubId) || '[]');
 
     rules.push(ruleData);
@@ -395,13 +459,9 @@ function addRule() {
 
     
 
-    // Show success
-
     alert(`✅ ${ruleType.toUpperCase()} rule added successfully!`);
 
     
-
-    // Reset form
 
     document.getElementById('ruleType').value = '';
 
@@ -417,15 +477,12 @@ function addRule() {
 
     
 
-    // Refresh rules display
-
     displayRules();
 
 }
 
 
 
-// Display all rules
 function displayRules() {
 
     const rulesList = document.getElementById('rulesList');
@@ -494,7 +551,6 @@ function displayRules() {
 
 
 
-// Delete rule by ID
 function deleteRuleById(ruleId) {
 
     if (confirm('❌ Are you sure you want to delete this rule?')) {
@@ -515,7 +571,6 @@ function deleteRuleById(ruleId) {
 
 
 
-// Load rules on page load
 document.addEventListener('DOMContentLoaded', () => {
 
     displayRules();
@@ -656,7 +711,7 @@ function renderQuickLinks(quickLinks) {
 
 
 
-// CRUD HELPERS (LOCALSTORAGE)
+// CRUD HELPERS
 
 function getLinksLS() {
 
@@ -742,44 +797,33 @@ function addQuickLink() {
 
 // ========================================
 
-// BUTTON FUNCTIONS (WORKING NOW ✅)
+// BUTTON FUNCTIONS (WORKING ✅)
 
 // ========================================
 
-// Settings Button
 function openSettings() {
 
     alert('⚙️ Opening Settings Page...');
 
-    // Later change to: window.location.href = './settings.html';
-
 }
 
 
 
-// Usage Stats Button
 function openUsageStats() {
 
     alert('📊 Opening Usage Statistics...');
 
-    // Later change to: window.location.href = './usage.html';
-
 }
 
 
 
-// Help Button
 function openHelp() {
 
     alert('❓ Opening Help & Support...');
 
-    // Later change to: window.location.href = './help.html';
-
 }
 
 
-
-// Login/Logout Toggle
 
 function toggleAuth() {
 
@@ -788,8 +832,6 @@ function toggleAuth() {
     
 
     if (isLoggedIn) {
-
-        // Logout
 
         alert('✅ You have logged out!');
 
@@ -800,8 +842,6 @@ function toggleAuth() {
         localStorage.removeItem('userLoggedIn');
 
     } else {
-
-        // Login
 
         showLoginModal();
 
@@ -853,7 +893,6 @@ function closeModal(){
 
 
 
-// Check if user was previously logged in
 window.addEventListener('load', () => {
 
     if (localStorage.getItem('userLoggedIn') === 'true') {
@@ -994,11 +1033,10 @@ function updateAnalytics(stats,links){
 
 // ========================================
 
-// EXPORT & ANALYTICS FUNCTIONS (WORKING NOW ✅)
+// EXPORT & ANALYTICS FUNCTIONS (WORKING ✅)
 
 // ========================================
 
-// Export report in different formats
 function exportReport(format) {
 
     const links = JSON.parse(localStorage.getItem('links_'+currentHubId) || '[]');
@@ -1057,7 +1095,6 @@ function exportReport(format) {
 
 
 
-// Generate CSV file
 function generateCSVReport(data) {
 
     let csv = 'Smart Link Hub - Report\n';
@@ -1102,7 +1139,6 @@ function generateCSVReport(data) {
 
 
 
-// Generate JSON file
 function generateJSONReport(data) {
 
     const jsonContent = JSON.stringify(data, null, 2);
@@ -1115,7 +1151,6 @@ function generateJSONReport(data) {
 
 
 
-// Generate HTML file
 function generateHTMLReport(data) {
 
     let html = `
@@ -1238,7 +1273,6 @@ function generateHTMLReport(data) {
 
 
 
-// Export analytics
 function exportAnalytics(type) {
 
     const links = JSON.parse(localStorage.getItem('links_'+currentHubId) || '[]');
@@ -1281,7 +1315,6 @@ function exportAnalytics(type) {
 
 
 
-// Generate analytics CSV
 function generateAnalyticsCSV(data, type) {
 
     let csv = `Analytics Export - ${type.toUpperCase()}\n`;
@@ -1318,7 +1351,6 @@ function generateAnalyticsCSV(data, type) {
 
 
 
-// Download file helper
 function downloadFile(content, filename, contentType) {
 
     const blob = new Blob([content], { type: contentType });
