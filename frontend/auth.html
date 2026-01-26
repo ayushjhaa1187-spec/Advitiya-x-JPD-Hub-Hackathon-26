@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Smart Link Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 90%;
+            overflow: hidden;
+        }
+
+        .auth-left {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-left h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .auth-left p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list i {
+            font-size: 20px;
+            width: 30px;
+        }
+
+        .auth-right {
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-right h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .oauth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .oauth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .oauth-btn i {
+            font-size: 20px;
+        }
+
+        .google-oauth {
+            border-color: #db4437;
+            color: #db4437;
+        }
+
+        .google-oauth:hover {
+            background: #f5f5f5;
+        }
+
+        .github-oauth {
+            border-color: #333;
+            color: #333;
+        }
+
+        .github-oauth:hover {
+            background: #f5f5f5;
+        }
+
+        .divider {
+            text-align: center;
+            color: #999;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-left {
+                display: none;
+            }
+
+            .auth-right {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Section -->
+        <div class="auth-left">
+            <h1>Smart Link Hub</h1>
+            <p>Create powerful link management with advanced features</p>
+            <ul class="feature-list">
+                <li>
+                    <i class="fas fa-link"></i>
+                    <span>Shorten & manage links</span>
+                </li>
+                <li>
+                    <i class="fas fa-chart-line"></i>
+                    <span>Track analytics & insights</span>
+                </li>
+                <li>
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Device-based redirects</span>
+                </li>
+                <li>
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Time-based campaigns</span>
+                </li>
+                <li>
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure & reliable</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Right Section -->
+        <div class="auth-right">
+            <h2>Create Account</h2>
+
+            <!-- OAuth Buttons -->
+            <div class="oauth-buttons">
+                <button class="oauth-btn google-oauth" onclick="handleGoogleSignup()">
+                    <i class="fab fa-google"></i>
+                    <span>Sign up with Google</span>
+                </button>
+                <button class="oauth-btn github-oauth" onclick="handleGithubSignup()">
+                    <i class="fab fa-github"></i>
+                    <span>Sign up with GitHub</span>
+                </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <!-- Email Signup Form -->
+            <form id="signupForm" onsubmit="handleEmailSignup(event)">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="signup-btn">Create Account</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Sign in here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // OAuth Signup Functions
+        function handleGoogleSignup() {
+            console.log('Google OAuth signup initiated');
+            // Production OAuth URL:
+            // const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=${window.location.origin}/callback&response_type=code&scope=openid%20email%20profile`;
+            // window.location.href = googleAuthUrl;
+            
+            alert('🔵 Google OAuth Flow\n\nIn production, this would redirect to Google\'s authentication endpoint.');
+            simulateOAuthSuccess('Google');
+        }
+
+        function handleGithubSignup() {
+            console.log('GitHub OAuth signup initiated');
+            // Production OAuth URL:
+            // const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=${window.location.origin}/callback&scope=user:email`;
+            // window.location.href = githubAuthUrl;
+            
+            alert('⚫ GitHub OAuth Flow\n\nIn production, this would redirect to GitHub\'s authentication endpoint.');
+            simulateOAuthSuccess('GitHub');
+        }
+
+        function handleEmailSignup(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+
+            // Store user data in localStorage
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('signupMethod', 'email');
+
+            alert(`Account created successfully!\nEmail: ${email}\n\nRedirecting to dashboard...`);
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+
+        function simulateOAuthSuccess(provider) {
+            // Simulate OAuth callback
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('oauthProvider', provider.toLowerCase());
+            localStorage.setItem('signupMethod', 'oauth');
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
