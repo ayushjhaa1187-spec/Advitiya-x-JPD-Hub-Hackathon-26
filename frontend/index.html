@@ -50,8 +50,103 @@
 <div class="section">
 <h2>⚙️ Smart Rules</h2>
 <div id="rulesList">
-<div class="empty-state">No rules yet</div>
+    <div class="empty-state">No rules yet</div>
 </div>
+
+<!-- ===== RULE CREATION FORM ===== -->
+<div style="margin-top: 16px; padding: 12px; background: #0a0a0a; border-radius: 4px; border: 1px solid #222222;">
+    <h4 style="color: #00ff41; margin-bottom: 12px;">➕ Add New Rule</h4>
+    
+    <!-- Rule Type Dropdown -->
+    <div style="margin-bottom: 12px;">
+        <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">RULE TYPE:</label>
+        <select id="ruleType" onchange="showRuleOptions()" style="
+            width: 100%;
+            padding: 10px;
+            background: #000000;
+            border: 1px solid #222222;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        ">
+            <option value="">-- Select Rule Type --</option>
+            <option value="device">🖥️ Device Type</option>
+            <option value="location">📍 Location Based</option>
+            <option value="time">⏰ Time Based</option>
+            <option value="custom">⚙️ Custom Rule</option>
+        </select>
+    </div>
+    
+    <!-- Device Type Dropdown (hidden by default) -->
+    <div id="deviceTypeDiv" style="display: none; margin-bottom: 12px;">
+        <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">SELECT DEVICE:</label>
+        <select id="deviceType" style="
+            width: 100%;
+            padding: 10px;
+            background: #000000;
+            border: 1px solid #222222;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 13px;
+        ">
+            <option value="">-- Select Device --</option>
+            <option value="mobile">📱 Mobile</option>
+            <option value="tablet">📲 Tablet</option>
+            <option value="desktop">💻 Desktop</option>
+            <option value="other">🔌 Other</option>
+        </select>
+    </div>
+    
+    <!-- Location Input (hidden by default) -->
+    <div id="locationDiv" style="display: none; margin-bottom: 12px;">
+        <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">LOCATION:</label>
+        <input type="text" id="locationInput" placeholder="Enter city or country" style="
+            width: 100%;
+            padding: 10px;
+            background: #000000;
+            border: 1px solid #222222;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 13px;
+        ">
+    </div>
+    
+    <!-- Time Input (hidden by default) -->
+    <div id="timeDiv" style="display: none; margin-bottom: 12px;">
+        <label style="color: #00ff41; font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">TIME RANGE:</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+                <label style="color: #00ff41; font-size: 11px; display: block; margin-bottom: 4px;">Start:</label>
+                <input type="time" id="startTime" style="
+                    width: 100%;
+                    padding: 8px;
+                    background: #000000;
+                    border: 1px solid #222222;
+                    color: #ffffff;
+                    border-radius: 4px;
+                    font-size: 13px;
+                ">
+            </div>
+            <div>
+                <label style="color: #00ff41; font-size: 11px; display: block; margin-bottom: 4px;">End:</label>
+                <input type="time" id="endTime" style="
+                    width: 100%;
+                    padding: 8px;
+                    background: #000000;
+                    border: 1px solid #222222;
+                    color: #ffffff;
+                    border-radius: 4px;
+                    font-size: 13px;
+                ">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Rule Button -->
+    <button class="btn btn-primary" onclick="addRule()" style="width: 100%; margin-top: 8px;">✅ Add Rule</button>
+</div>
+
 </div>
 </div>
 <div class="right-panel">
@@ -70,23 +165,35 @@
 <div class="section">
 <h2>📊 Analytics & Insights</h2>
 <div class="stats-grid">
-<div class="stat-card">
-<div class="stat-value" id="statClicks">0</div>
-<div class="stat-label">CLICKS</div>
+    <!-- Clicks Stat -->
+    <div class="stat-card">
+        <div style="font-size: 28px; margin-bottom: 8px;">👆</div>
+        <div class="stat-value" id="statClicks">0</div>
+        <div class="stat-label">CLICKS</div>
+    </div>
+    
+    <!-- Visits Stat -->
+    <div class="stat-card">
+        <div style="font-size: 28px; margin-bottom: 8px;">👁️</div>
+        <div class="stat-value" id="statVisits">0</div>
+        <div class="stat-label">VISITS</div>
+    </div>
+    
+    <!-- Conversion Stat -->
+    <div class="stat-card">
+        <div style="font-size: 28px; margin-bottom: 8px;">📊</div>
+        <div class="stat-value" id="statConversion">0%</div>
+        <div class="stat-label">CONVERSION</div>
+    </div>
+    
+    <!-- CTR Stat -->
+    <div class="stat-card">
+        <div style="font-size: 28px; margin-bottom: 8px;">⚡</div>
+        <div class="stat-value" id="statAvgCTR">0%</div>
+        <div class="stat-label">AVG CTR</div>
+    </div>
 </div>
-<div class="stat-card">
-<div class="stat-value" id="statVisits">0</div>
-<div class="stat-label">VISITS</div>
-</div>
-<div class="stat-card">
-<div class="stat-value" id="statConversion">0%</div>
-<div class="stat-label">CONVERSION</div>
-</div>
-<div class="stat-card" style="min-width: 0;">
-<div class="stat-value" id="statAvgCTR" style="word-break: break-all; font-size: 1.5rem;">0%</div>
-<div class="stat-label">AVG CTR</div>
-</div>
-</div>
+
 </div>
 <div class="section">
 <h2>📊 Detailed Graphs</h2>
@@ -104,9 +211,9 @@
 </div>
 </div>
 <div id="extraTab-content" class="tab-content">
-<div style="text-align: center; margin-bottom: 30px;">
-<h2 style="color: #00ff41;">Extra Features</h2>
-<p style="color: #888;">Advanced capabilities for enhanced link sharing & analytics</p>
+<div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #00ff41;">
+    <h2 style="color: #00ff41; font-size: 32px; margin-bottom: 8px;">✨ Extra Features</h2>
+    <p style="color: #888; font-size: 14px;">🚀 Advanced capabilities for enhanced link sharing & analytics</p>
 </div>
 <div class="features-grid">
 <div class="feature-section">
