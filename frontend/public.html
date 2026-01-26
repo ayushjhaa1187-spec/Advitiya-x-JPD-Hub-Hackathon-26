@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Link Hub – Public Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">LinkHub</div>
+    <ul class="navbar-links">
+      <li><a href="./dashboard.html">Dashboard</a></li>
+      <li><a href="./analysis.html">Analysis</a></li>
+      <li><a href="./public.html" class="active">Public Page</a></li>
+    </ul>
+    <div class="navbar-auth">
+      <button id="btn-google-signup" class="btn secondary">
+        <i class="ri-google-fill"></i> Sign up with Google
+      </button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <section class="panel">
+      <header class="panel-header">
+        <h1>Public Link Hub</h1>
+        <p>Shareable page with your curated smart links.</p>
+      </header>
+
+      <div class="panel-body">
+        <div id="public-links" class="public-links">
+          <!-- Public links cards injected by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./js/public.js"></script>
+</body>
+</html>
