@@ -1,0 +1,34 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">🔗 Smart Link Hub</div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li class="nav-item"><a href="analytics.html" class="nav-link">Analytics</a></li>
+      <li class="nav-item"><a href="public-hub.html" class="nav-link">Public Hub</a></li>
+      <li class="nav-item" id="authNav"><a href="login.html" class="nav-link">Login</a></li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+.navbar { background: #000; border-bottom: 1px solid #222; padding: 15px 0; }
+.nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+.nav-logo { color: #00ff41; font-weight: bold; font-size: 18px; }
+.nav-menu { display: flex; list-style: none; gap: 30px; margin: 0; }
+.nav-link { color: #fff; text-decoration: none; transition: 0.3s; }
+.nav-link:hover { color: #00ff41; }
+.nav-item.active .nav-link { color: #00ff41; border-bottom: 2px solid #00ff41; }
+</style>
+
+<script>
+function initializeNavbar() {
+  const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const link = item.querySelector('.nav-link');
+    if (link && link.getAttribute('href') === currentPage) {
+      item.classList.add('active');
+    }
+  });
+}
+initializeNavbar();
+</script>
