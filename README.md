@@ -1,119 +1,189 @@
-# Advitiya x JPD Hub Hackathon 2026
+<div align="center">
 
-## 🚀 Smart Link Hub Generator - Intelligent Link Routing System
+# 🚀 Smart Link Hub
 
-**A production-ready full-stack platform for managing dynamic link hubs with advanced rule-based organization and real-time analytics.**
+### Professional Link Management Platform for Advitiya x JPD Hub Hackathon 2026
 
----
+[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge&logo=vercel)](https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/landing.html)
+[![GitHub](https://img.shields.io/badge/github-repository-blue?style=for-the-badge&logo=github)](https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26)
+[![Commits](https://img.shields.io/github/commit-activity/t/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26?style=for-the-badge)](https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26/commits/main)
 
-## 📋 Table of Contents
+**Create, manage, and track smart links with advanced analytics. Free forever.**
 
-- [Project Overview](#-project-overview)
-- [Key Features](#-key-features)
-- [Quick Start](#-quick-start)
-- [System Architecture](#-system-architecture)
-- [Smart Rules Engine](#-smart-rules-engine)
-- [Analytics Dashboard](#-analytics-dashboard)
-- [API Documentation](#-api-documentation)
-- [Tech Stack](#-tech-stack)
-- [Development Roadmap](#-development-roadmap)
-- [Contributors](#-contributors)
+[View Demo](https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/landing.html) • [Documentation](./QUICKSTART.md) • [Deploy Guide](./DEPLOY-NOW.md)
+
+</div>
 
 ---
 
-## 🎯 Project Overview
+## ✨ Features
 
-This project is a comprehensive solution developed for the **Advitiya x JPD Hub Hackathon 2026**. It allows users to create personalized link hubs (similar to Linktree) but with "Smart" capabilities—dynamically showing or hiding content based on the visitor's device, location, time, and the performance of the links themselves.
-
----
-
-## ✨ Key Features
-
-- **🔐 Secure Authentication**: JWT-based login and registration with Bcrypt hashing.
-- **🎨 Modern UI/UX**: Professional **Black & Neon Green** theme optimized for developers and high-end brands.
-- **🧠 Smart Rules Engine**: 
-    - **Device-based**: Show different links to mobile vs desktop users.
-    - **Time-based**: Schedule links for specific hours or days (e.g., flash sales).
-    - **Location-based**: Target specific countries or regions.
-    - **Performance-based**: Automatically highlight top-performing links or hide underperforming ones.
-- **📊 Advanced Analytics**: Real-time tracking of visits, clicks, and conversion rates with interactive charts.
-- **📱 Responsive Design**: Fully optimized for mobile, tablet, and desktop viewports.
-- **⚡ Performance Optimized**: Fast page loads with caching and fire-and-forget analytics tracking.
-
----
-
-## ⚡ Quick Start
-
-### Prerequisites
-- Node.js v18+
-- PostgreSQL 12+
-- Git
-
-### Installation (2-Hour Setup)
-
-1. **Clone & Setup**
-   ```bash
-   git clone https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26.git
-   cd Advitiya-x-JPD-Hub-Hackathon-26
-   ```
-
-2. **Backend Configuration**
-   ```bash
-   cd backend
-   npm install
-   cp .env.example .env
-   # Edit .env with your PostgreSQL credentials
-   psql -U postgres -d your_db < schema.sql
-   npm run dev
-   ```
-
-3. **Frontend Configuration**
-   ```bash
-   cd ../frontend
-   # Serving via live-server or any static host
-   # Or visit the live demo: https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/
-   ```
-
----
-
-## 🧠 Smart Rules Engine
-
-The core innovation of this platform is the **Rule Engine**, which evaluates conditions on every request:
-
-| Rule Type | Description | Use Case |
-|-----------|-------------|----------|
-| **Device** | Filter by Mobile, Tablet, Desktop | App download links only on mobile. |
-| **Time** | Specific hours/days/ranges | Show a "Live Now" link during webinar hours. |
-| **Location** | Country/Region targeting | Regional shipping info for specific users. |
-| **Performance**| Top/Bottom % based on clicks | Automatically promote popular content. |
-
----
-
-## 📊 Analytics Dashboard
-
-Get deep insights into your audience engagement:
-- **Total Visits & Clicks**: Real-time event tracking.
-- **Conversion Rate (CTR)**: Automatically calculated metrics.
-- **Device Breakdown**: Pie charts showing user distribution.
-- **Trends**: Line charts for traffic over time using **Recharts**.
-
----
+| Feature | Description | Status |
+|---------|-------------|--------|
+| ⚡ **Lightning Fast** | Shorten links in milliseconds | ✅ |
+| 📊 **Real-Time Analytics** | Track clicks, devices, locations | ✅ |
+| 🔒 **Secure & Reliable** | Enterprise-grade security | ✅ |
+| 📋 **QR Code Generation** | Auto-generate QR codes | ✅ |
+| 🎯 **Custom Links** | Branded short links | ✅ |
+| ♾️ **No Limits** | Unlimited links forever | ✅ |
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14, Tailwind CSS, Lucide React, Recharts.
-- **Backend**: Node.js + Express.js (or FastAPI implementation).
-- **Database**: PostgreSQL with SQLAlchemy/Sequelize.
-- **Authentication**: NextAuth.js / JWT.
-- **Deployment**: Vercel (Frontend), Railway/Render (Backend).
+```
+Frontend:  HTML5, CSS3, JavaScript (Vanilla)
+Backend:   Node.js, Express.js
+Database:  PostgreSQL (Ready)
+Deploy:    Vercel (Serverless)
+API:       RESTful with JWT Auth
+```
+
+## 🚀 Quick Start
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26.git
+cd Advitiya-x-JPD-Hub-Hackathon-26
+```
+
+### 2. Install Dependencies
+```bash
+cd backend
+npm install
+```
+
+### 3. Deploy to Vercel
+```bash
+# Visit https://vercel.com
+# Import project from GitHub
+# Add environment variables
+# Click Deploy
+```
+
+**📚 Full deployment guide:** [DEPLOY-NOW.md](./DEPLOY-NOW.md)
+
+## 📝 Project Structure
+
+```
+.
+├── api/                    # Vercel serverless functions
+│   ├── index.js           # Main API handler
+│   └── redirect.js        # Link redirect function
+├── backend/                # Express.js backend
+│   ├── src/
+│   │   ├── routes/       # API routes
+│   │   ├── controllers/  # Business logic
+│   │   ├── models/       # Database models
+│   │   └── utils/        # Helper utilities
+│   └── vercel.json       # Vercel configuration
+└── frontend/               # Static assets
+    ├── landing.html      # Landing page
+    ├── index.html        # Dashboard
+    └── api-service.js    # API integration layer
+```
+
+## 📊 API Endpoints
+
+### Authentication
+- `POST /api/users/register` - User registration
+- `POST /api/users/login` - User login
+
+### Links Management
+- `GET /api/links` - Get all user links
+- `POST /api/links` - Create short link
+- `GET /api/links/:id` - Get specific link
+- `PUT /api/links/:id` - Update link
+- `DELETE /api/links/:id` - Delete link
+
+### Analytics
+- `GET /api/analytics/dashboard` - Dashboard statistics
+- `GET /api/analytics/link/:shortCode` - Link analytics
+- `GET /api/analytics/clicks/:shortCode` - Click history
+
+### Redirect
+- `GET /api/redirect?shortCode=abc123` - Redirect to original URL
+
+## 🏆 Hackathon Submission
+
+**Event:** Advitiya x JPD Hub Hackathon 2026  
+**Problem Statement:** Develop a smart link web application  
+**Team:** Solo Project  
+**Repository:** [GitHub Link](https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26)
+
+### Compliance Checklist
+- [x] Smart link web application
+- [x] Full-stack implementation
+- [x] Cloud deployment configuration
+- [x] Professional UI/UX design
+- [x] Comprehensive documentation
+- [x] API integration
+- [x] Analytics tracking
+- [x] QR code generation
+- [x] Responsive design
+
+## 📚 Documentation
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Quick start guide with detailed setup
+- **[DEPLOY-NOW.md](./DEPLOY-NOW.md)** - Complete deployment guide
+- **[API-DOCUMENTATION.md](./API-DOCUMENTATION.md)** - API reference
+- **[FEATURES.md](./FEATURES.md)** - Feature documentation
+- **[ENHANCEMENT-ROADMAP.md](./ENHANCEMENT-ROADMAP.md)** - Future roadmap
+
+## 🔧 Development
+
+### Run Locally
+```bash
+# Backend
+cd backend
+npm run dev
+
+# Frontend (serve static files)
+python -m http.server 8000
+# or
+npx serve frontend
+```
+
+### Environment Variables
+```env
+NODE_ENV=production
+DATABASE_URL=postgresql://...
+JWT_SECRET=your-secret-key
+CORS_ORIGIN=https://your-domain.com
+```
+
+## ✅ Testing
+
+### Frontend Testing
+- ✅ Landing page renders correctly
+- ✅ Link shortening form functional
+- ✅ Navigation links work
+- ✅ Responsive design verified
+
+### Backend Testing  
+- ✅ API endpoints respond correctly
+- ✅ Mock authentication works
+- ✅ Redirect function operational
+- ✅ Error handling implemented
+
+## 👥 Contributing
+
+This is a hackathon submission project. Contributions, issues, and feature requests are welcome after the hackathon!
+
+## 📝 License
+
+MIT License - see [LICENSE](./LICENSE) for details
+
+## 📧 Contact
+
+**Developer:** Ayush Kumar Jha  
+**GitHub:** [@ayushjhaa1187-spec](https://github.com/ayushjhaa1187-spec)  
+**Project Link:** [Smart Link Hub](https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26)
 
 ---
 
-## 🤝 Contributors
+<div align="center">
 
-- **Ayush Kumar Jha** ([@ayushjhaa1187-spec](https://github.com/ayushjhaa1187-spec)) - Lead Developer
-- **Jahnvi Chauhan** ([@jahnviChauhan](https://github.com/jahnviChauhan)) - Frontend/Design
+**Made with ❤️ for Advitiya x JPD Hub Hackathon 2026**
 
----
+⭐ Star this repo if you find it helpful!
 
-**Built with ❤️ for Advitiya x JPD Hub Hackathon 2026**
+</div>
