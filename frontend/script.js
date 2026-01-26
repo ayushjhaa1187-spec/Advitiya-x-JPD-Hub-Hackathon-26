@@ -1,11 +1,167 @@
-const API_BASE='http://localhost:3000/api';let currentHubId=localStorage.getItem('hubId')||'hub_'+Date.now();let useBackend=false;let qrCodeInstance=null;let visitsChart=null,clicksChart=null;let isLoggedIn=false;let chartsInitialized=false;document.addEventListener('DOMContentLoaded',async()=>{localStorage.setItem('hubId',currentHubId);const urlDisplay=document.getElementById('publicUrl');if(urlDisplay)urlDisplay.textContent=`https://smart-link-hub.vercel.app/hub/${currentHubId}`;await loadData();setInterval(loadData,5000);});async function loadData(){loadFromLocal();updateAnalytics();}function loadFromLocal(){const links=JSON.parse(localStorage.getItem('links_'+currentHubId)||'[]');const rules=JSON.parse(localStorage.getItem('rules_'+currentHubId)||'[]');const stats=JSON.parse(localStorage.getItem('stats_'+currentHubId)||'{"totalClicks":0,"totalVisits":0}');const quickLinks=JSON.parse(localStorage.getItem('quickLinks_'+currentHubId)||'[]');renderLinks(links);renderRules(rules);updateAnalytics(stats,links);}function switchTab(tabName){document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));const tab=document.getElementById(tabName+'Tab');const content=document.getElementById(tabName+'Tab-content');if(tab)tab.classList.add('active');if(content)content.classList.add('active');if(tabName==='analytics'){setTimeout(renderAllCharts,100);}}function renderAllCharts(){if(chartsInitialized)return;chartsInitialized=true;const ctx1=document.getElementById('visitsChart');const ctx2=document.getElementById('clicksChart');if(!ctx1||!ctx2)return;const chartConfig={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}};visitsChart=new Chart(ctx1,{type:'line',data:{labels:['M','T','W','T','F','S','S'],datasets:[{label:'Visits',data:[10,20,15,30,25,40,35],borderColor:'#00ff41',backgroundColor:'rgba(0,255,65,0.1)',tension:0.4}]},options:chartConfig});clicksChart=new Chart(ctx2,{type:'line',data:{labels:['M','T','W','T','F','S','S'],datasets:[{label:'Clicks',data:[8,15,12,25,20,35,30],borderColor:'#00ff41',backgroundColor:'rgba(0,255,65,0.1)',tension:0.4}]},options:chartConfig});}function toggleAuth(){if(isLoggedIn){isLoggedIn=false;const authBtn=document.getElementById('authBtn');if(authBtn)authBtn.textContent='Login';alert('Logged out successfully');}else{showLoginModal();}}function showLoginModal(){const html=`<div id="authModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;"><div style="background:#1a1a1a;border:2px solid #00ff41;border-radius:8px;padding:30px;text-align:center;color:#fff;"><h2>Login with</h2><button onclick="loginWith('Google')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">Google</button><button onclick="loginWith('GitHub')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">GitHub</button><button onclick="closeModal()" style="background:#666;color:#fff;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;">Cancel</button></div></div>`;document.body.insertAdjacentHTML('beforeend',html);}function loginWith(provider){isLoggedIn=true;alert('Logged in with '+provider);closeModal();const authBtn=document.getElementById('authBtn');if(authBtn)authBtn.textContent='Logout';}function closeModal(){const modal=document.getElementById('authModal');if(modal)modal.remove();}function generateQRCode(){const url=document.getElementById('publicUrl').textContent;const container=document.getElementById('qrCodeContainer');const btn=document.getElementById('genQRBtn');if(container.style.display==='block'){container.style.display='none';container.innerHTML='';qrCodeInstance=null;if(btn)btn.textContent='Generate QR Code';return;}container.innerHTML='';qrCodeInstance=new QRCode(container,{text:url,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff'});container.style.display='block';if(btn)btn.textContent='Close QR Code';document.getElementById('downloadQRBtn').style.display='block';}function copyUrl(){const url=document.getElementById('publicUrl').textContent;const btn=document.querySelector('[onclick="copyUrl()"]');navigator.clipboard.writeText(url).then(()=>{if(btn){const originalText=btn.textContent;btn.textContent='Copied!';btn.style.borderColor='#00ff41';setTimeout(()=>{btn.textContent=originalText;btn.style.borderColor='';},2000);}});}function downloadQRCode(){const canvas=document.querySelector('#qrCodeContainer canvas');if(canvas){const link=document.createElement('a');link.href=canvas.toDataURL();link.download='qrcode.png';link.click();}}function renderLinks(links){}function renderRules(rules){}function updateAnalytics(stats,links){const clicksEl=document.getElementById('statClicks');const visitsEl=document.getElementById('statVisits');const conversionEl=document.getElementById('statConversion');const ctrEl=document.getElementById('statAvgCTR');if(clicksEl)clicksEl.textContent=(stats?.totalClicks||0);if(visitsEl)visitsEl.textContent=(stats?.totalVisits||0);if(conversionEl){const conversion=stats?.totalVisits>0?(stats.totalClicks/stats.totalVisits*100).toFixed(1):'0';conversionEl.textContent=conversion+'%';}if(ctrEl)ctrEl.textContent=(stats?.avgCTR||'0')+'%';}function openAddLinkModal(){}function addQuickLink(){}function openSettings(){}function openUsageStats(){}function openHelp(){}
+const API_BASE='http://localhost:3000/api';
+let currentHubId=localStorage.getItem('hubId')||'hub_'+Date.now();
+let useBackend=false;
+let qrCodeInstance=null;
+let visitsChart=null,clicksChart=null;
+let isLoggedIn=false;
+let chartsInitialized=false;
 
-// simple in-memory mirrors
+document.addEventListener('DOMContentLoaded',async()=>{
+  localStorage.setItem('hubId',currentHubId);
+  const urlDisplay=document.getElementById('publicUrl');
+  if(urlDisplay)urlDisplay.textContent=`https://smart-link-hub.vercel.app/hub/${currentHubId}`;
+  await loadData();
+  setInterval(loadData,5000);
+});
+
+async function loadData(){
+  loadFromLocal();
+  updateAnalytics();
+}
+
+function loadFromLocal(){
+  const links=JSON.parse(localStorage.getItem('links_'+currentHubId)||'[]');
+  const rules=JSON.parse(localStorage.getItem('rules_'+currentHubId)||'[]');
+  const stats=JSON.parse(localStorage.getItem('stats_'+currentHubId)||'{"totalClicks":0,"totalVisits":0}');
+  const quickLinks=JSON.parse(localStorage.getItem('quickLinks_'+currentHubId)||'[]');
+  renderLinks(links);
+  renderRules(rules);
+  renderQuickLinks(quickLinks);
+  updateAnalytics(stats,links);
+}
+
+function switchTab(tabName){
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
+  const tab=document.getElementById(tabName+'Tab');
+  const content=document.getElementById(tabName+'Tab-content');
+  if(tab)tab.classList.add('active');
+  if(content)content.classList.add('active');
+  if(tabName==='analytics'){
+    setTimeout(renderAllCharts,100);
+  }
+}
+
+function renderAllCharts(){
+  if(chartsInitialized)return;
+  chartsInitialized=true;
+  const ctx1=document.getElementById('visitsChart');
+  const ctx2=document.getElementById('clicksChart');
+  if(!ctx1||!ctx2)return;
+  const chartConfig={
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{display:false},y:{display:false}}
+  };
+  visitsChart=new Chart(ctx1,{
+    type:'line',
+    data:{
+      labels:['M','T','W','T','F','S','S'],
+      datasets:[{
+        label:'Visits',
+        data:[10,20,15,30,25,40,35],
+        borderColor:'#00ff41',
+        backgroundColor:'rgba(0,255,65,0.1)',
+        tension:0.4
+      }]
+    },
+    options:chartConfig
+  });
+  clicksChart=new Chart(ctx2,{
+    type:'line',
+    data:{
+      labels:['M','T','W','T','F','S','S'],
+      datasets:[{
+        label:'Clicks',
+        data:[8,15,12,25,20,35,30],
+        borderColor:'#00ff41',
+        backgroundColor:'rgba(0,255,65,0.1)',
+        tension:0.4
+      }]
+    },
+    options:chartConfig
+  });
+}
+
+function toggleAuth(){
+  if(isLoggedIn){
+    isLoggedIn=false;
+    const authBtn=document.getElementById('authBtn');
+    if(authBtn)authBtn.textContent='Login';
+    alert('Logged out successfully');
+  }else{
+    showLoginModal();
+  }
+}
+
+function showLoginModal(){
+  const html=`<div id="authModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;"><div style="background:#1a1a1a;border:2px solid #00ff41;border-radius:8px;padding:30px;text-align:center;color:#fff;"><h2>Login with</h2><button onclick="loginWith('Google')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">Google</button><button onclick="loginWith('GitHub')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">GitHub</button><button onclick="closeModal()" style="background:#666;color:#fff;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;">Cancel</button></div></div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+function loginWith(provider){
+  isLoggedIn=true;
+  alert('Logged in with '+provider);
+  closeModal();
+  const authBtn=document.getElementById('authBtn');
+  if(authBtn)authBtn.textContent='Logout';
+}
+
+function closeModal(){
+  const modal=document.getElementById('authModal');
+  if(modal)modal.remove();
+}
+
+function generateQRCode(){
+  const url=document.getElementById('publicUrl').textContent;
+  const container=document.getElementById('qrCodeContainer');
+  const btn=document.getElementById('genQRBtn');
+  if(container.style.display==='block'){
+    container.style.display='none';
+    container.innerHTML='';
+    qrCodeInstance=null;
+    if(btn)btn.textContent='Generate QR Code';
+    return;
+  }
+  container.innerHTML='';
+  qrCodeInstance=new QRCode(container,{text:url,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff'});
+  container.style.display='block';
+  if(btn)btn.textContent='Close QR Code';
+  document.getElementById('downloadQRBtn').style.display='block';
+}
+
+function copyUrl(){
+  const url=document.getElementById('publicUrl').textContent;
+  const btn=document.querySelector('[onclick="copyUrl()"]');
+  navigator.clipboard.writeText(url).then(()=>{
+    if(btn){
+      const originalText=btn.textContent;
+      btn.textContent='Copied!';
+      btn.style.borderColor='#00ff41';
+      setTimeout(()=>{
+        btn.textContent=originalText;
+        btn.style.borderColor='';
+      },2000);
+    }
+  });
+}
+
+function downloadQRCode(){
+  const canvas=document.querySelector('#qrCodeContainer canvas');
+  if(canvas){
+    const link=document.createElement('a');
+    link.href=canvas.toDataURL();
+    link.download='qrcode.png';
+    link.click();
+  }
+}
+
+// RENDERERS
 let linksState = [];
 let rulesState = [];
 let quickLinksState = [];
 
-// RENDERERS
 function renderLinks(links) {
   linksState = links || [];
   const container = document.getElementById('linksList');
@@ -67,7 +223,7 @@ function renderQuickLinks(quickLinks) {
   });
 }
 
-// CRUD HELPERS (LOCALSTORAGE FOR NOW)
+// CRUD HELPERS (LOCALSTORAGE)
 function getLinksLS() {
   return JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
 }
@@ -168,33 +324,16 @@ function deleteRule(idx) {
   renderRules(rules);
 }
 
-
-const express = require('express');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-const limiter = rateLimit({ windowMs: 60000, max: 100 });
-app.use('/api/', limiter);
-
-const express = require('express');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-const limiter = rateLimit({ windowMs: 60000, max: 100 });
-app.use('/api/', limiter);
-
-// API Routes
-app.post('/api/hubs', (req, res) => { /* Create hub */ });
-app.get('/api/hubs/:id', (req, res) => { /* Get hub */ });
-app.post('/api/hubs/:id/links', (req, res) => { /* Add link */ });
-app.get('/api/hubs/:id/analytics', (req, res) => { /* Get analytics */ });
-
-app.listen(3000, () => console.log('Server running on port 3000'));
+function updateAnalytics(stats,links){
+  const clicksEl=document.getElementById('statClicks');
+  const visitsEl=document.getElementById('statVisits');
+  const conversionEl=document.getElementById('statConversion');
+  const ctrEl=document.getElementById('statAvgCTR');
+  if(clicksEl)clicksEl.textContent=(stats?.totalClicks||0);
+  if(visitsEl)visitsEl.textContent=(stats?.totalVisits||0);
+  if(conversionEl){
+    const conversion=stats?.totalVisits>0?(stats.totalClicks/stats.totalVisits*100).toFixed(1):'0';
+    conversionEl.textContent=conversion+'%';
+  }
+  if(ctrEl)ctrEl.textContent=(stats?.avgCTR||'0')+'%';
+}
