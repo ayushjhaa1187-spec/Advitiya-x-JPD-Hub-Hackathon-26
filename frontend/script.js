@@ -1,1374 +1,294 @@
-const API_BASE='http://localhost:3000/api';
+const API_BASE = 'http://localhost:3000/api';
+let currentHubId = localStorage.getItem('hubId') || 'hub_' + Date.now();
+let qrCodeInstance = null;
+let visitsChart = null, clicksChart = null;
+let isLoggedIn = false;
 
-let currentHubId=localStorage.getItem('hubId')||'hub_'+Date.now();
-
-let useBackend=false;
-
-let qrCodeInstance=null;
-
-let visitsChart=null,clicksChart=null;
-
-let isLoggedIn=false;
-
-// ✅ REMOVED chartsInitialized flag - allows chart recreation
-
-
-
-document.addEventListener('DOMContentLoaded',async()=>{
-
-  localStorage.setItem('hubId',currentHubId);
-
-  const urlDisplay=document.getElementById('publicUrl');
-
-  if(urlDisplay)urlDisplay.textContent=`https://smart-link-hub.vercel.app/hub/${currentHubId}`;
-
+document.addEventListener('DOMContentLoaded', async () => {
+  localStorage.setItem('hubId', currentHubId);
+  const urlDisplay = document.getElementById('publicUrl');
+  if (urlDisplay) urlDisplay.textContent = `https://smart-link-hub.vercel.app/hub/${currentHubId}`;
+  
   await loadData();
-
-  setInterval(loadData,5000);
-
+  setInterval(loadData, 5000);
 });
 
-
-
-async function loadData(){
-
-  loadFromLocal();
-
-  updateAnalytics();
-
-}
-
-
-
-function loadFromLocal(){
-
-  const links=JSON.parse(localStorage.getItem('links_'+currentHubId)||'[]');
-
-  const rules=JSON.parse(localStorage.getItem('rules_'+currentHubId)||'[]');
-
-  const stats=JSON.parse(localStorage.getItem('stats_'+currentHubId)||'{"totalClicks":0,"totalVisits":0}');
-
-  const quickLinks=JSON.parse(localStorage.getItem('quickLinks_'+currentHubId)||'[]');
+async function loadData() {
+  const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+  const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
+  const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{"totalClicks":0,"totalVisits":0}');
+  const quickLinks = JSON.parse(localStorage.getItem('quickLinks_' + currentHubId) || '[]');
 
   renderLinks(links);
-
   renderRules(rules);
-
   renderQuickLinks(quickLinks);
-
-  updateAnalytics(stats,links);
-
+  updateAnalytics(stats);
 }
 
-
-
-function switchTab(tabName){
-
-  document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
-
-  document.querySelectorAll('.tab-content').forEach(content=>content.classList.remove('active'));
-
-  const tab=document.getElementById(tabName+'Tab');
-
-  const content=document.getElementById(tabName+'Tab-content');
-
-  if(tab)tab.classList.add('active');
-
-  if(content)content.classList.add('active');
-
-  if(tabName==='analytics'){
-
-    setTimeout(renderAllCharts,100);
-
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  const tab = document.getElementById(tabName + 'Tab');
+  const content = document.getElementById(tabName + 'Tab-content');
+  
+  if (tab) tab.classList.add('active');
+  if (content) content.classList.add('active');
+  
+  if (tabName === 'analytics') {
+    setTimeout(renderAllCharts, 100);
   }
-
 }
 
+function renderAllCharts() {
+  const ctx1 = document.getElementById('visitsChart');
+  const ctx2 = document.getElementById('clicksChart');
+  if (!ctx1 || !ctx2) return;
 
+  if (visitsChart) visitsChart.destroy();
+  if (clicksChart) clicksChart.destroy();
 
-// ✅ FIXED: Destroy old charts before creating new ones
-function renderAllCharts(){
-
-  const ctx1=document.getElementById('visitsChart');
-
-  const ctx2=document.getElementById('clicksChart');
-
-  
-
-  if(!ctx1||!ctx2){
-
-    console.error('Chart canvas elements not found in HTML');
-
-    return;
-
-  }
-
-  
-
-  // ✅ DESTROY old charts if they exist (prevents duplication)
-  if(visitsChart){
-
-    visitsChart.destroy();
-
-    visitsChart=null;
-
-  }
-
-  if(clicksChart){
-
-    clicksChart.destroy();
-
-    clicksChart=null;
-
-  }
-
-  
-
-  // ✅ Chart configuration with animation disabled
-  const chartConfig={
-
-    responsive:true,
-
-    maintainAspectRatio:false,
-
-    animation:false,  // ✅ CRITICAL: Stops infinite animation
-
-    plugins:{
-
-      legend:{display:false},
-
-      tooltip:{enabled:true}
-
-    },
-
-    scales:{
-
-      x:{display:false},
-
-      y:{display:false}
-
-    }
-
+  const chartConfig = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+    plugins: { legend: { display: false } },
+    scales: { x: { display: false }, y: { display: false } }
   };
 
-  
-
-  // ✅ Create Visits Chart
-  try{
-
-    visitsChart=new Chart(ctx1,{
-
-      type:'line',
-
-      data:{
-
-        labels:['M','T','W','T','F','S','S'],
-
-        datasets:[{
-
-          label:'Visits',
-
-          data:[10,20,15,30,25,40,35],
-
-          borderColor:'#00ff41',
-
-          backgroundColor:'rgba(0,255,65,0.1)',
-
-          tension:0.4,
-
-          fill:true,
-
-          borderWidth:2,
-
-          pointRadius:4,
-
-          pointBackgroundColor:'#00ff41'
-
-        }]
-
-      },
-
-      options:chartConfig
-
-    });
-
-  }catch(err){
-
-    console.error('Error creating visits chart:',err);
-
-  }
-
-  
-
-  // ✅ Create Clicks Chart
-  try{
-
-    clicksChart=new Chart(ctx2,{
-
-      type:'line',
-
-      data:{
-
-        labels:['M','T','W','T','F','S','S'],
-
-        datasets:[{
-
-          label:'Clicks',
-
-          data:[8,15,12,25,20,35,30],
-
-          borderColor:'#00ff41',
-
-          backgroundColor:'rgba(0,255,65,0.1)',
-
-          tension:0.4,
-
-          fill:true,
-
-          borderWidth:2,
-
-          pointRadius:4,
-
-          pointBackgroundColor:'#00ff41'
-
-        }]
-
-      },
-
-      options:chartConfig
-
-    });
-
-  }catch(err){
-
-    console.error('Error creating clicks chart:',err);
-
-  }
-
-}
-
-
-
-function generateQRCode(){
-
-  const url=document.getElementById('publicUrl').textContent;
-
-  const container=document.getElementById('qrCodeContainer');
-
-  const btn=document.getElementById('genQRBtn');
-
-  if(container.style.display==='block'){
-
-    container.style.display='none';
-
-    container.innerHTML='';
-
-    qrCodeInstance=null;
-
-    if(btn)btn.textContent='Generate QR Code';
-
-    return;
-
-  }
-
-  container.innerHTML='';
-
-  qrCodeInstance=new QRCode(container,{text:url,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff'});
-
-  container.style.display='block';
-
-  if(btn)btn.textContent='Close QR Code';
-
-  document.getElementById('downloadQRBtn').style.display='block';
-
-}
-
-
-
-function copyUrl(){
-
-  const url=document.getElementById('publicUrl').textContent;
-
-  const btn=document.querySelector('[onclick="copyUrl()"]');
-
-  navigator.clipboard.writeText(url).then(()=>{
-
-    if(btn){
-
-      const originalText=btn.textContent;
-
-      btn.textContent='✅ Copied!';
-
-      btn.style.borderColor='#00ff41';
-
-      setTimeout(()=>{
-
-        btn.textContent=originalText;
-
-        btn.style.borderColor='';
-
-      },2000);
-
-    }
-
+  visitsChart = new Chart(ctx1, {
+    type: 'line',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        label: 'Visits',
+        data: [10, 20, 15, 30, 25, 40, 35],
+        borderColor: '#00ff41',
+        backgroundColor: 'rgba(0,255,65,0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: chartConfig
   });
 
-}
-
-
-
-function downloadQRCode(){
-
-  const canvas=document.querySelector('#qrCodeContainer canvas');
-
-  if(canvas){
-
-    const link=document.createElement('a');
-
-    link.href=canvas.toDataURL();
-
-    link.download='qrcode.png';
-
-    link.click();
-
-  }
-
-}
-
-// ========================================
-
-// RULE MANAGEMENT FUNCTIONS
-
-// ========================================
-
-function showRuleOptions() {
-
-    const ruleType = document.getElementById('ruleType').value;
-
-    
-
-    document.getElementById('deviceTypeDiv').style.display = 'none';
-
-    document.getElementById('locationDiv').style.display = 'none';
-
-    document.getElementById('timeDiv').style.display = 'none';
-
-    
-
-    if (ruleType === 'device') {
-
-        document.getElementById('deviceTypeDiv').style.display = 'block';
-
-    } else if (ruleType === 'location') {
-
-        document.getElementById('locationDiv').style.display = 'block';
-
-    } else if (ruleType === 'time') {
-
-        document.getElementById('timeDiv').style.display = 'block';
-
-    }
-
-}
-
-
-
-function addRule() {
-
-    const ruleType = document.getElementById('ruleType').value;
-
-    
-
-    if (!ruleType) {
-
-        alert('❌ Please select a rule type');
-
-        return;
-
-    }
-
-    
-
-    let ruleData = {
-
-        type: ruleType,
-
-        createdAt: new Date().toLocaleDateString(),
-
-        id: 'rule-' + Date.now()
-
-    };
-
-    
-
-    if (ruleType === 'device') {
-
-        const device = document.getElementById('deviceType').value;
-
-        if (!device) {
-
-            alert('❌ Please select a device');
-
-            return;
-
-        }
-
-        ruleData.device = device;
-
-    } else if (ruleType === 'location') {
-
-        const location = document.getElementById('locationInput').value.trim();
-
-        if (!location) {
-
-            alert('❌ Please enter a location');
-
-            return;
-
-        }
-
-        ruleData.location = location;
-
-    } else if (ruleType === 'time') {
-
-        const startTime = document.getElementById('startTime').value;
-
-        const endTime = document.getElementById('endTime').value;
-
-        if (!startTime || !endTime) {
-
-            alert('❌ Please select both start and end times');
-
-            return;
-
-        }
-
-        ruleData.startTime = startTime;
-
-        ruleData.endTime = endTime;
-
-    }
-
-    
-
-    let rules = JSON.parse(localStorage.getItem('rules_'+currentHubId) || '[]');
-
-    rules.push(ruleData);
-
-    localStorage.setItem('rules_'+currentHubId, JSON.stringify(rules));
-
-    
-
-    alert(`✅ ${ruleType.toUpperCase()} rule added successfully!`);
-
-    
-
-    document.getElementById('ruleType').value = '';
-
-    document.getElementById('deviceType').value = '';
-
-    document.getElementById('locationInput').value = '';
-
-    document.getElementById('startTime').value = '';
-
-    document.getElementById('endTime').value = '';
-
-    showRuleOptions();
-
-    
-
-    displayRules();
-
-}
-
-
-
-function displayRules() {
-
-    const rulesList = document.getElementById('rulesList');
-
-    const rules = JSON.parse(localStorage.getItem('rules_'+currentHubId) || '[]');
-
-    
-
-    if (rules.length === 0) {
-
-        rulesList.innerHTML = '<div class="empty-state">No rules yet</div>';
-
-        return;
-
-    }
-
-    
-
-    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
-
-    
-
-    rules.forEach((rule, index) => {
-
-        let ruleLabel = '';
-
-        
-
-        if (rule.type === 'device') {
-
-            ruleLabel = `🖥️ Device: ${rule.device}`;
-
-        } else if (rule.type === 'location') {
-
-            ruleLabel = `📍 Location: ${rule.location}`;
-
-        } else if (rule.type === 'time') {
-
-            ruleLabel = `⏰ Time: ${rule.startTime} - ${rule.endTime}`;
-
-        }
-
-        
-
-        html += `
-
-            <div style="background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px solid #222222; display: flex; justify-content: space-between; align-items: center;">
-
-                <div style="color: #00ff41; font-size: 12px;">${ruleLabel}</div>
-
-                <button class="btn btn-small" onclick="deleteRuleById('${rule.id}')" style="background: #ff3333; border: 1px solid #ff3333; color: #fff;">🗑️ Delete</button>
-
-            </div>
-
-        `;
-
-    });
-
-    
-
-    html += '</div>';
-
-    rulesList.innerHTML = html;
-
-}
-
-
-
-function deleteRuleById(ruleId) {
-
-    if (confirm('❌ Are you sure you want to delete this rule?')) {
-
-        let rules = JSON.parse(localStorage.getItem('rules_'+currentHubId) || '[]');
-
-        rules = rules.filter(r => r.id !== ruleId);
-
-        localStorage.setItem('rules_'+currentHubId, JSON.stringify(rules));
-
-        displayRules();
-
-        alert('✅ Rule deleted');
-
-    }
-
-}
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    displayRules();
-
-});
-
-
-
-// RENDERERS
-
-let linksState = [];
-
-let rulesState = [];
-
-let quickLinksState = [];
-
-
-
-function renderLinks(links) {
-
-  linksState = links || [];
-
-  const container = document.getElementById('linksList');
-
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  linksState.forEach((l, idx) => {
-
-    const div = document.createElement('div');
-
-    div.className = 'link-item';
-
-    div.innerHTML = `
-
-      <div class="link-main">
-
-        <span class="link-title">${l.title || l.url}</span>
-
-        <span class="link-url">${l.url}</span>
-
-      </div>
-
-      <div class="link-actions">
-
-        <button onclick="editLink(${idx})">Edit</button>
-
-        <button onclick="deleteLink(${idx})">Delete</button>
-
-      </div>
-
-    `;
-
-    container.appendChild(div);
-
+  clicksChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      datasets: [{
+        label: 'Clicks',
+        data: [8, 15, 12, 25, 20, 35, 30],
+        borderColor: '#00ff41',
+        backgroundColor: 'rgba(0,255,65,0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: chartConfig
   });
-
 }
-
-
-
-function renderRules(rules) {
-
-  rulesState = rules || [];
-
-  const container = document.getElementById('rulesList');
-
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  rulesState.forEach((r, idx) => {
-
-    const info = r.type === 'device'
-
-      ? `${r.type} → ${r.deviceType || 'any'}`
-
-      : `${r.type} → ${r.target}`;
-
-    const div = document.createElement('div');
-
-    div.className = 'rule-item';
-
-    div.innerHTML = `
-
-      <div class="rule-main">
-
-        <span class="rule-label">${info}</span>
-
-      </div>
-
-      <div class="rule-actions">
-
-        <button onclick="editRule(${idx})">Edit</button>
-
-        <button onclick="deleteRuleOld(${idx})">Delete</button>
-
-      </div>
-
-    `;
-
-    container.appendChild(div);
-
-  });
-
-}
-
-
-
-function renderQuickLinks(quickLinks) {
-
-  quickLinksState = quickLinks || [];
-
-  const container = document.getElementById('quickLinksContainer');
-
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  quickLinksState.forEach(q => {
-
-    const a = document.createElement('a');
-
-    a.href = q.url;
-
-    a.target = '_blank';
-
-    a.className = 'quick-link-pill';
-
-    a.textContent = q.name;
-
-    container.appendChild(a);
-
-  });
-
-}
-
-
-
-// CRUD HELPERS
-
-function getLinksLS() {
-
-  return JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-
-}
-
-function setLinksLS(links) {
-
-  localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
-
-}
-
-function getRulesLS() {
-
-  return JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-
-}
-
-function setRulesLS(rules) {
-
-  localStorage.setItem('rules_' + currentHubId, JSON.stringify(rules));
-
-}
-
-function getQuickLinksLS() {
-
-  return JSON.parse(localStorage.getItem('quickLinks_' + currentHubId) || '[]');
-
-}
-
-function setQuickLinksLS(ql) {
-
-  localStorage.setItem('quickLinks_' + currentHubId, JSON.stringify(ql));
-
-}
-
-
-
-// BUTTON ACTIONS
-
-function openAddLinkModal() {
-
-  const url = prompt('Destination URL');
-
-  if (!url) return;
-
-  const title = prompt('Title (optional)');
-
-  const links = getLinksLS();
-
-  links.push({ id: Date.now(), url, title });
-
-  setLinksLS(links);
-
-  renderLinks(links);
-
-}
-
-
-
-function addQuickLink() {
-
-  const name = prompt('Quick link label');
-
-  if (!name) return;
-
-  const url = prompt('Quick link URL');
-
-  if (!url) return;
-
-  const quickLinks = getQuickLinksLS();
-
-  quickLinks.push({ id: Date.now(), name, url });
-
-  setQuickLinksLS(quickLinks);
-
-  renderQuickLinks(quickLinks);
-
-}
-
-
-
-// ========================================
-
-// BUTTON FUNCTIONS (WORKING ✅)
-
-// ========================================
-
-function openSettings() {
-
-    alert('⚙️ Opening Settings Page...');
-
-}
-
-
-
-function openUsageStats() {
-
-    alert('📊 Opening Usage Statistics...');
-
-}
-
-
-
-function openHelp() {
-
-    alert('❓ Opening Help & Support...');
-
-}
-
-
 
 function toggleAuth() {
-
-    const btn = document.getElementById('authBtn');
-
-    
-
-    if (isLoggedIn) {
-
-        alert('✅ You have logged out!');
-
-        btn.textContent = 'Login';
-
-        isLoggedIn = false;
-
-        localStorage.removeItem('userLoggedIn');
-
-    } else {
-
-        showLoginModal();
-
-        isLoggedIn = true;
-
-        btn.textContent = '👤 Logout';
-
-        localStorage.setItem('userLoggedIn', 'true');
-
-    }
-
-}
-
-
-
-function showLoginModal(){
-
-  const html=`<div id="authModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;"><div style="background:#1a1a1a;border:2px solid #00ff41;border-radius:8px;padding:30px;text-align:center;color:#fff;"><h2>Login with</h2><button onclick="loginWith('Google')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">🔐 Google</button><button onclick="loginWith('GitHub')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">🐙 GitHub</button><button onclick="closeModal()" style="background:#666;color:#fff;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;">Cancel</button></div></div>`;
-
-  document.body.insertAdjacentHTML('beforeend',html);
-
-}
-
-
-
-function loginWith(provider){
-
-  isLoggedIn=true;
-
-  alert('✅ Logged in with '+provider);
-
-  closeModal();
-
-  const authBtn=document.getElementById('authBtn');
-
-  if(authBtn)authBtn.textContent='👤 Logout';
-
-}
-
-
-
-function closeModal(){
-
-  const modal=document.getElementById('authModal');
-
-  if(modal)modal.remove();
-
-}
-
-
-
-window.addEventListener('load', () => {
-
-    if (localStorage.getItem('userLoggedIn') === 'true') {
-
-        isLoggedIn = true;
-
-        const authBtn = document.getElementById('authBtn');
-
-        if(authBtn) authBtn.textContent = '👤 Logout';
-
-    }
-
-});
-
-
-
-// LINK / RULE EDITING
-
-function editLink(idx) {
-
-  const links = getLinksLS();
-
-  const link = links[idx];
-
-  if (!link) return;
-
-  const url = prompt('Update URL', link.url);
-
-  if (!url) return;
-
-  const title = prompt('Update Title', link.title || '');
-
-  links[idx] = { ...link, url, title };
-
-  setLinksLS(links);
-
-  renderLinks(links);
-
-}
-
-
-
-function deleteLink(idx) {
-
-  const links = getLinksLS();
-
-  links.splice(idx, 1);
-
-  setLinksLS(links);
-
-  renderLinks(links);
-
-}
-
-
-
-function editRule(idx) {
-
-  const rules = getRulesLS();
-
-  const rule = rules[idx];
-
-  if (!rule) return;
-
-  const type = prompt('Rule type (geo/time/device)', rule.type);
-
-  let updated = { ...rule, type };
-
-  if (type === 'device') {
-
-    const deviceType = prompt('Device type (desktop/mobile/tablet)', rule.deviceType || 'desktop');
-
-    updated.deviceType = deviceType;
-
-    updated.target = rule.target;
-
+  if (isLoggedIn) {
+    isLoggedIn = false;
+    localStorage.removeItem('userLoggedIn');
+    document.getElementById('authBtn').textContent = 'Login';
+    alert('✅ Logged out successfully');
   } else {
+    showLoginModal();
+  }
+}
 
-    const target = prompt('Target URL / value', rule.target || '');
+function showLoginModal() {
+  const html = `
+    <div id="authModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;">
+      <div style="background:#1a1a1a;border:2px solid #00ff41;border-radius:8px;padding:30px;text-align:center;color:#fff;">
+        <h2>Login with</h2>
+        <button onclick="loginWith('Google')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">🔐 Google</button>
+        <button onclick="loginWith('GitHub')" style="background:#00ff41;color:#000;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;font-weight:bold;">🐙 GitHub</button>
+        <button onclick="closeModal()" style="background:#666;color:#fff;border:none;padding:10px 20px;margin:10px;border-radius:4px;cursor:pointer;">Cancel</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
 
-    updated.target = target;
+function loginWith(provider) {
+  isLoggedIn = true;
+  localStorage.setItem('userLoggedIn', 'true');
+  alert('✅ Logged in with ' + provider);
+  closeModal();
+  document.getElementById('authBtn').textContent = '👤 Logout';
+}
 
-    delete updated.deviceType;
+function closeModal() {
+  const modal = document.getElementById('authModal');
+  if (modal) modal.remove();
+}
 
+function generateQRCode() {
+  const url = document.getElementById('publicUrl').textContent;
+  const container = document.getElementById('qrCodeContainer');
+  const btn = document.getElementById('genQRBtn');
+  const downloadBtn = document.getElementById('downloadQRBtn');
+
+  if (container.style.display === 'block') {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    if (btn) btn.textContent = 'Generate QR Code';
+    if (downloadBtn) downloadBtn.style.display = 'none';
+    return;
   }
 
-  rules[idx] = updated;
-
-  setRulesLS(rules);
-
-  renderRules(rules);
-
+  container.innerHTML = '';
+  qrCodeInstance = new QRCode(container, { text: url, width: 200, height: 200 });
+  container.style.display = 'block';
+  if (btn) btn.textContent = 'Close QR Code';
+  if (downloadBtn) downloadBtn.style.display = 'block';
 }
 
-
-
-function deleteRuleOld(idx) {
-
-  const rules = getRulesLS();
-
-  rules.splice(idx, 1);
-
-  setRulesLS(rules);
-
-  renderRules(rules);
-
-}
-
-
-
-function updateAnalytics(stats,links){
-
-  const clicksEl=document.getElementById('statClicks');
-
-  const visitsEl=document.getElementById('statVisits');
-
-  const conversionEl=document.getElementById('statConversion');
-
-  const ctrEl=document.getElementById('statAvgCTR');
-
-  if(clicksEl)clicksEl.textContent=(stats?.totalClicks||0);
-
-  if(visitsEl)visitsEl.textContent=(stats?.totalVisits||0);
-
-  if(conversionEl){
-
-    const conversion=stats?.totalVisits>0?(stats.totalClicks/stats.totalVisits*100).toFixed(1):'0';
-
-    conversionEl.textContent=conversion+'%';
-
+function downloadQRCode() {
+  const canvas = document.querySelector('#qrCodeContainer canvas');
+  if (canvas) {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL();
+    link.download = 'qrcode.png';
+    link.click();
   }
-
-  if(ctrEl)ctrEl.textContent=(stats?.avgCTR||'0')+'%';
-
 }
 
+function copyUrl() {
+  const url = document.getElementById('publicUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    alert('✅ URL copied to clipboard!');
+  });
+}
 
+function showRuleOptions() {
+  const type = document.getElementById('ruleType').value;
+  document.getElementById('deviceTypeDiv').style.display = type === 'device' ? 'block' : 'none';
+  document.getElementById('locationDiv').style.display = type === 'location' ? 'block' : 'none';
+  document.getElementById('timeDiv').style.display = type === 'time' ? 'block' : 'none';
+}
 
-// ========================================
+function addRule() {
+  const type = document.getElementById('ruleType').value;
+  if (!type) return alert('Select rule type');
+  
+  let value = '';
+  if (type === 'device') value = document.getElementById('deviceType').value;
+  if (type === 'location') value = document.getElementById('locationInput').value;
+  if (type === 'time') value = `${document.getElementById('startTime').value}-${document.getElementById('endTime').value}`;
+  
+  const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
+  rules.push({ id: Date.now(), type, value });
+  localStorage.setItem('rules_' + currentHubId, JSON.stringify(rules));
+  loadData();
+}
 
-// EXPORT & ANALYTICS FUNCTIONS (WORKING ✅)
+function renderRules(rules) {
+  const container = document.getElementById('rulesList');
+  if (!container) return;
+  container.innerHTML = rules.length ? '' : '<div class="empty-state">No rules yet</div>';
+  rules.forEach(r => {
+    const div = document.createElement('div');
+    div.style = 'background:#1a1a1a; padding:10px; margin-bottom:5px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;';
+    div.innerHTML = `<span>${r.type}: ${r.value}</span> <button onclick="deleteRule(${r.id})" style="background:#ff4444; border:none; color:#fff; padding:5px 10px; border-radius:4px; cursor:pointer;">Delete</button>`;
+    container.appendChild(div);
+  });
+}
 
-// ========================================
+function deleteRule(id) {
+  let rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
+  rules = rules.filter(r => r.id !== id);
+  localStorage.setItem('rules_' + currentHubId, JSON.stringify(rules));
+  loadData();
+}
+
+function renderLinks(links) {
+  const container = document.getElementById('linksList');
+  if (!container) return;
+  container.innerHTML = links.length ? '' : '<div class="empty-state">No links added</div>';
+  links.forEach(l => {
+    const div = document.createElement('div');
+    div.className = 'link-card';
+    div.innerHTML = `<div class="link-card-title">${l.title || l.url}</div><div style="font-size:12px; color:#888;">${l.url}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderQuickLinks(qls) {
+  const container = document.getElementById('quickLinksContainer');
+  if (!container) return;
+  container.innerHTML = qls.length ? '' : '<div class="empty-state">No quick links yet</div>';
+  qls.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'quick-link';
+    div.innerHTML = `<div class="quick-link-icon">🔗</div><div class="quick-link-name">${q.name}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function addQuickLink() {
+  const name = prompt('Enter link name:');
+  const url = prompt('Enter URL:');
+  if (name && url) {
+    const qls = JSON.parse(localStorage.getItem('quickLinks_' + currentHubId) || '[]');
+    qls.push({ name, url });
+    localStorage.setItem('quickLinks_' + currentHubId, JSON.stringify(qls));
+    loadData();
+  }
+}
+
+function openAddLinkModal() {
+  const url = prompt('Enter Destination URL:');
+  const title = prompt('Enter Title:');
+  if (url) {
+    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+    links.push({ url, title });
+    localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
+    loadData();
+  }
+}
+
+function updateAnalytics(stats) {
+  document.getElementById('statClicks').textContent = stats.totalClicks || 0;
+  document.getElementById('statVisits').textContent = stats.totalVisits || 0;
+}
 
 function exportReport(format) {
-
-    const links = JSON.parse(localStorage.getItem('links_'+currentHubId) || '[]');
-
-    const stats = JSON.parse(localStorage.getItem('stats_'+currentHubId) || '{"totalClicks": 0}');
-
-    const hubId = currentHubId;
-
-    
-
-    const reportData = {
-
-        hubId: hubId,
-
-        exportDate: new Date().toLocaleDateString(),
-
-        exportTime: new Date().toLocaleTimeString(),
-
-        totalClicks: stats.totalClicks || 0,
-
-        totalVisits: stats.totalVisits || 0,
-
-        totalLinks: links.length,
-
-        topLinks: links.slice(0, 10).map(l => ({
-
-            title: l.title,
-
-            url: l.url,
-
-            clicks: l.clicks || 0,
-
-            priority: l.priority || 0
-
-        }))
-
-    };
-
-    
-
-    if (format === 'csv') {
-
-        generateCSVReport(reportData);
-
-    } else if (format === 'json') {
-
-        generateJSONReport(reportData);
-
-    } else if (format === 'html') {
-
-        generateHTMLReport(reportData);
-
-    }
-
-}
-
-
-
-function generateCSVReport(data) {
-
-    let csv = 'Smart Link Hub - Report\n';
-
-    csv += `Hub ID,${data.hubId}\n`;
-
-    csv += `Export Date,${data.exportDate}\n`;
-
-    csv += `Export Time,${data.exportTime}\n`;
-
-    csv += '\n';
-
-    csv += 'STATISTICS\n';
-
-    csv += `Total Clicks,${data.totalClicks}\n`;
-
-    csv += `Total Visits,${data.totalVisits}\n`;
-
-    csv += `Total Links,${data.totalLinks}\n`;
-
-    csv += '\n';
-
-    csv += 'TOP LINKS\n';
-
-    csv += 'Link Title,URL,Clicks,Priority\n';
-
-    
-
-    data.topLinks.forEach(link => {
-
-        csv += `"${link.title}","${link.url}",${link.clicks},${link.priority}\n`;
-
-    });
-
-    
-
-    downloadFile(csv, 'hub-report.csv', 'text/csv');
-
-    alert('✅ CSV Report exported successfully!');
-
-}
-
-
-
-function generateJSONReport(data) {
-
-    const jsonContent = JSON.stringify(data, null, 2);
-
-    downloadFile(jsonContent, 'hub-report.json', 'application/json');
-
-    alert('✅ JSON Report exported successfully!');
-
-}
-
-
-
-function generateHTMLReport(data) {
-
-    let html = `
-
-        <!DOCTYPE html>
-
-        <html>
-
-        <head>
-
-            <title>Smart Link Hub Report</title>
-
-            <style>
-
-                body { font-family: Arial; margin: 20px; background: #f5f5f5; }
-
-                h1 { color: #00ff41; }
-
-                .stat { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #00ff41; }
-
-                table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-
-                th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-
-                th { background: #00ff41; color: black; }
-
-                tr:nth-child(even) { background: #f9f9f9; }
-
-            </style>
-
-        </head>
-
-        <body>
-
-            <h1>📊 Smart Link Hub - Analytics Report</h1>
-
-            <p><strong>Hub ID:</strong> ${data.hubId}</p>
-
-            <p><strong>Generated:</strong> ${data.exportDate} at ${data.exportTime}</p>
-
-            
-
-            <h2>📈 Statistics</h2>
-
-            <div class="stat">
-
-                <strong>Total Clicks:</strong> ${data.totalClicks}
-
-            </div>
-
-            <div class="stat">
-
-                <strong>Total Visits:</strong> ${data.totalVisits}
-
-            </div>
-
-            <div class="stat">
-
-                <strong>Total Links:</strong> ${data.totalLinks}
-
-            </div>
-
-            
-
-            <h2>🔗 Top Links</h2>
-
-            <table>
-
-                <tr>
-
-                    <th>Link Title</th>
-
-                    <th>URL</th>
-
-                    <th>Clicks</th>
-
-                    <th>Priority</th>
-
-                </tr>
-
-                ${data.topLinks.map(link => `
-
-                    <tr>
-
-                        <td>${link.title}</td>
-
-                        <td>${link.url}</td>
-
-                        <td>${link.clicks}</td>
-
-                        <td>${link.priority}/10</td>
-
-                    </tr>
-
-                `).join('')}
-
-            </table>
-
-            
-
-            <p style="margin-top: 30px; color: #888; font-size: 12px;">
-
-                Report generated by Smart Link Hub on ${new Date().toString()}
-
-            </p>
-
-        </body>
-
-        </html>
-
-    `;
-
-    
-
-    downloadFile(html, 'hub-report.html', 'text/html');
-
-    alert('✅ HTML Report exported successfully!');
-
-}
-
-
-
-function exportAnalytics(type) {
-
-    const links = JSON.parse(localStorage.getItem('links_'+currentHubId) || '[]');
-
-    const stats = JSON.parse(localStorage.getItem('stats_'+currentHubId) || '{}');
-
-    
-
-    const analyticsData = {
-
-        exportType: type,
-
-        timestamp: new Date().toISOString(),
-
-        totalClicks: stats.totalClicks || 0,
-
-        totalLinks: links.length,
-
-        links: links.slice(0, 10)
-
-    };
-
-    
-
-    if (type.includes('json')) {
-
-        downloadFile(JSON.stringify(analyticsData, null, 2), `analytics-${type}.json`, 'application/json');
-
-    } else {
-
-        generateAnalyticsCSV(analyticsData, type);
-
-    }
-
-    
-
-    alert(`✅ Analytics exported as ${type.toUpperCase()}!`);
-
-}
-
-
-
-function generateAnalyticsCSV(data, type) {
-
-    let csv = `Analytics Export - ${type.toUpperCase()}\n`;
-
-    csv += `Generated: ${new Date().toLocaleDateString()}\n`;
-
-    csv += '\n';
-
-    csv += 'SUMMARY\n';
-
-    csv += `Total Clicks,${data.totalClicks}\n`;
-
-    csv += `Total Links,${data.totalLinks}\n`;
-
-    csv += '\n';
-
-    csv += 'LINKS BREAKDOWN\n';
-
-    csv += 'Title,URL,Clicks\n';
-
-    
-
-    data.links.forEach(link => {
-
-        csv += `"${link.title}","${link.url}",${link.clicks || 0}\n`;
-
-    });
-
-    
-
-    downloadFile(csv, `analytics-${type}.csv`, 'text/csv');
-
-}
-
-
-
-function downloadFile(content, filename, contentType) {
-
-    const blob = new Blob([content], { type: contentType });
-
+  const data = {
+    hubId: currentHubId,
+    links: JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]'),
+    rules: JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]'),
+    stats: JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{}')
+  };
+  
+  if (format === 'json') {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-
-    link.href = url;
-
-    link.download = filename;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
-
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'analytics.json';
+    a.click();
+  } else if (format === 'csv') {
+    let csv = 'Type,ID,Value
+';
+    data.links.forEach(l => csv += `Link,${l.url},${l.title}
+`);
+    data.rules.forEach(r => csv += `Rule,${r.type},${r.value}
+`);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'analytics.csv';
+    a.click();
+  } else {
+    alert('Exporting ' + format + '...');
+  }
 }
+
+function openSettings() { alert('⚙️ Settings opened'); }
+function openUsageStats() { alert('📊 Usage stats opened'); }
+function openHelp() { alert('❓ Help opened'); }
