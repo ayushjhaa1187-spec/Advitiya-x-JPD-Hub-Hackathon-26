@@ -3,8 +3,7 @@
 
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000'
-  : 'https://advitiya.jpdlab.co.in'; // Production URL
-class APIService {
+    : 'https://advitiya-x-jpd-hub-hackathon-26.onrender.com'; // Production URLclass APIService {
   constructor() {
     this.token = localStorage.getItem('authToken');
   }
