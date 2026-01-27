@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Link Hub - Your All-in-One Link Management Platform</title>
-  <meta name="description" content="Create smart links, track analytics, generate QR codes. The ultimate link management platform for creators and businesses.">
+  <meta name="description" content="Create, manage, and track your links with ease. Free forever.">
   <style>
     * {
       margin: 0;
@@ -27,6 +27,11 @@
       color: #F9FAFB;
       overflow-x: hidden;
     }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
     /* Navigation */
     nav {
       background: #020617;
@@ -48,7 +53,6 @@
       font-size: 1.5rem;
       font-weight: bold;
       color: var(--primary);
-      text-decoration: none;
     }
     .nav-links {
       display: flex;
@@ -56,7 +60,6 @@
       align-items: center;
     }
     .nav-links a {
-      text-decoration: none;
       color: #E5E7EB;
       font-weight: 500;
       font-size: 0.95rem;
@@ -66,6 +69,7 @@
       color: var(--primary);
       opacity: 0.9;
     }
+
     .btn {
       padding: 0.6rem 1.2rem;
       border-radius: 999px;
@@ -73,7 +77,6 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      text-decoration: none;
       display: inline-block;
       font-size: 0.9rem;
     }
@@ -96,156 +99,159 @@
       background: #111827;
     }
 
-    /* Page layout */
+    /* Layout */
     .page {
       max-width: 1200px;
       margin: 2.5rem auto 3rem;
       padding: 0 2rem;
     }
 
-    /* Hero styled like analytics header */
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+    /* Hero section */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
     }
-    .page-title {
-      font-size: 2.3rem;
-      font-weight: 700;
+    .hero-eyebrow {
+      font-size: 0.9rem;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
     }
-    .page-subtitle {
+    .hero-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
       color: var(--muted);
-      margin-top: 0.35rem;
       max-width: 520px;
-      font-size: 0.95rem;
+      margin: 0 auto 1.5rem;
     }
-    .page-actions {
+    .hero-actions {
       display: flex;
+      justify-content: center;
       gap: 0.75rem;
       flex-wrap: wrap;
+      margin-bottom: 2rem;
     }
 
-    /* Two-column hero content */
-    .grid-2 {
+    /* Cards / panels base */
+    .section {
+      margin-bottom: 2.5rem;
+    }
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 1.3rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid #111827;
+      padding: 1.3rem 1.3rem 1.4rem;
+    }
+    .card-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .card-text {
+      font-size: 0.9rem;
+      color: #D1D5DB;
+    }
+
+    /* About section */
+    .about-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
       gap: 1.5rem;
       align-items: flex-start;
     }
-
-    .panel {
+    .about-block {
       background: #020617;
       border-radius: 1rem;
       border: 1px solid #111827;
-      padding: 1.4rem 1.4rem 1.5rem;
+      padding: 1.4rem;
     }
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
+    .about-heading {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
     }
-    .panel-title {
-      font-size: 1rem;
-      font-weight: 600;
-    }
-    .panel-tag {
-      font-size: 0.75rem;
-      color: #9CA3AF;
-      border-radius: 999px;
-      border: 1px solid #1F2937;
-      padding: 0.15rem 0.6rem;
-    }
-    .panel-subtitle {
-      font-size: 0.85rem;
-      color: #9CA3AF;
-      margin-bottom: 1rem;
-    }
-
-    .feature-list {
-      display: grid;
-      gap: 0.6rem;
+    .about-text {
       font-size: 0.9rem;
-      color: #E5E7EB;
+      color: #D1D5DB;
+      margin-bottom: 0.7rem;
     }
-    .feature-item {
-      display: flex;
-      gap: 0.5rem;
-      align-items: flex-start;
-    }
-    .feature-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--primary);
-      margin-top: 0.4rem;
-    }
-
-    /* Right side “preview” styled like chart card */
-    .preview-placeholder {
-      height: 220px;
-      border-radius: 0.9rem;
-      border: 1px dashed #1F2937;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      color: #6B7280;
-      background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.06), transparent);
-      text-align: center;
-      padding: 0 1rem;
-    }
-
-    /* Simple “How it works” section using same cards */
-    .section-title {
-      font-size: 1.1rem;
+    .about-label {
+      font-size: 0.9rem;
       font-weight: 600;
-      margin-bottom: 0.8rem;
-    }
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1rem;
-    }
-    .step-number {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9CA3AF;
+      margin-top: 0.6rem;
       margin-bottom: 0.2rem;
     }
-    .step-heading {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
+    .about-list {
+      font-size: 0.9rem;
+      color: #D1D5DB;
+      list-style: none;
     }
-    .step-text {
-      font-size: 0.85rem;
-      color: #9CA3AF;
+    .about-list li::before {
+      content: "• ";
+      color: var(--primary);
     }
 
-    /* Footer strip */
-    .page-footer {
-      margin-top: 2rem;
-      font-size: 0.75rem;
+    /* CTA section */
+    .cta {
+      text-align: center;
+      padding: 1.7rem 1.4rem;
+      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid #111827;
+      margin-bottom: 2rem;
+    }
+    .cta-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .cta-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 1rem;
+      font-size: 0.8rem;
       color: #6B7280;
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      text-align: center;
       border-top: 1px solid #111827;
-      padding-top: 0.9rem;
+      padding: 0.9rem 1rem 1.2rem;
     }
 
     @media (max-width: 900px) {
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .grid-2 {
+      .about-layout {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -256,17 +262,21 @@
       .page {
         padding: 0 1.25rem;
       }
+      .hero-title {
+        font-size: 2.1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Nav -->
   <nav>
     <div class="nav-container">
       <a href="landing.html" class="logo">🔗 Smart Link Hub</a>
       <div class="nav-links">
         <a href="analytics.html">Analytics</a>
-        <a href="#how-it-works">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
         <a href="login.html" class="btn btn-secondary">Sign In</a>
         <a href="auth.html" class="btn btn-primary">Get Started</a>
       </div>
@@ -274,101 +284,139 @@
   </nav>
 
   <main class="page">
-    <!-- Hero (same layout style as analytics header) -->
-    <header class="page-header">
-      <div>
-        <h1 class="page-title">One hub for all your links.</h1>
-        <p class="page-subtitle">
-          Create smart links, add rules, and track every click in a clean analytics view.
-          Built for hackathon projects, creators, and teams who want a modern link experience.
-        </p>
-      </div>
-      <div class="page-actions">
-        <a href="auth.html" class="btn btn-primary">Create your first link</a>
-        <a href="analytics.html" class="btn btn-secondary">View analytics demo</a>
-      </div>
-    </header>
-
-    <!-- Two-column section (cards styled like analytics panels) -->
-    <section class="grid-2">
-      <!-- Left card: features -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Why Smart Link Hub?</h2>
-          <span class="panel-tag">Live link management</span>
-        </div>
-        <p class="panel-subtitle">
-          Use the same clean, dark UI as your analytics page, but focused on creating and organizing links.
-        </p>
-        <div class="feature-list">
-          <div class="feature-item">
-            <span class="feature-dot"></span>
-            <div>Shorten any long URL into a neat branded link.</div>
-          </div>
-          <div class="feature-item">
-            <span class="feature-dot"></span>
-            <div>Add smart rules for devices, campaigns, or time-based redirects.</div>
-          </div>
-          <div class="feature-item">
-            <span class="feature-dot"></span>
-            <div>Generate QR codes and share anywhere in one click.</div>
-          </div>
-          <div class="feature-item">
-            <span class="feature-dot"></span>
-            <div>Preview performance quickly, then jump into full analytics.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right card: preview -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Live preview</h2>
-          <span class="panel-tag">Instant feedback</span>
-        </div>
-        <p class="panel-subtitle">
-          This block mirrors the analytics chart style so your homepage feels part of the same product.
-        </p>
-        <div class="preview-placeholder">
-          <div>Preview of how your smart link activity will appear once you start sharing.</div>
-          <div style="margin-top:0.4rem; font-size:0.8rem; color:#9CA3AF;">
-            Connect this area to your real dashboard cards later.
-          </div>
-        </div>
+    <!-- Hero: One Smart Link. Unlimited Possibilities. -->
+    <section class="hero">
+      <div class="hero-eyebrow">Smart Link Hub</div>
+      <h1 class="hero-title">One Smart Link. Unlimited Possibilities.</h1>
+      <p class="hero-subtitle">
+        Create, manage, and track your links with ease. Free forever.
+      </p>
+      <div class="hero-actions">
+        <a href="auth.html" class="btn btn-primary">Shorten It</a>
+        <a href="analytics.html" class="btn btn-secondary">View Analytics</a>
       </div>
     </section>
 
-    <!-- How it works section -->
-    <section id="how-it-works" style="margin-top: 2rem;">
-      <h2 class="section-title">How it works</h2>
-      <div class="steps-grid">
-        <div class="panel">
-          <div class="step-number">Step 1</div>
-          <div class="step-heading">Paste your destination link</div>
-          <p class="step-text">
-            Add any URL you want to track. Smart Link Hub generates a short link instantly.
+    <!-- Features: Everything You Need -->
+    <section id="features" class="section">
+      <h2 class="section-title">Everything You Need</h2>
+      <p class="section-subtitle">Powerful features for modern link management</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Lightning Fast</div>
+          <p class="card-text">
+            Shorten links in milliseconds with our optimized infrastructure.
           </p>
         </div>
-        <div class="panel">
-          <div class="step-number">Step 2</div>
-          <div class="step-heading">Add smart rules</div>
-          <p class="step-text">
-            Configure device, campaign, or time-based routing so each user lands on the best page.
+
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Real-Time Analytics</div>
+          <p class="card-text">
+            Track clicks, locations, devices, and more with detailed analytics.
           </p>
         </div>
-        <div class="panel">
-          <div class="step-number">Step 3</div>
-          <div class="step-heading">Share and analyze</div>
-          <p class="step-text">
-            Share the link everywhere and open the Analytics page to see performance in real time.
+
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <div class="card-title">Secure & Reliable</div>
+          <p class="card-text">
+            Your links are protected with enterprise-grade security.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📄</div>
+          <div class="card-title">QR Codes</div>
+          <p class="card-text">
+            Auto-generate QR codes for every link you create.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🎯</div>
+          <div class="card-title">Custom Links</div>
+          <p class="card-text">
+            Create branded short links with custom slugs.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">No Limits</div>
+          <p class="card-text">
+            Unlimited links, clicks, and analytics. Forever free.
           </p>
         </div>
       </div>
     </section>
 
-    <footer class="page-footer">
-      <span>Smart Link Hub · Advitiya x JPD Hub Hackathon 2026</span>
-      <span>Homepage shares the same modern theme as your analytics experience.</span>
+    <!-- About Smart Link Hub -->
+    <section id="about" class="section">
+      <h2 class="section-title">About Smart Link Hub</h2>
+      <p class="section-subtitle">
+        Smart Link Hub is an innovative link management platform developed for the Advitiya x JPD Hub Hackathon 2026.
+      </p>
+
+      <div class="about-layout">
+        <div class="about-block">
+          <h3 class="about-heading">Our Mission</h3>
+          <p class="about-text">
+            🎯 Our Mission: To provide a free, powerful, and user-friendly link management solution that empowers
+            creators, businesses, and individuals to maximize their online presence.
+          </p>
+
+          <h3 class="about-heading">Innovation</h3>
+          <p class="about-text">
+            💡 Innovation: Built with cutting-edge technology including Node.js, Express, PostgreSQL, and a smart rules
+            engine to automate link management based on your custom criteria.
+          </p>
+
+          <h3 class="about-heading">Features</h3>
+          <p class="about-text">
+            🚀 Features: From URL shortening to QR code generation, real-time analytics, and custom branded links – we
+            offer everything you need in one comprehensive platform.
+          </p>
+        </div>
+
+        <div class="about-block">
+          <h3 class="about-heading">Community & Hackathon</h3>
+          <p class="about-text">
+            🌟 Community: Developed as part of the hackathon initiative to showcase innovation, collaboration, and the
+            power of open-source development.
+          </p>
+
+          <div class="about-label">Tech Stack Highlights</div>
+          <ul class="about-list">
+            <li>Node.js + Express backend</li>
+            <li>PostgreSQL for reliable data storage</li>
+            <li>Smart rules engine for advanced redirect logic</li>
+            <li>Modern frontend with a dark analytics-inspired UI</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA: Ready to Get Started? -->
+    <section class="cta">
+      <h2 class="cta-title">Ready to Get Started?</h2>
+      <p class="cta-subtitle">
+        Join thousands of users managing their links smarter.
+      </p>
+      <a
+        href="https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/auth.html"
+        class="btn btn-primary"
+      >
+        Create Free Account
+      </a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div>© 2026 Smart Link Hub. Made for Advitiya x JPD Hub Hackathon.</div>
+      <div>All Rights Reserved.</div>
     </footer>
   </main>
 </body>
