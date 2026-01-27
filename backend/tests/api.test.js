@@ -1,3 +1,18 @@
+/**
+ * API Integration Tests
+ * 
+ * Comprehensive unit and integration tests for all API endpoints.
+ * Tests cover:
+ * - Authentication endpoints (register, login)
+ * - Hub management (CRUD operations)
+ * - Link operations with Smart Rules
+ * - Analytics tracking
+ * - Error handling and validation
+ * 
+ * Framework: Jest with Supertest
+ * Run: npm test
+ */
+
 const request = require('supertest');
 const app = require('../src/app');
 
