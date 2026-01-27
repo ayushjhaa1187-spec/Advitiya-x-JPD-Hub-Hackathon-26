@@ -57,8 +57,7 @@ function showDashboard() {
 // Tab switching function
 function switchTab(tabName) {
     // Hide all tabs
-    document.querySelectorAll('[id*="Tab-content"]').forEach(tab => {
-        tab.classList.remove('active');
+    document.querySelectorAll('[id$="-content"]').forEach(tab => {        tab.classList.remove('active');
     });
 
     // Deactivate all buttons
