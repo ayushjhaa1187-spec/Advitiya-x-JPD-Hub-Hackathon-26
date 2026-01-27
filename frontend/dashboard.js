@@ -76,8 +76,7 @@ function switchTab(tabName) {
   event.target.classList.add('active');
 }
 
-const API_BASE_URL = "https://advitiya.jpdlab.co.in/api";
-
+const API_BASE_URL = "https://advitiya-x-jpd-hub-hackathon-26.onrender.com/api";
 document.addEventListener("DOMContentLoaded", () => {
   const statTotalLinks = document.getElementById("stat-total-links");
   const statTodayClicks = document.getElementById("stat-today-clicks");
