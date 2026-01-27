@@ -131,5 +131,161 @@ router.post('/login', async (req, res) => {
     });
   }
 });
+// Google OAuth initiation
+router.get('/oauth/google', (req, res) => {
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+    `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
+    `redirect_uri=${process.env.BACKEND_URL}/api/auth/oauth/google/callback&` +
+    `response_type=code&` +
+    `scope=openid%20email%20profile&` +
+    `access_type=offline&` +
+    `prompt=consent`;
+  
+  res.redirect(googleAuthUrl);
+});
+
+// Google OAuth callback
+router.get('/oauth/google/callback', async (req, res) => {
+  const { code } = req.query;
+  
+  if (!code) {
+    return res.redirect(`${process.env.FRONTEND_URL}/auth.html?error=oauth_failed`);
+  }
+
+  try {
+    // Exchange code for tokens
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: `${process.env.BACKEND_URL}/api/auth/oauth/google/callback`,
+        grant_type: 'authorization_code'
+      })
+    });
+
+    const tokens = await tokenResponse.json();
+    
+    // Get user info
+    const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${tokens.access_token}` }
+    });
+    
+    const userInfo = await userInfoResponse.json();
+    
+    // Check if user exists
+    let user = await pool.query('SELECT * FROM users WHERE email = $1', [userInfo.email]);
+    
+    if (user.rows.length === 0) {
+      // Create new user
+      const result = await pool.query(
+        'INSERT INTO users (email, name, oauth_provider, oauth_id) VALUES ($1, $2, $3, $4) RETURNING *',
+        [userInfo.email, userInfo.name, 'google', userInfo.id]
+      );
+      user = result;
+    }
+    
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.rows[0].id, email: user.rows[0].email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    // Redirect to frontend with token
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard.html?token=${token}`);
+    
+  } catch (error) {
+    console.error('Google OAuth error:', error);
+    res.redirect(`${process.env.FRONTEND_URL}/auth.html?error=oauth_failed`);
+  }
+});
+
+// GitHub OAuth initiation
+router.get('/oauth/github', (req, res) => {
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?` +
+    `client_id=${process.env.GITHUB_CLIENT_ID}&` +
+    `redirect_uri=${process.env.BACKEND_URL}/api/auth/oauth/github/callback&` +
+    `scope=user:email`;
+  
+  res.redirect(githubAuthUrl);
+});
+
+// GitHub OAuth callback
+router.get('/oauth/github/callback', async (req, res) => {
+  const { code } = req.query;
+  
+  if (!code) {
+    return res.redirect(`${process.env.FRONTEND_URL}/auth.html?error=oauth_failed`);
+  }
+
+  try {
+    // Exchange code for access token
+    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+        redirect_uri: `${process.env.BACKEND_URL}/api/auth/oauth/github/callback`
+      })
+    });
+
+    const tokens = await tokenResponse.json();
+    
+    // Get user info
+    const userInfoResponse = await fetch('https://api.github.com/user', {
+      headers: { 
+        'Authorization': `Bearer ${tokens.access_token}`,
+        'User-Agent': 'Smart-Link-Hub'
+      }
+    });
+    
+    const userInfo = await userInfoResponse.json();
+    
+    // Get user email
+    const emailResponse = await fetch('https://api.github.com/user/emails', {
+      headers: { 
+        'Authorization': `Bearer ${tokens.access_token}`,
+        'User-Agent': 'Smart-Link-Hub'
+      }
+    });
+    
+    const emails = await emailResponse.json();
+    const primaryEmail = emails.find(e => e.primary)?.email;
+    
+    // Check if user exists
+    let user = await pool.query('SELECT * FROM users WHERE email = $1', [primaryEmail]);
+    
+    if (user.rows.length === 0) {
+      // Create new user
+      const result = await pool.query(
+        'INSERT INTO users (email, name, oauth_provider, oauth_id) VALUES ($1, $2, $3, $4) RETURNING *',
+        [primaryEmail, userInfo.name || userInfo.login, 'github', userInfo.id.toString()]
+      );
+      user = result;
+    }
+    
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.rows[0].id, email: user.rows[0].email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    // Redirect to frontend with token
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard.html?token=${token}`);
+    
+  } catch (error) {
+    console.error('GitHub OAuth error:', error);
+    res.redirect(`${process.env.FRONTEND_URL}/auth.html?error=oauth_failed`);
+  }
+});
 
 module.exports = router;
