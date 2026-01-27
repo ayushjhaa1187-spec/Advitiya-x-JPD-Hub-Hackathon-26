@@ -1,93 +1,450 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Link Hub – Analysis</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Link Hub - Analytics</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #10B981;
+      --primary-dark: #059669;
+      --secondary: #10B981;
+      --dark: #000000;
+      --light: #111827;
+      --border: #1F2933;
+      --muted: #9CA3AF;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      background: var(--dark);
+      color: #F9FAFB;
+      overflow-x: hidden;
+    }
+
+    /* Navigation (same as landing/dashboard) */
+    nav {
+      background: #020617;
+      padding: 1rem 0;
+      border-bottom: 1px solid #111827;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #E5E7EB;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s, opacity 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      opacity: 0.9;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #020617;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #E5E7EB;
+      border: 1px solid #374151;
+    }
+
+    .btn-secondary:hover {
+      border-color: #6B7280;
+      background: #111827;
+    }
+
+    /* Page layout */
+    .page {
+      max-width: 1200px;
+      margin: 2.5rem auto 3rem;
+      padding: 0 2rem;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      margin-top: 0.25rem;
+      max-width: 520px;
+      font-size: 0.95rem;
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+    }
+
+    .filter-label {
+      color: #9CA3AF;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .filters select,
+    .filters input[type="date"] {
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid #1F2937;
+      padding: 0.5rem 0.8rem;
+      color: #E5E7EB;
+      font-size: 0.85rem;
+      min-width: 0;
+    }
+
+    .filters select:focus,
+    .filters input[type="date"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Cards / layout */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .panel {
+      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid #111827;
+      padding: 1.4rem 1.4rem 1.5rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .panel-tag {
+      font-size: 0.75rem;
+      color: #9CA3AF;
+      border-radius: 999px;
+      border: 1px solid #1F2937;
+      padding: 0.15rem 0.6rem;
+    }
+
+    .panel-subtitle {
+      font-size: 0.85rem;
+      color: #9CA3AF;
+      margin-bottom: 1rem;
+    }
+
+    .chart-placeholder {
+      height: 220px;
+      border-radius: 0.9rem;
+      border: 1px dashed #1F2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #6B7280;
+      background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.06), transparent);
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead {
+      background: #020617;
+    }
+
+    th, td {
+      padding: 0.6rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #111827;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9CA3AF;
+    }
+
+    tbody tr:hover {
+      background: #020617;
+    }
+
+    .cell-muted {
+      color: #6B7280;
+      font-size: 0.8rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #4B5563;
+      color: #E5E7EB;
+    }
+
+    .badge-green {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    /* Footer strip */
+    .page-footer {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #6B7280;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-top: 1px solid #111827;
+      padding-top: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;
+      }
+
+      .page {
+        padding: 0 1.25rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="navbar-logo">LinkHub</div>
-    <ul class="navbar-links">
-      <li><a href="./dashboard.html">Dashboard</a></li>
-      <li><a href="./analysis.html" class="active">Analysis</a></li>
-      <li><a href="./public.html">Public Page</a></li>
-    </ul>
-    <div class="navbar-auth">
-      <button id="btn-google-signup" class="btn secondary">
-        <i class="ri-google-fill"></i> Sign up with Google
-      </button>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="landing.html" class="logo">🔗 Smart Link Hub</a>
+      <div class="nav-links">
+        <a href="index.html">Dashboard</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="landing.html#about">About</a>
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+        <a href="auth.html" class="btn btn-primary">Get Started</a>
+      </div>
     </div>
   </nav>
 
-  <main class="main">
-    <section class="panel">
-      <header class="panel-header">
-        <h1>Analytics & Insights</h1>
-        <p>Explore performance across devices, dates, and links.</p>
-      </header>
+  <main class="page">
+    <!-- Header -->
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Analytics & Insights</h1>
+        <p class="page-subtitle">
+          Explore performance across devices, locations, and time. These insights are powered by the same data that powers your dashboard cards.
+        </p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary" id="refreshBtn">Refresh stats</button>
+        <button class="btn btn-primary" id="exportBtn">Export CSV</button>
+      </div>
+    </header>
 
-      <div class="panel-body">
-        <!-- Filters -->
-        <div class="filters">
-          <div>
-            <label for="filter-device">Device type</label>
-            <select id="filter-device">
-              <option value="">All</option>
-              <option value="mobile">Mobile</option>
-              <option value="desktop">Desktop</option>
-              <option value="tablet">Tablet</option>
-            </select>
-          </div>
-          <div>
-            <label for="filter-from">
-              From
-              <i class="ri-calendar-line"></i>
-            </label>
-            <input type="date" id="filter-from" />
-          </div>
-          <div>
-            <label for="filter-to">
-              To
-              <i class="ri-calendar-line"></i>
-            </label>
-            <input type="date" id="filter-to" />
-          </div>
-          <button id="btn-apply-filters" class="btn primary">
-            Apply filters
-          </button>
-        </div>
+    <!-- Filters -->
+    <section class="filters">
+      <div class="filter-group">
+        <span class="filter-label">Device</span>
+        <select id="filter-device">
+          <option value="">All devices</option>
+          <option value="mobile">Mobile</option>
+          <option value="desktop">Desktop</option>
+          <option value="tablet">Tablet</option>
+        </select>
+      </div>
 
-        <!-- 7) BUTTONS UNDER ANALYSIS -->
-        <div class="analysis-actions">
-          <button id="btn-refresh-stats" class="btn secondary">
-            <i class="ri-refresh-line"></i> Refresh stats
-          </button>
-          <button id="btn-export-csv" class="btn secondary">
-            <i class="ri-file-download-line"></i> Export CSV
-          </button>
-        </div>
+      <div class="filter-group">
+        <span class="filter-label">From</span>
+        <input type="date" id="filter-from">
+      </div>
 
-        <!-- Table -->
-        <table class="table" id="table-analysis">
-          <thead>
-            <tr>
-              <th>Link</th>
-              <th>Device</th>
-              <th>Date</th>
-              <th>Clicks</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-analysis">
-            <!-- Filled by JS -->
-          </tbody>
-        </table>
+      <div class="filter-group">
+        <span class="filter-label">To</span>
+        <input type="date" id="filter-to">
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">&nbsp;</span>
+        <button class="btn btn-secondary" id="applyFilters">Apply filters</button>
       </div>
     </section>
+
+    <!-- Content -->
+    <section class="grid-2">
+      <!-- Chart / summary -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Traffic overview</h2>
+          <span class="panel-tag" id="summaryRange">Last 7 days</span>
+        </div>
+        <p class="panel-subtitle">
+          High-level view of clicks across all links. Integrate your real analytics later; this layout is ready for charts.
+        </p>
+        <div class="chart-placeholder" id="chartPlaceholder">
+          Chart placeholder – plug in Chart.js or any other chart library here.
+        </div>
+      </div>
+
+      <!-- Top links table -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Top links</h2>
+          <span class="panel-tag" id="topLinksCount">0 tracked</span>
+        </div>
+        <div class="panel-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Link</th>
+                <th>Clicks</th>
+                <th>Device</th>
+                <th>Last seen</th>
+              </tr>
+            </thead>
+            <tbody id="topLinksBody">
+              <tr>
+                <td colspan="4" class="cell-muted">
+                  No data yet. Once visitors start interacting with your links, top performers will appear here.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>Smart Link Hub · Advitiya x JPD Hub Hackathon 2026</span>
+      <span>Analytics shares the same modern theme as your landing and dashboard pages.</span>
+    </footer>
   </main>
 
-  <script src="./js/analysis.js"></script>
+  <script>
+    // Simple demo behaviours so buttons feel responsive
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      const placeholder = document.getElementById('chartPlaceholder');
+      placeholder.textContent = 'Refreshing data…';
+      setTimeout(() => {
+        placeholder.textContent = 'Chart placeholder – data refreshed (mock).';
+      }, 700);
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      alert('CSV export will be wired to your backend later. This is just a demo action.');
+    });
+
+    document.getElementById('applyFilters').addEventListener('click', () => {
+      const device = document.getElementById('filter-device').value || 'all devices';
+      const from = document.getElementById('filter-from').value || 'any time';
+      const to = document.getElementById('filter-to').value || 'now';
+      document.getElementById('summaryRange').textContent = `${device} · ${from} → ${to}`;
+    });
+  </script>
 </body>
 </html>
