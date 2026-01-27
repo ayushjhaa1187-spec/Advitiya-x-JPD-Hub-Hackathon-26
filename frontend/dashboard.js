@@ -56,26 +56,28 @@ function showDashboard() {
 
 // Tab switching function
 function switchTab(tabName) {
-  // Hide all tabs
-  document.querySelectorAll('[id$="-content"]').forEach(tab => {
-    tab.classList.remove('active');
-    tab.style.display = 'none';
-  });
-  
-  // Deactivate all buttons
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  
-  // Show selected tab
-  const tabElement = document.getElementById(tabName + 'Tab-content');
-  if (tabElement) {
-    tabElement.classList.add('active');
-    tabElement.style.display = 'block';
-  }
-  
-  // Activate button
-  event.target.classList.add('active');
-}
+    // Hide all tabs
+    document.querySelectorAll('[id*="Tab-content"]').forEach(tab => {
+        tab.classList.remove('active');
+    });
 
+    // Deactivate all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+    // Show selected tab
+    const tabElement = document.getElementById(tabName + 'Tab-content');
+    if (tabElement) {
+        tabElement.classList.add('active');
+    }
+
+    // Activate the clicked button
+    const clickedButton = Array.from(document.querySelectorAll('.tab-btn')).find(
+        btn => btn.onclick.toString().includes(tabName)
+    );
+    if (clickedButton) {
+        clickedButton.classList.add('active');
+    }
+}
 const API_BASE_URL = "https://advitiya-x-jpd-hub-hackathon-26.onrender.com/api";
 document.addEventListener("DOMContentLoaded", () => {
   const statTotalLinks = document.getElementById("stat-total-links");
