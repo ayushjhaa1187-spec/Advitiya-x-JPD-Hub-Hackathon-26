@@ -61,6 +61,23 @@ npm install
 
 **📚 Full deployment guide:** [DEPLOY-NOW.md](./DEPLOY-NOW.md)
 
+### Alternative Deployment Platforms
+
+> **GitHub Pages (Current - Recommended for Demo)**
+> Live frontend: https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/landing.html
+> Status: ✅ LIVE
+
+> **Render (For Backend API)**
+> Simple alternative to Vercel, free tier available
+> 1. Go to render.com
+> 2. Connect your GitHub account
+> 3. Create new Web Service
+> 4. Select backend folder
+> 5. Deploy - Takes ~5 minutes
+
+> **Railway.app**
+> Another reliable alternative with PostgreSQL support
+
 ## 📝 Project Structure
 
 ```
