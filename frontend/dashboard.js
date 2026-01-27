@@ -260,34 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${fromText} – ${toText}`;
   }
 
- // 3) TAB NAVIGATION - HOME, ANALYTICS, EXTRA FEATURES
- const btnHome = document.querySelector('button:contains("Home")');
- const btnAnalytics = document.querySelector('button:contains("Analytics")');
- const btnExtraFeatures = document.querySelector('button:contains("Extra Features")');
- const homeTabContent = document.getElementById('homeTab-content');
+ /
 
- // Show home tab by default
- function showTab(tabName) {
- const allTabs = document.querySelectorAll('[id$="-content"]');
- allTabs.forEach(tab => tab.style.display = 'none');
- const targetTab = document.getElementById(tabName + '-content');
- if (targetTab) targetTab.style.display = 'block';
- }
-
- // Home button handler
- document.querySelectorAll('button').forEach(btn => {
- if (btn.textContent.includes('Home')) {
- btn.addEventListener('click', () => showTab('homeTab'));
- }
- if (btn.textContent.includes('Analytics')) {
- btn.addEventListener('click', () => {
- showTab('analyticsTab');
- alert('Analytics page coming soon!');
- });
- }
- if (btn.textContent.includes('Extra Features')) {
- btn.addEventListener('click', () => alert('Extra features require premium - coming soon!'));
- }
- });
 
 });
