@@ -1,5 +1,12 @@
 /**
  * Analytics Service - FINALS ENHANCED VERSION
+  * 
+ * REAL ANALYTICS ENDPOINTS - Connected to persistent PostgreSQL database
+ * Tracks link performance metrics including:
+ * - Click tracking with timestamps
+ * - Visit analytics with device/location data  
+ * - Performance metrics for optimization
+ * - Real-time data storage in PostgreSQL
  * Non-blocking fire-and-forget tracking for visits and clicks
  * Implements performance-optimized tracking as recommended for finals
  */
