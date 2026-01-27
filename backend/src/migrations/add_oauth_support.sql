@@ -32,3 +32,6 @@ ADD COLUMN IF NOT EXISTS qr_code TEXT;
 
 -- Success message
 SELECT 'OAuth support migration completed successfully!' as message;
+
+# Connect to your PostgreSQL database and run:
+psql -U your_db_user -d your_db_name -f backend/src/migrations/add_oauth_support.sql
