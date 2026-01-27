@@ -2,7 +2,6 @@
   "version": 2,
   "buildCommand": "npm install && npm run build",
   "framework": "express",
-  "envPrefix": "REACT_APP_",
   "regions": ["sfo1"],
   "env": {
     "NODE_ENV": "production"
