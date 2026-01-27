@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hub Manager - Smart Link Hub</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .hub-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+    .hub-card { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .hub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .hub-name { font-size: 1.25rem; font-weight: 600; color: #10b981; }
+    .hub-url { color: #6b7280; font-size: 0.9rem; word-break: break-all; }
+    .hub-actions { display: flex; gap: 0.5rem; }
+    .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+    .btn-primary { background: #10b981; color: white; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-danger { background: #ef4444; color: white; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+    .modal-content { background: white; max-width: 700px; margin: 2rem auto; padding: 2rem; border-radius: 8px; max-height: 90vh; overflow-y: auto; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; }
+    .link-item { padding: 1rem; background: #f9fafb; border-radius: 4px; margin-bottom: 0.5rem; }
+    .link-item-header { display: flex; justify-content: space-between; align-items: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .stat-card { background: #f9fafb; padding: 1rem; border-radius: 4px; }
+    .stat-value { font-size: 1.5rem; font-weight: 600; color: #10b981; }
+    .stat-label { font-size: 0.875rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Smart Link Hub</a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="analytics.html">Analytics</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="hub.html" class="active">Hubs</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="hub-container">
+    <div class="page-header">
+      <h1>My Smart Hubs</h1>
+      <button class="btn btn-primary" onclick="openCreateModal()">+ Create Hub</button>
+    </div>
+
+    <div id="hubsContainer"></div>
+  </div>
+
+  <!-- Create/Edit Hub Modal -->
+  <div id="hubModal" class="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Create Smart Hub</h2>
+      <form id="hubForm" onsubmit="saveHub(event)">
+        <div class="form-group">
+          <label>Hub Name</label>
+          <input type="text" id="hubName" required placeholder="My Portfolio">
+        </div>
+        <div class="form-group">
+          <label>Hub Slug (URL)</label>
+          <input type="text" id="hubSlug" required placeholder="myportfolio" pattern="[a-z0-9-]+">
+          <small>Only lowercase letters, numbers, and hyphens</small>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="hubDescription" rows="2" placeholder="A collection of my work"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Theme Color</label>
+          <select id="hubTheme">
+            <option value="green">Green (Default)</option>
+            <option value="blue">Blue</option>
+            <option value="purple">Purple</option>
+            <option value="orange">Orange</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Links (Add links to this hub)</label>
+          <div id="hubLinks"></div>
+          <button type="button" class="btn btn-secondary" onclick="addLinkField()">+ Add Link</button>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Hub</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+    let currentHubId = null;
+    let linkCount = 0;
+
+    async function loadHubs() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/hubs`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const hubs = await response.json();
+        displayHubs(hubs);
+      } catch (error) {
+        console.error('Error loading hubs:', error);
+      }
+    }
+
+    function displayHubs(hubs) {
+      const container = document.getElementById('hubsContainer');
+      if (!hubs || hubs.length === 0) {
+        container.innerHTML = '<p>No hubs created yet. Click "Create Hub" to get started!</p>';
+        return;
+      }
+      container.innerHTML = hubs.map(hub => `
+        <div class="hub-card">
+          <div class="hub-header">
+            <div>
+              <div class="hub-name">${hub.name}</div>
+              <div class="hub-url">${window.location.origin}/h/${hub.slug}</div>
+            </div>
+            <div class="hub-actions">
+              <button class="btn btn-primary" onclick="viewHub('${hub.slug}')">View</button>
+              <button class="btn btn-secondary" onclick="editHub(${hub.id})">Edit</button>
+              <button class="btn btn-secondary" onclick="copyHubUrl('${hub.slug}')">Copy URL</button>
+              <button class="btn btn-danger" onclick="deleteHub(${hub.id})">Delete</button>
+            </div>
+          </div>
+          <div style="color: #6b7280; margin-bottom: 1rem;">${hub.description || 'No description'}</div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">${hub.total_clicks || 0}</div>
+              <div class="stat-label">Total Clicks</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${hub.link_count || 0}</div>
+              <div class="stat-label">Links</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${hub.views || 0}</div>
+              <div class="stat-label">Hub Views</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openCreateModal() {
+      currentHubId = null;
+      linkCount = 0;
+      document.getElementById('modalTitle').textContent = 'Create Smart Hub';
+      document.getElementById('hubForm').reset();
+      document.getElementById('hubLinks').innerHTML = '';
+      addLinkField();
+      document.getElementById('hubModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('hubModal').style.display = 'none';
+    }
+
+    function addLinkField() {
+      linkCount++;
+      const linksContainer = document.getElementById('hubLinks');
+      const linkItem = document.createElement('div');
+      linkItem.className = 'link-item';
+      linkItem.innerHTML = `
+        <div class="link-item-header">
+          <input type="text" placeholder="Link Title" id="linkTitle${linkCount}" style="width: 45%; margin-right: 1%;">
+          <input type="url" placeholder="https://example.com" id="linkUrl${linkCount}" style="width: 45%;">
+          <button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.remove()" style="padding: 0.5rem; width: 8%;">✕</button>
+        </div>
+      `;
+      linksContainer.appendChild(linkItem);
+    }
+
+    async function saveHub(event) {
+      event.preventDefault();
+      const token = localStorage.getItem('token');
+      
+      // Collect all links
+      const links = [];
+      for (let i = 1; i <= linkCount; i++) {
+        const titleEl = document.getElementById(`linkTitle${i}`);
+        const urlEl = document.getElementById(`linkUrl${i}`);
+        if (titleEl && urlEl && titleEl.value && urlEl.value) {
+          links.push({
+            title: titleEl.value,
+            url: urlEl.value
+          });
+        }
+      }
+
+      const hubData = {
+        name: document.getElementById('hubName').value,
+        slug: document.getElementById('hubSlug').value,
+        description: document.getElementById('hubDescription').value,
+        theme: document.getElementById('hubTheme').value,
+        links: links
+      };
+
+      try {
+        const url = currentHubId ? `${API_URL}/hubs/${currentHubId}` : `${API_URL}/hubs`;
+        const method = currentHubId ? 'PUT' : 'POST';
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(hubData)
+        });
+        if (response.ok) {
+          closeModal();
+          loadHubs();
+        } else {
+          alert('Error saving hub');
+        }
+      } catch (error) {
+        alert('Error saving hub');
+      }
+    }
+
+    function viewHub(slug) {
+      window.open(`/h/${slug}`, '_blank');
+    }
+
+    function copyHubUrl(slug) {
+      const url = `${window.location.origin}/h/${slug}`;
+      navigator.clipboard.writeText(url);
+      alert('Hub URL copied to clipboard!');
+    }
+
+    async function deleteHub(id) {
+      if (!confirm('Delete this hub? This will remove all associated links.')) return;
+      const token = localStorage.getItem('token');
+      await fetch(`${API_URL}/hubs/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      loadHubs();
+    }
+
+    async function editHub(id) {
+      currentHubId = id;
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/hubs/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const hub = await response.json();
+      
+      document.getElementById('modalTitle').textContent = 'Edit Hub';
+      document.getElementById('hubName').value = hub.name;
+      document.getElementById('hubSlug').value = hub.slug;
+      document.getElementById('hubDescription').value = hub.description || '';
+      document.getElementById('hubTheme').value = hub.theme || 'green';
+      
+      document.getElementById('hubLinks').innerHTML = '';
+      linkCount = 0;
+      if (hub.links && hub.links.length > 0) {
+        hub.links.forEach(link => {
+          addLinkField();
+          document.getElementById(`linkTitle${linkCount}`).value = link.title;
+          document.getElementById(`linkUrl${linkCount}`).value = link.url;
+        });
+      } else {
+        addLinkField();
+      }
+      
+      document.getElementById('hubModal').style.display = 'block';
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+
+    loadHubs();
+  </script>
+</body>
+</html>
