@@ -222,7 +222,68 @@
         }
 
         /* CTA */
-        .cta {
+        .cta
+            /* About Section */
+    .about {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .about-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .about h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .about-intro {
+        text-align: center;
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto 3rem;
+        color: var(--dark);
+        opacity: 0.8;
+        line-height: 1.8;
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .about-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .about-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+    }
+
+    .about-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        color: var(--primary);
+    }
+
+    .about-card p {
+        color: var(--dark);
+        opacity: 0.8;
+        line-height: 1.6;
+    }
+{
             background: var(--dark);
             color: white;
             padding: 5rem 2rem;
@@ -255,6 +316,7 @@
             <a href="#" class="logo">🔗 Smart Link Hub</a>
             <div class="nav-links">
                 <a href="#features">Features</a>
+                                <a href="#about">About</a>
                 <a href="#">Pricing</a>
                 <a href="login.html" class="btn btn-secondary">Sign In</a>
                 <a href="auth.html" class="btn btn-primary">Get Started</a>
@@ -315,6 +377,35 @@
                 <div class="feature-icon">🚀</div>
                 <h3>No Limits</h3>
                 <p>Unlimited links, clicks, and analytics. Forever free.</p>
+            </div>
+        </div>
+    </section>
+
+        <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <h2>About Smart Link Hub</h2>
+                <p class="about-intro">Smart Link Hub is an innovative link management platform developed for the Advitiya x JPD Hub Hackathon 2026. Our mission is to simplify the way you create, manage, and track your links while providing powerful analytics and automation features.</p>
+                
+                <div class="about-grid">
+                    <div class="about-card">
+                        <h3>🎯 Our Mission</h3>
+                        <p>To provide a free, powerful, and user-friendly link management solution that empowers creators, businesses, and individuals to maximize their online presence.</p>
+                    </div>
+                    <div class="about-card">
+                        <h3>💡 Innovation</h3>
+                        <p>Built with cutting-edge technology including Node.js, Express, PostgreSQL, and smart rules engine to automate link management based on your custom criteria.</p>
+                    </div>
+                    <div class="about-card">
+                        <h3>🚀 Features</h3>
+                        <p>From URL shortening to QR code generation, real-time analytics, and custom branded links - we offer everything you need in one comprehensive platform.</p>
+                    </div>
+                    <div class="about-card">
+                        <h3>🌟 Community</h3>
+                        <p>Developed as part of the hackathon initiative to showcase innovation, collaboration, and the power of open-source development.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
