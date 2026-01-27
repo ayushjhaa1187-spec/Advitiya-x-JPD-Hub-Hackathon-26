@@ -13,10 +13,10 @@
         }
 
         :root {
-            --primary: #4F46E5;
-            --primary-dark: #4338CA;
+            --primary: ##10B981;
+            --primary-dark: ##059669;
             --secondary: #10B981;
-            --dark: #1F2937;
+            --dark: ##000000;
             --light: #F9FAFB;
             --border: #E5E7EB;
         }
@@ -24,8 +24,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: var(--dark);
-            overflow-x: hidden;
+                    background: var(--dark);
+        color: #FFFFFF;            overflow-x: hidden;
         }
 
         /* Navigation */
@@ -118,6 +118,28 @@
             margin-bottom: 3rem;
             opacity: 0.95;
         }
+
+            /* Animated Line */
+    .animated-line {
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, #10B981, #059669, #10B981);
+        margin: 2rem auto;
+        border-radius: 2px;
+        animation: lineMove 3s ease-in-out infinite;
+        box-shadow: 0 0 10px #10B981;
+    }
+
+    @keyframes lineMove {
+        0%, 100% {
+            transform: translateX(-20px);
+            width: 100px;
+        }
+        50% {
+            transform: translateX(20px);
+            width: 150px;
+        }
+    }
 
         .shortener-box {
             background: white;
@@ -317,16 +339,16 @@
             <div class="nav-links">
                 <a href="#features">Features</a>
                                 <a href="#about">About</a>
-                <a href="#">Pricing</a>
-                <a href="login.html" class="btn btn-secondary">Sign In</a>
+                <a href="analytics.html">Analytics</a>                <a href="login.html" class="btn btn-secondary">Sign In</a>
                 <a href="auth.html" class="btn btn-primary">Get Started</a>
             </div>
-        </div>
+        </divanalytics
     </nav>
 
     <!-- Hero -->
     <section class="hero">
         <h1>One Smart Link.<br>Unlimited Possibilities.</h1>
+                <div class="animated-line"></div>
         <p>Create, manage, and track your links with ease. Free forever.</p>
         
         <div class="shortener-box">
