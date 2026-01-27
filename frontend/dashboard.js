@@ -1,5 +1,7 @@
 // Configuration
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api'
+    : 'https://your-backend-url.onrender.com/api'; // Update with your deployed backend URL
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
