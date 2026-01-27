@@ -1,265 +1,201 @@
-// CHANGE THIS TO YOUR REAL BACKEND URL IN PRODUCTION
+// Configuration
+const API_BASE_URL = 'http://localhost:3000/api';
 
-// Authentication State Management
-let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-let userEmail = localStorage.getItem('userEmail');
-
-// Initialize auth UI on page load
-function initAuth() {
-  const authBtn = document.getElementById('authBtn');
-  if (!authBtn) return;
-  
-  if (isLoggedIn && userEmail) {
-    authBtn.innerHTML = `<i class="ri-logout-box-line"></i> Sign out (${userEmail})`;
-    authBtn.style.backgroundColor = '#ff4444';
-    authBtn.onclick = logout;
-    showDashboard();
-  } else {
-    authBtn.innerHTML = `<i class="ri-google-fill"></i> Sign in`;
-    authBtn.style.backgroundColor = '#00ff41';
-    authBtn.onclick = login;
-    hideDashboard();
-  }
-}
-
-function login() {
-  // Demo: Store login state in localStorage
-  const email = prompt('Enter your email (Demo)');
-  if (email) {
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', email);
-    isLoggedIn = true;
-    userEmail = email;
-    initAuth();
-    location.reload(); // Refresh to show dashboard
-  }
-}
-
-function logout() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('userEmail');
-  isLoggedIn = false;
-  userEmail = null;
-  initAuth();
-  location.reload();
-}
-
-function hideDashboard() {
-  const mainContent = document.querySelector('main');
-  if (mainContent) mainContent.style.display = 'none';
-}
-
-function showDashboard() {
-  const mainContent = document.querySelector('main');
-  if (mainContent) mainContent.style.display = 'block';
-}
-
-// Tab switching function
-function switchTab(tabName) {
-    // Hide all tabs
-    document.querySelectorAll('[id$="-content"]').forEach(tab => {        tab.classList.remove('active');
-    });
-
-    // Deactivate all buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-    // Show selected tab
-    const tabElement = document.getElementById(tabName + 'Tab-content');
-    if (tabElement) {
-        tabElement.classList.add('active');
-    }
-
-    // Activate the clicked button
-    const clickedButton = Array.from(document.querySelectorAll('.tab-btn')).find(
-        btn => btn.onclick.toString().includes(tabName)
-    );
-    if (clickedButton) {
-        clickedButton.classList.add('active');
-    }
-}
-const API_BASE_URL = "https://advitiya-x-jpd-hub-hackathon-26.onrender.com/api";
-document.addEventListener("DOMContentLoaded", () => {
-  const statTotalLinks = document.getElementById("stat-total-links");
-  const statTodayClicks = document.getElementById("stat-today-clicks");
-  const statActiveRules = document.getElementById("stat-active-rules");
-
-    initAuth(); // Initialize authentication state
-  const formAddLink = document.getElementById("form-add-link");
-  const inputLinkUrl = document.getElementById("input-link-url");
-  const inputLinkTitle = document.getElementById("input-link-title");
-
-  const selectDeviceType = document.getElementById("select-device-type");
-  const inputDateFrom = document.getElementById("input-date-from");
-  const inputDateTo = document.getElementById("input-date-to");
-  const btnSaveRule = document.getElementById("btn-save-rule");
-
-  const tbodyLinks = document.getElementById("tbody-links");
-  const btnGoogleSignup = document.getElementById("btn-google-signup");
-
-  // 1) NAVBAR + BASIC DATA LOAD
-  loadDashboardStats();
-  loadLinks();
-
-  // 6) SIGN UP WITH GOOGLE (FRONTEND PLACEHOLDER)
-  if (btnGoogleSignup) {
-    btnGoogleSignup.addEventListener("click", () => {
-      alert("Google sign up is not fully wired yet – connect to backend OAuth endpoint here.");
-      // Example for future:
-      // window.location.href = `${API_BASE_URL}/auth/google`;
-    });
-  }
-
-  // 1) ADD LINK BUTTON WORKING
-  if (formAddLink) {
-    formAddLink.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const payload = {
-        url: inputLinkUrl.value.trim(),
-        title: inputLinkTitle.value.trim() || null,
-      };
-
-      if (!payload.url) {
-        alert("Please enter a valid URL.");
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/links`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to add link");
-        }
-
-        inputLinkUrl.value = "";
-        inputLinkTitle.value = "";
-        await loadLinks();
-        await loadDashboardStats();
-      } catch (err) {
-        console.error(err);
-        alert("Could not add link. Check backend server.");
-      }
-    });
-  }
-
-  // 2) SAVE RULE BUTTON WORKING
-  if (btnSaveRule) {
-    btnSaveRule.addEventListener("click", async () => {
-      const payload = {
-        deviceType: selectDeviceType.value || null,
-        activeFrom: inputDateFrom.value || null,
-        activeTo: inputDateTo.value || null,
-      };
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/rules`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to save rule");
-        }
-
-        alert("Rule saved successfully.");
-        await loadDashboardStats();
-      } catch (err) {
-        console.error(err);
-        alert("Could not save rule. Check backend server.");
-      }
-    });
-  }
-
-  // TABLE ACTION BUTTONS (EDIT / DELETE) – delegate
-  if (tbodyLinks) {
-    tbodyLinks.addEventListener("click", async (e) => {
-      const target = e.target;
-
-      if (target.matches(".btn-delete-link")) {
-        const id = target.getAttribute("data-id");
-        if (!id) return;
-
-        if (!confirm("Delete this link?")) return;
-
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/links/${id}`, {
-            method: "DELETE",
-          });
-          if (!res.ok) throw new Error("Failed to delete link");
-          await loadLinks();
-          await loadDashboardStats();
-        } catch (err) {
-          console.error(err);
-          alert("Could not delete link.");
-        }
-      }
-
-      // Extend here for ".btn-edit-link", etc.
-    });
-  }
-
-  async function loadDashboardStats() {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/links/stats`);
-      if (!res.ok) throw new Error("Failed to load stats");
-      const data = await res.json();
-
-      statTotalLinks.textContent = data.totalLinks ?? 0;
-      statTodayClicks.textContent = data.todayClicks ?? 0;
-      statActiveRules.textContent = data.activeRules ?? 0;
-    } catch (err) {
-      console.error(err);
-      // keep defaults
-    }
-  }
-
-  async function loadLinks() {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/links`);
-      if (!res.ok) throw new Error("Failed to load links");
-      const data = await res.json();
-
-      tbodyLinks.innerHTML = "";
-
-      data.links.forEach((link) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${link.title || "-"}</td>
-          <td><a href="${link.url}" target="_blank">${link.url}</a></td>
-          <td>${link.deviceType || "-"}</td>
-          <td>${formatDateRange(link.activeFrom, link.activeTo)}</td>
-          <td>${link.clicks ?? 0}</td>
-          <td>
-            <button class="btn secondary btn-delete-link" data-id="${link.id}">
-              Delete
-            </button>
-          </td>
-        `;
-        tbodyLinks.appendChild(tr);
-      });
-    } catch (err) {
-      console.error(err);
-      tbodyLinks.innerHTML = "<tr><td colspan='6'>Could not load links.</td></tr>";
-    }
-  }
-
-  function formatDateRange(from, to) {
-    if (!from && !to) return "-";
-    const fromText = from ? new Date(from).toLocaleDateString() : "...";
-    const toText = to ? new Date(to).toLocaleDateString() : "...";
-    return `${fromText} – ${toText}`;
-  }
-
- /
-
-
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    loadDashboardData();
+    loadLinks();
 });
+
+// Create Short Link
+function createLink(e) {
+    e.preventDefault();
+    
+    const longUrl = document.getElementById('longUrl').value;
+    const customSlug = document.getElementById('customSlug').value || null;
+    const description = document.getElementById('description').value || null;
+    const category = document.getElementById('category').value || null;
+    const expiryDate = document.getElementById('expiryDate').value || null;
+
+    const linkData = {
+        longUrl,
+        customSlug,
+        description,
+        category,
+        expiryDate
+    };
+
+    fetch(`${API_BASE_URL}/links/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(linkData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('✅ Link created successfully!', 'success');
+            document.getElementById('createLinkForm').reset();
+            loadLinks();
+            loadDashboardData();
+        } else {
+            showMessage('❌ Error: ' + (data.message || 'Failed to create link'), 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        showMessage('❌ Error creating link: ' + err.message, 'error');
+    });
+}
+
+// Load all links
+function loadLinks() {
+    fetch(`${API_BASE_URL}/links`)
+    .then(res => res.json())
+    .then(data => {
+        const linksList = document.getElementById('linksList');
+        
+        if (!data.links || data.links.length === 0) {
+            linksList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-link"></i>
+                    <p>No short links created yet. Start by creating one above!</p>
+                </div>
+            `;
+            return;
+        }
+
+        linksList.innerHTML = data.links.map(link => `
+            <div class="link-item">
+                <div class="link-info">
+                    <h4>${link.description || 'Untitled Link'}</h4>
+                    <p>Original: <a href="${link.longUrl}" target="_blank" class="short-link">${link.longUrl.substring(0, 50)}...</a></p>
+                    <p>Short: <a href="https://short.link/${link.shortCode}" target="_blank" class="short-link">short.link/${link.shortCode}</a></p>
+                    ${link.category ? `<p>Category: <strong>${link.category}</strong></p>` : ''}
+                </div>
+                <div class="link-stats">
+                    <div class="stat">
+                        <div class="stat-value">${link.clicks || 0}</div>
+                        <div class="stat-label">Clicks</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${new Date(link.createdAt).toLocaleDateString()}</div>
+                        <div class="stat-label">Created</div>
+                    </div>
+                </div>
+                <div class="link-actions">
+                    <button class="btn-action" onclick="showQRCode('${link.shortCode}')">
+                        <i class="fas fa-qrcode"></i> QR
+                    </button>
+                    <button class="btn-action" onclick="copyLink('${link.shortCode}')">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="btn-action btn-delete" onclick="deleteLink('${link._id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    })
+    .catch(err => {
+        console.error('Error loading links:', err);
+        document.getElementById('linksList').innerHTML = '<p>Error loading links</p>';
+    });
+}
+
+// Load Dashboard Data
+function loadDashboardData() {
+    fetch(`${API_BASE_URL}/stats`)
+    .then(res => res.json())
+    .then(data => {
+        if (data.stats) {
+            document.getElementById('totalLinks').textContent = data.stats.totalLinks || 0;
+            document.getElementById('totalClicks').textContent = data.stats.totalClicks || 0;
+            document.getElementById('clicksToday').textContent = data.stats.clicksToday || 0;
+        }
+    })
+    .catch(err => console.error('Error loading stats:', err));
+}
+
+// Show QR Code
+function showQRCode(shortCode) {
+    const qrImage = document.getElementById('qrImage');
+    const modalShortLink = document.getElementById('modalShortLink');
+    const shortUrl = `https://short.link/${shortCode}`;
+    
+    // Using QR Server API (free, no authentication needed)
+    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shortUrl)}`;
+    modalShortLink.textContent = `Short Link: ${shortUrl}`;
+    
+    document.getElementById('qrModal').classList.add('active');
+}
+
+// Close Modal
+function closeModal() {
+    document.getElementById('qrModal').classList.remove('active');
+}
+
+// Copy Link to Clipboard
+function copyLink(shortCode) {
+    const shortUrl = `https://short.link/${shortCode}`;
+    navigator.clipboard.writeText(shortUrl).then(() => {
+        showMessage('✅ Link copied to clipboard!', 'success');
+    }).catch(err => {
+        showMessage('❌ Failed to copy link', 'error');
+    });
+}
+
+// Delete Link
+function deleteLink(linkId) {
+    if (!confirm('Are you sure you want to delete this link? This action cannot be undone.')) {
+        return;
+    }
+
+    fetch(`${API_BASE_URL}/links/${linkId}`, {
+        method: 'DELETE'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('✅ Link deleted successfully!', 'success');
+            loadLinks();
+            loadDashboardData();
+        } else {
+            showMessage('❌ Error deleting link', 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        showMessage('❌ Error deleting link', 'error');
+    });
+}
+
+// Show Message
+function showMessage(message, type) {
+    const messageBox = document.getElementById('messageBox');
+    const className = type === 'success' ? 'success-message' : 'error-message';
+    
+    messageBox.innerHTML = `<div class="${className}">${message}</div>`;
+    messageBox.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        messageBox.style.display = 'none';
+    }, 5000);
+}
+
+// Logout
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('token');
+        window.location.href = 'landing.html';
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('qrModal');
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
