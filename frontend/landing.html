@@ -1,520 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Link Hub - Your All-in-One Link Management Platform</title>
-    <meta name="description" content="Create smart links, track analytics, generate QR codes. The ultimate link management platform for creators and businesses.">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Link Hub - Your All-in-One Link Management Platform</title>
+  <meta name="description" content="Create smart links, track analytics, generate QR codes. The ultimate link management platform for creators and businesses.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        :root {
-            --primary: ##10B981;
-            --primary-dark: ##059669;
-            --secondary: #10B981;
-            --dark: ##000000;
-            --light: #F9FAFB;
-            --border: #E5E7EB;
-        }
+    :root {
+      --primary: #10B981;
+      --primary-dark: #059669;
+      --secondary: #10B981;
+      --dark: #000000;
+      --light: #F9FAFB;
+      --border: #E5E7EB;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-                    background: var(--dark);
-        color: #FFFFFF;            overflow-x: hidden;
-        }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      background: var(--dark);
+      color: #FFFFFF;
+      overflow-x: hidden;
+    }
 
-        /* Navigation */
-        nav {
-            background: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+    /* Navigation */
+    nav {
+      background: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-decoration: none;
-        }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      text-decoration: none;
+    }
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
 
-        .nav-links a:hover {
-            color: var(--primary);
-        }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
-        }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+    }
 
-        .btn-secondary {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
 
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6rem 2rem;
-            text-align: center;
-        }
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+    }
 
-        .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 3rem;
-            opacity: 0.95;
-        }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 3rem;
+      opacity: 0.95;
+    }
 
-            /* Animated Line */
+    /* Animated Line */
     .animated-line {
-        width: 100px;
-        height: 3px;
-        background: linear-gradient(90deg, #10B981, #059669, #10B981);
-        margin: 2rem auto;
-        border-radius: 2px;
-        animation: lineMove 3s ease-in-out infinite;
-        box-shadow: 0 0 10px #10B981;
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, #10B981, #059669, #10B981);
+      margin: 2rem auto;
+      border-radius: 2px;
+      animation: lineMove 3s ease-in-out infinite;
+      box-shadow: 0 0 10px #10B981;
     }
 
     @keyframes lineMove {
-        0%, 100% {
-            transform: translateX(-20px);
-            width: 100px;
-        }
-        50% {
-            transform: translateX(20px);
-            width: 150px;
-        }
+      0%, 100% {
+        transform: translateX(-20px);
+        width: 100px;
+      }
+      50% {
+        transform: translateX(20px);
+        width: 150px;
+      }
     }
 
-        .shortener-box {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
+    .shortener-box {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
 
-        .shortener-form {
-            display: flex;
-            gap: 1rem;
-        }
+    .shortener-form {
+      display: flex;
+      gap: 1rem;
+    }
 
-        .shortener-form input {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+    .shortener-form input {
+      flex: 1;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
 
-        .shortener-form button {
-            padding: 1rem 2rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .shortener-form button {
+      padding: 1rem 2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
 
-        .shortener-form button:hover {
-            background: var(--primary-dark);
-        }
+    .shortener-form button:hover {
+      background: var(--primary-dark);
+    }
 
-        #result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: var(--light);
-            border-radius: 8px;
-            display: none;
-        }
+    #result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--light);
+      border-radius: 8px;
+      display: none;
+    }
 
-        .result-link {
-            color: var(--primary);
-            font-weight: 600;
-            word-break: break-all;
-        }
+    .result-link {
+      color: var(--primary);
+      font-weight: 600;
+      word-break: break-all;
+    }
 
-        /* Features */
-        .features {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    /* Features */
+    .features {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
 
-        .section-subtitle {
-            text-align: center;
-            color: #6B7280;
-            margin-bottom: 4rem;
-        }
+    .section-subtitle {
+      text-align: center;
+      color: #6B7280;
+      margin-bottom: 4rem;
+    }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
 
-        .feature-card {
-            padding: 2rem;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            transition: all 0.3s;
-        }
+    .feature-card {
+      padding: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
 
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
 
-        .feature-card h3 {
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
+    .feature-card h3 {
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
 
-        .feature-card p {
-            color: #6B7280;
-        }
+    .feature-card p {
+      color: #6B7280;
+    }
 
-        /* CTA */
-        .cta
-            /* About Section */
+    /* About Section */
     .about {
-        padding: 5rem 0;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 5rem 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
 
     .about-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
     }
 
     .about h2 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: var(--dark);
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
     }
 
     .about-intro {
-        text-align: center;
-        font-size: 1.2rem;
-        max-width: 800px;
-        margin: 0 auto 3rem;
-        color: var(--dark);
-        opacity: 0.8;
-        line-height: 1.8;
+      text-align: center;
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      color: var(--dark);
+      opacity: 0.8;
+      line-height: 1.8;
     }
 
     .about-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
     }
 
     .about-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .about-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.15);
     }
 
     .about-card h3 {
-        font-size: 1.4rem;
-        margin-bottom: 1rem;
-        color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
     }
 
     .about-card p {
-        color: var(--dark);
-        opacity: 0.8;
-        line-height: 1.6;
+      color: var(--dark);
+      opacity: 0.8;
+      line-height: 1.6;
     }
-{
-            background: var(--dark);
-            color: white;
-            padding: 5rem 2rem;
-            text-align: center;
-        }
 
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
+    /* CTA */
+    .cta {
+      background: var(--dark);
+      color: white;
+      padding: 5rem 2rem;
+      text-align: center;
+    }
 
-        /* Footer */
-        footer {
-            background: var(--light);
-            padding: 3rem 2rem 1rem;
-            text-align: center;
-        }
+    .cta h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .shortener-form { flex-direction: column; }
-            .nav-links { display: none; }
-        }
-    </style>
+    /* Footer */
+    footer {
+      background: var(--light);
+      padding: 3rem 2rem 1rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .shortener-form { flex-direction: column; }
+      .nav-links { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="#" class="logo">🔗 Smart Link Hub</a>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                                <a href="#about">About</a>
-                                <a href="dashboard.html">Dashboard</a>
-                <a href="analytics.html">Analytics</a>                <a href="login.html" class="btn btn-secondary">Sign In</a>
-                <a href="auth.html" class="btn btn-primary">Get Started</a>
-            </div>
-                            <a href="dashboard.html">Dashboard</a>
-        </divanalytics
-    </nav>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="logo">🔗 Smart Link Hub</a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+        <a href="auth.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <h1>One Smart Link.<br>Unlimited Possibilities.</h1>
-                <div class="animated-line"></div>
-        <p>Create, manage, and track your links with ease. Free forever.</p>
-        
-        <div class="shortener-box">
-            <form class="shortener-form" id="shortener-form">
-                <input type="url" id="url-input" placeholder="Enter or paste your long URL..." required>
-                <button type="submit">Shorten It</button>
-            </form>
-            <div id="result">
-                <p><strong>Your short link:</strong></p>
-                <a href="#" class="result-link" id="short-link" target="_blank"></a>
-                <button onclick="copyLink()" style="margin-top:1rem" class="btn btn-primary">Copy Link</button>
-            </div>
+  <!-- Hero -->
+  <section class="hero">
+    <h1>One Smart Link.<br>Unlimited Possibilities.</h1>
+    <div class="animated-line"></div>
+    <p>Create, manage, and track your links with ease. Free forever.</p>
+
+    <div class="shortener-box">
+      <form class="shortener-form" id="shortener-form">
+        <input type="url" id="url-input" placeholder="Enter or paste your long URL..." required>
+        <button type="submit">Shorten It</button>
+      </form>
+      <div id="result">
+        <p><strong>Your short link:</strong></p>
+        <a href="#" class="result-link" id="short-link" target="_blank"></a>
+        <button onclick="copyLink()" style="margin-top:1rem" class="btn btn-primary">Copy Link</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-subtitle">Powerful features for modern link management</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Shorten links in milliseconds with our optimized infrastructure</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Real-Time Analytics</h3>
+        <p>Track clicks, locations, devices, and more with detailed analytics</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure &amp; Reliable</h3>
+        <p>Your links are protected with enterprise-grade security</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>QR Codes</h3>
+        <p>Auto-generate QR codes for every link you create</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Custom Links</h3>
+        <p>Create branded short links with custom slugs</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>No Limits</h3>
+        <p>Unlimited links, clicks, and analytics. Forever free.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <div class="about-content">
+      <h2>About Smart Link Hub</h2>
+      <p class="about-intro">
+        Smart Link Hub is an innovative link management platform developed for the Advitiya x JPD Hub Hackathon 2026.
+        Our mission is to simplify the way you create, manage, and track your links while providing powerful analytics and automation features.
+      </p>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <h3>🎯 Our Mission</h3>
+          <p>To provide a free, powerful, and user-friendly link management solution that empowers creators, businesses, and individuals to maximize their online presence.</p>
         </div>
-    </section>
-
-    <!-- Features -->
-    <section class="features" id="features">
-        <h2 class="section-title">Everything You Need</h2>
-        <p class="section-subtitle">Powerful features for modern link management</p>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Lightning Fast</h3>
-                <p>Shorten links in milliseconds with our optimized infrastructure</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Real-Time Analytics</h3>
-                <p>Track clicks, locations, devices, and more with detailed analytics</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Secure & Reliable</h3>
-                <p>Your links are protected with enterprise-grade security</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📄</div>
-                <h3>QR Codes</h3>
-                <p>Auto-generate QR codes for every link you create</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Custom Links</h3>
-                <p>Create branded short links with custom slugs</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>No Limits</h3>
-                <p>Unlimited links, clicks, and analytics. Forever free.</p>
-            </div>
+        <div class="about-card">
+          <h3>💡 Innovation</h3>
+          <p>Built with cutting-edge technology including Node.js, Express, PostgreSQL, and a smart rules engine to automate link management based on your custom criteria.</p>
         </div>
-    </section>
-
-        <!-- About Section -->
-    <section class="about" id="about">
-        <div class="container">
-            <div class="about-content">
-                <h2>About Smart Link Hub</h2>
-                <p class="about-intro">Smart Link Hub is an innovative link management platform developed for the Advitiya x JPD Hub Hackathon 2026. Our mission is to simplify the way you create, manage, and track your links while providing powerful analytics and automation features.</p>
-                
-                <div class="about-grid">
-                    <div class="about-card">
-                        <h3>🎯 Our Mission</h3>
-                        <p>To provide a free, powerful, and user-friendly link management solution that empowers creators, businesses, and individuals to maximize their online presence.</p>
-                    </div>
-                    <div class="about-card">
-                        <h3>💡 Innovation</h3>
-                        <p>Built with cutting-edge technology including Node.js, Express, PostgreSQL, and smart rules engine to automate link management based on your custom criteria.</p>
-                    </div>
-                    <div class="about-card">
-                        <h3>🚀 Features</h3>
-                        <p>From URL shortening to QR code generation, real-time analytics, and custom branded links - we offer everything you need in one comprehensive platform.</p>
-                    </div>
-                    <div class="about-card">
-                        <h3>🌟 Community</h3>
-                        <p>Developed as part of the hackathon initiative to showcase innovation, collaboration, and the power of open-source development.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="about-card">
+          <h3>🚀 Features</h3>
+          <p>From URL shortening to QR code generation, real-time analytics, and custom branded links – we offer everything you need in one comprehensive platform.</p>
         </div>
-    </section>
+        <div class="about-card">
+          <h3>🌟 Community</h3>
+          <p>Developed as part of the hackathon initiative to showcase innovation, collaboration, and the power of open-source development.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- CTA -->
-    <section class="cta">
-        <h2>Ready to Get Started?</h2>
-        <p style="margin-bottom: 2rem; opacity: 0.9">Join thousands of users managing their links smarter</p>
-        <a href="auth.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Create Free Account</a>
-    </section>
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Ready to Get Started?</h2>
+    <p style="margin-bottom: 2rem; opacity: 0.9">Join thousands of users managing their links smarter</p>
+    <a href="auth.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Create Free Account</a>
+  </section>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Smart Link Hub. Made for Advitiya x JPD Hub Hackathon.</p>
-        <p style="margin-top: 0.5rem; color: #6B7280;">All Rights Reserved</p>
-    </footer>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Smart Link Hub. Made for Advitiya x JPD Hub Hackathon.</p>
+    <p style="margin-top: 0.5rem; color: #6B7280;">All Rights Reserved</p>
+  </footer>
 
-    <script>
-        // Link Shortener Functionality
-        document.getElementById('shortener-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const urlInput = document.getElementById('url-input');
-            const resultDiv = document.getElementById('result');
-            const shortLink = document.getElementById('short-link');
-            
-        try {
-            // Connect to backend API
-            const API_URL = 'https://your-backend-url.com/api'; // Update this with actual backend URL
-            
-            const response = await fetch(`${API_URL}/links`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    originalUrl: urlInput.value,
-                    title: 'Quick Link'
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to shorten link');
-            }
-            
-            const data = await response.json();
-            const shortUrl = `${window.location.origin}/${data.shortCode}`;
-            
-            shortLink.href = shortUrl;
-            shortLink.textContent = shortUrl;
-            resultDiv.style.display = 'block';
-            
-            // Optionally fetch QR code
-            try {
-                const qrResponse = await fetch(`${API_URL}/links/${data.id}/qr`);
-                if (qrResponse.ok) {
-                    const qrData = await qrResponse.json();
-                    // You can display the QR code here if needed
-                    console.log('QR Code:', qrData.qrCode);
-                }
-            } catch (qrError) {
-                console.log('QR generation skipped:', qrError);
-            }            } catch (error) {
-                alert('Error shortening link. Please try again.');
-            }
+  <script>
+    // Link Shortener Functionality
+    document.getElementById('shortener-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const urlInput = document.getElementById('url-input');
+      const resultDiv = document.getElementById('result');
+      const shortLink = document.getElementById('short-link');
+
+      try {
+        // Connect to backend API
+        const API_URL = 'https://your-backend-url.com/api'; // Update this with actual backend URL
+
+        const response = await fetch(`${API_URL}/links`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            originalUrl: urlInput.value,
+            title: 'Quick Link'
+          })
         });
-        
-        function copyLink() {
-            const shortLink = document.getElementById('short-link');
-            navigator.clipboard.writeText(shortLink.textContent);
-            alert('Link copied to clipboard!');
+
+        if (!response.ok) {
+          throw new Error('Failed to shorten link');
         }
-        
-        // Smooth scroll for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-    </script>
-    <!-- API Service Layer -->
-    <script src="api-service.js"></script>
 
+        const data = await response.json();
+        const shortUrl = `${window.location.origin}/${data.shortCode}`;
+
+        shortLink.href = shortUrl;
+        shortLink.textContent = shortUrl;
+        resultDiv.style.display = 'block';
+
+        // Optionally fetch QR code
+        try {
+          const qrResponse = await fetch(`${API_URL}/links/${data.id}/qr`);
+          if (qrResponse.ok) {
+            const qrData = await qrResponse.json();
+            console.log('QR Code:', qrData.qrCode);
+          }
+        } catch (qrError) {
+          console.log('QR generation skipped:', qrError);
+        }
+      } catch (error) {
+        alert('Error shortening link. Please try again.');
+      }
+    });
+
+    function copyLink() {
+      const shortLink = document.getElementById('short-link');
+      navigator.clipboard.writeText(shortLink.textContent);
+      alert('Link copied to clipboard!');
+    }
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+  <!-- API Service Layer -->
+  <script src="api-service.js"></script>
 </body>
 </html>
+
