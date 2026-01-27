@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://advitiya.jpdlab.co.in/api";
 
 document.addEventListener("DOMContentLoaded", () => {
   const filterDevice = document.getElementById("filter-device");
