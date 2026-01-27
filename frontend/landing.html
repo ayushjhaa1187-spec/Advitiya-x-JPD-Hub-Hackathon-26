@@ -455,26 +455,43 @@
             const resultDiv = document.getElementById('result');
             const shortLink = document.getElementById('short-link');
             
+        try {
+            // Connect to backend API
+            const API_URL = 'https://your-backend-url.com/api'; // Update this with actual backend URL
+            
+            const response = await fetch(`${API_URL}/links`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    originalUrl: urlInput.value,
+                    title: 'Quick Link'
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to shorten link');
+            }
+            
+            const data = await response.json();
+            const shortUrl = `${window.location.origin}/${data.shortCode}`;
+            
+            shortLink.href = shortUrl;
+            shortLink.textContent = shortUrl;
+            resultDiv.style.display = 'block';
+            
+            // Optionally fetch QR code
             try {
-                // Simple mock for now - will connect to backend later
-                const shortCode = Math.random().toString(36).substring(2, 8);
-                const shortUrl = `${window.location.origin}/${shortCode}`;
-                
-                shortLink.href = shortUrl;
-                shortLink.textContent = shortUrl;
-                resultDiv.style.display = 'block';
-                
-                // TODO: Connect to actual backend API
-                // const response = await fetch('/api/shorten', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ url: urlInput.value })
-                // });
-                // const data = await response.json();
-                // shortLink.href = data.shortUrl;
-                // shortLink.textContent = data.shortUrl;
-                
-            } catch (error) {
+                const qrResponse = await fetch(`${API_URL}/links/${data.id}/qr`);
+                if (qrResponse.ok) {
+                    const qrData = await qrResponse.json();
+                    // You can display the QR code here if needed
+                    console.log('QR Code:', qrData.qrCode);
+                }
+            } catch (qrError) {
+                console.log('QR generation skipped:', qrError);
+            }            } catch (error) {
                 alert('Error shortening link. Please try again.');
             }
         });
