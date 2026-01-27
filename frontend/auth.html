@@ -308,24 +308,15 @@
     <script>
         // OAuth Signup Functions
         function handleGoogleSignup() {
-            console.log('Google OAuth signup initiated');
-            // Production OAuth URL:
-            // const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=${window.location.origin}/callback&response_type=code&scope=openid%20email%20profile`;
-            // window.location.href = googleAuthUrl;
-            
-            alert('🔵 Google OAuth Flow\n\nIn production, this would redirect to Google\'s authentication endpoint.');
-            simulateOAuthSuccess('Google');
-        }
+  // Redirect to backend OAuth endpoint
+  window.location.href = 'https://advitiya.jpdlab.co.in/api/auth/oauth/google';
+}
 
-        function handleGithubSignup() {
-            console.log('GitHub OAuth signup initiated');
-            // Production OAuth URL:
-            // const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=${window.location.origin}/callback&scope=user:email`;
-            // window.location.href = githubAuthUrl;
+function handleGithubSignup() {
+  // Redirect to backend OAuth endpoint
+  window.location.href = 'https://advitiya.jpdlab.co.in/api/auth/oauth/github';
+}
             
-            alert('⚫ GitHub OAuth Flow\n\nIn production, this would redirect to GitHub\'s authentication endpoint.');
-            simulateOAuthSuccess('GitHub');
-        }
 
         function handleEmailSignup(event) {
             event.preventDefault();
