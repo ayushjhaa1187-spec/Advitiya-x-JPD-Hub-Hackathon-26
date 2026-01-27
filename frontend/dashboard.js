@@ -1,4 +1,81 @@
 // CHANGE THIS TO YOUR REAL BACKEND URL IN PRODUCTION
+
+// Authentication State Management
+let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+let userEmail = localStorage.getItem('userEmail');
+
+// Initialize auth UI on page load
+function initAuth() {
+  const authBtn = document.getElementById('authBtn');
+  if (!authBtn) return;
+  
+  if (isLoggedIn && userEmail) {
+    authBtn.innerHTML = `<i class="ri-logout-box-line"></i> Sign out (${userEmail})`;
+    authBtn.style.backgroundColor = '#ff4444';
+    authBtn.onclick = logout;
+    showDashboard();
+  } else {
+    authBtn.innerHTML = `<i class="ri-google-fill"></i> Sign in`;
+    authBtn.style.backgroundColor = '#00ff41';
+    authBtn.onclick = login;
+    hideDashboard();
+  }
+}
+
+function login() {
+  // Demo: Store login state in localStorage
+  const email = prompt('Enter your email (Demo)');
+  if (email) {
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userEmail', email);
+    isLoggedIn = true;
+    userEmail = email;
+    initAuth();
+    location.reload(); // Refresh to show dashboard
+  }
+}
+
+function logout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userEmail');
+  isLoggedIn = false;
+  userEmail = null;
+  initAuth();
+  location.reload();
+}
+
+function hideDashboard() {
+  const mainContent = document.querySelector('main');
+  if (mainContent) mainContent.style.display = 'none';
+}
+
+function showDashboard() {
+  const mainContent = document.querySelector('main');
+  if (mainContent) mainContent.style.display = 'block';
+}
+
+// Tab switching function
+function switchTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('[id$="-content"]').forEach(tab => {
+    tab.classList.remove('active');
+    tab.style.display = 'none';
+  });
+  
+  // Deactivate all buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  
+  // Show selected tab
+  const tabElement = document.getElementById(tabName + 'Tab-content');
+  if (tabElement) {
+    tabElement.classList.add('active');
+    tabElement.style.display = 'block';
+  }
+  
+  // Activate button
+  event.target.classList.add('active');
+}
+
 const API_BASE_URL = "https://advitiya.jpdlab.co.in/api";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -6,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statTodayClicks = document.getElementById("stat-today-clicks");
   const statActiveRules = document.getElementById("stat-active-rules");
 
+    initAuth(); // Initialize authentication state
   const formAddLink = document.getElementById("form-add-link");
   const inputLinkUrl = document.getElementById("input-link-url");
   const inputLinkTitle = document.getElementById("input-link-title");
