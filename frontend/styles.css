@@ -1,7 +1,7 @@
 /* GLOBAL STYLES */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body { background: #000000; color: #ffffff; font-family: 'Segoe UI', Roboto, sans-serif; padding: 20px; }
+body { background: #linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%); color: #ffffff; font-family: 'Segoe UI', Roboto, sans-serif; padding: 20px; }
 .container { max-width: 1400px; margin: 0 auto; }
 
 header { border-bottom: 3px solid #00ff41; padding-bottom: 20px; margin-bottom: 30px; }
