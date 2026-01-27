@@ -1,3 +1,25 @@
+/**
+ * PostgreSQL Database Configuration
+ * 
+ * This module configures the PostgreSQL connection pool for persistent data storage.
+ * Compatible with:
+ * - Neon (Serverless Postgres): https://neon.tech
+ * - Supabase (Postgres Backend): https://supabase.com
+ * - Standard PostgreSQL instances
+ * 
+ * Environment Variables Required:
+ * - DB_HOST: PostgreSQL host (e.g., your-project.neon.tech)
+ * - DB_USER: Database username
+ * - DB_PASSWORD: Database password
+ * - DB_NAME: Database name
+ * - DB_PORT: Database port (default: 5432)
+ * 
+ * Features:
+ * - Connection pooling for optimal performance
+ * - Auto-initialization of database tables
+ * - Graceful error handling
+ */
+
 const { Pool } = require('pg');
 require('dotenv').config();
 
