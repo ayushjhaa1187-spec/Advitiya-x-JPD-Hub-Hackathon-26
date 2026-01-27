@@ -17,23 +17,24 @@
       --primary-dark: #059669;
       --secondary: #10B981;
       --dark: #000000;
-      --light: #F9FAFB;
-      --border: #E5E7EB;
+      --light: #111827;
+      --border: #1F2933;
+      --muted: #9CA3AF;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       line-height: 1.6;
       background: var(--dark);
-      color: #FFFFFF;
+      color: #F9FAFB;
       overflow-x: hidden;
     }
 
     /* Navigation */
     nav {
-      background: white;
+      background: #020617;
       padding: 1rem 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-bottom: 1px solid #111827;
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -56,279 +57,208 @@
     }
 
     .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    .nav-links a {
       text-decoration: none;
-      color: var(--dark);
+      color: #E5E7EB;
       font-weight: 500;
-      transition: color 0.3s;
+      font-size: 0.95rem;
+      transition: color 0.2s, opacity 0.2s;
     }
 
     .nav-links a:hover {
-      color: var(--primary);
+       color: var(--primary);
+      opacity: 0.9;
     }
 
     .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
       border: none;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.2s;
       text-decoration: none;
       display: inline-block;
+      font-size: 0.9rem;
     }
-
     .btn-primary {
       background: var(--primary);
-      color: white;
+      color: #020617;
     }
-
     .btn-primary:hover {
       background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
     }
-
     .btn-secondary {
-      background: white;
-      color: var(--primary);
-      border: 2px solid var(--primary);
+      background: transparent;
+      color: #E5E7EB;
+      border: 1px solid #374151;
+    }
+    .btn-secondary:hover {
+      border-color: #6B7280;
+      background: #111827;
     }
 
-    /* Hero Section */
-    .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 6rem 2rem;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 1.5rem;
-      font-weight: 800;
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-      margin-bottom: 3rem;
-      opacity: 0.95;
-    }
-
-    /* Animated Line */
-    .animated-line {
-      width: 100px;
-      height: 3px;
-      background: linear-gradient(90deg, #10B981, #059669, #10B981);
-      margin: 2rem auto;
-      border-radius: 2px;
-      animation: lineMove 3s ease-in-out infinite;
-      box-shadow: 0 0 10px #10B981;
-    }
-
-    @keyframes lineMove {
-      0%, 100% {
-        transform: translateX(-20px);
-        width: 100px;
-      }
-      50% {
-        transform: translateX(20px);
-        width: 150px;
-      }
-    }
-
-    .shortener-box {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      max-width: 600px;
-      margin: 0 auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-
-    .shortener-form {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .shortener-form input {
-      flex: 1;
-      padding: 1rem;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-
-    .shortener-form button {
-      padding: 1rem 2rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .shortener-form button:hover {
-      background: var(--primary-dark);
-    }
-
-    #result {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: var(--light);
-      border-radius: 8px;
-      display: none;
-    }
-
-    .result-link {
-      color: var(--primary);
-      font-weight: 600;
-      word-break: break-all;
-    }
-
-    /* Features */
-    .features {
-      padding: 6rem 2rem;
+    /* Page layout */
+    .page {
       max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .section-subtitle {
-      text-align: center;
-      color: #6B7280;
-      margin-bottom: 4rem;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      padding: 2rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: all 0.3s;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-
-    .feature-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .feature-card h3 {
-      margin-bottom: 0.5rem;
-      color: var(--dark);
-    }
-
-    .feature-card p {
-      color: #6B7280;
-    }
-
-    /* About Section */
-    .about {
-      padding: 5rem 0;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-
-    .about-content {
-      max-width: 1200px;
-      margin: 0 auto;
+      margin: 2.5rem auto 3rem;
       padding: 0 2rem;
     }
 
-    .about h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--dark);
+    /* Hero styled like analytics header section */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .page-title {
+      font-size: 2.3rem;
+      font-weight: 700;
+    }
+    .page-subtitle {
+      color: var(--muted);
+      margin-top: 0.35rem;
+      max-width: 520px;
+      font-size: 0.95rem;
+    }
+    .page-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    .about-intro {
-      text-align: center;
-      font-size: 1.2rem;
-      max-width: 800px;
-      margin: 0 auto 3rem;
-      color: var(--dark);
-      opacity: 0.8;
-      line-height: 1.8;
-    }
-
-    .about-grid {
+    /* Two-column hero content */
+    .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: flex-start;
     }
 
-    .about-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .panel {
+      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid #111827;
+      padding: 1.4rem 1.4rem 1.5rem;
     }
-
-    .about-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 12px rgba(0,0,0,0.15);
-    }
-
-    .about-card h3 {
-      font-size: 1.4rem;
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 1rem;
-      color: var(--primary);
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .panel-tag {
+      font-size: 0.75rem;
+      color: #9CA3AF;
+      border-radius: 999px;
+      border: 1px solid #1F2937;
+      padding: 0.15rem 0.6rem;
+    }
+    .panel-subtitle {
+      font-size: 0.85rem;
+      color: #9CA3AF;
+      margin-bottom: 1rem;
     }
 
-    .about-card p {
-      color: var(--dark);
-      opacity: 0.8;
-      line-height: 1.6;
+    .feature-list {
+      display: grid;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: #E5E7EB;
+    }
+    .feature-item {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    .feature-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--primary);
+      margin-top: 0.4rem;
     }
 
-    /* CTA */
-    .cta {
-      background: var(--dark);
-      color: white;
-      padding: 5rem 2rem;
+    /* Right side “preview” styled like chart card */
+    .preview-placeholder {
+      height: 220px;
+      border-radius: 0.9rem;
+      border: 1px dashed #1F2937;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #6B7280;
+      background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.06), transparent);
       text-align: center;
+      padding: 0 1rem;
     }
 
-    .cta h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+    /* Simple “How it works” section using same cards */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+    .step-number {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9CA3AF;
+      margin-bottom: 0.2rem;
+    }
+    .step-heading {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .step-text {
+      font-size: 0.85rem;
+      color: #9CA3AF;
     }
 
-    /* Footer */
-    footer {
-      background: var(--light);
-      padding: 3rem 2rem 1rem;
-      text-align: center;
+    /* Footer strip */
+    .page-footer {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #6B7280;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-top: 1px solid #111827;
+      padding-top: 0.9rem;
     }
 
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2rem; }
-      .shortener-form { flex-direction: column; }
-      .nav-links { display: none; }
+    @media (max-width: 900px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;
+      }
+      .page {
+        padding: 0 1.25rem;
+      }
     }
   </style>
 </head>
@@ -336,188 +266,114 @@
   <!-- Navigation -->
   <nav>
     <div class="nav-container">
-      <a href="#" class="logo">🔗 Smart Link Hub</a>
+      <a href="landing.html" class="logo">🔗 Smart Link Hub</a>
       <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#about">About</a>
-      
         <a href="analytics.html">Analytics</a>
+        <a href="#how-it-works">How it works</a>
         <a href="login.html" class="btn btn-secondary">Sign In</a>
         <a href="auth.html" class="btn btn-primary">Get Started</a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1>One Smart Link.<br>Unlimited Possibilities.</h1>
-    <div class="animated-line"></div>
-    <p>Create, manage, and track your links with ease. Free forever.</p>
+  <main class="page">
+    <!-- Hero (same layout style as analytics header) -->
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">One hub for all your links.</h1>
+        <p class="page-subtitle">
+          Create smart links, add rules, and track every click in a clean analytics view. 
+          Built for hackathon projects, creators, and teams who want a modern link experience.
+        </p>
+      </div>
+      <div class="page-actions">
+        <a href="auth.html" class="btn btn-primary">Create your first link</a>
+        <a href="analytics.html" class="btn btn-secondary">View analytics demo</a>
+      </div>
+    </header>
 
-    <div class="shortener-box">
-      <form class="shortener-form" id="shortener-form">
-        <input type="url" id="url-input" placeholder="Enter or paste your long URL..." required>
-        <button type="submit">Shorten It</button>
-      </form>
-      <div id="result">
-        <p><strong>Your short link:</strong></p>
-        <a href="#" class="result-link" id="short-link" target="_blank"></a>
-        <button onclick="copyLink()" style="margin-top:1rem" class="btn btn-primary">Copy Link</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="features" id="features">
-    <h2 class="section-title">Everything You Need</h2>
-    <p class="section-subtitle">Powerful features for modern link management</p>
-
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Lightning Fast</h3>
-        <p>Shorten links in milliseconds with our optimized infrastructure</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Real-Time Analytics</h3>
-        <p>Track clicks, locations, devices, and more with detailed analytics</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Secure &amp; Reliable</h3>
-        <p>Your links are protected with enterprise-grade security</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📄</div>
-        <h3>QR Codes</h3>
-        <p>Auto-generate QR codes for every link you create</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>Custom Links</h3>
-        <p>Create branded short links with custom slugs</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🚀</div>
-        <h3>No Limits</h3>
-        <p>Unlimited links, clicks, and analytics. Forever free.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section class="about" id="about">
-    <div class="about-content">
-      <h2>About Smart Link Hub</h2>
-      <p class="about-intro">
-        Smart Link Hub is an innovative link management platform developed for the Advitiya x JPD Hub Hackathon 2026.
-        Our mission is to simplify the way you create, manage, and track your links while providing powerful analytics and automation features.
-      </p>
-
-      <div class="about-grid">
-        <div class="about-card">
-          <h3>🎯 Our Mission</h3>
-          <p>To provide a free, powerful, and user-friendly link management solution that empowers creators, businesses, and individuals to maximize their online presence.</p>
+    <!-- Two-column section (cards styled like analytics panels) -->
+    <section class="grid-2">
+      <!-- Left card: features -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Why Smart Link Hub?</h2>
+          <span class="panel-tag">Live link management</span>
         </div>
-        <div class="about-card">
-          <h3>💡 Innovation</h3>
-          <p>Built with cutting-edge technology including Node.js, Express, PostgreSQL, and a smart rules engine to automate link management based on your custom criteria.</p>
-        </div>
-        <div class="about-card">
-          <h3>🚀 Features</h3>
-          <p>From URL shortening to QR code generation, real-time analytics, and custom branded links – we offer everything you need in one comprehensive platform.</p>
-        </div>
-        <div class="about-card">
-          <h3>🌟 Community</h3>
-          <p>Developed as part of the hackathon initiative to showcase innovation, collaboration, and the power of open-source development.</p>
+        <p class="panel-subtitle">
+          Use the same clean, dark UI as your analytics page, but focused on creating and organizing links.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <div>Shorten any long URL into a neat branded link.</div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <div>Add smart rules for devices, campaigns, or time-based redirects.</div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <div>Generate QR codes and share anywhere in one click.</div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <div>Preview performance quickly, then jump into full analytics.</div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- CTA -->
-  <section class="cta">
-    <h2>Ready to Get Started?</h2>
-    <p style="margin-bottom: 2rem; opacity: 0.9">Join thousands of users managing their links smarter</p>
-    <a href="auth.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">Create Free Account</a>
-  </section>
+      <!-- Right card: preview -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Live preview</h2>
+          <span class="panel-tag">Instant feedback</span>
+        </div>
+        <p class="panel-subtitle">
+          This block mirrors the analytics chart style so your homepage feels part of the same product.
+        </p>
+        <div class="preview-placeholder">
+          <div>Preview of how your smart link activity will appear once you start sharing.</div>
+          <div style="margin-top:0.4rem; font-size:0.8rem; color:#9CA3AF;">
+            Connect this area to your real dashboard cards later.
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2026 Smart Link Hub. Made for Advitiya x JPD Hub Hackathon.</p>
-    <p style="margin-top: 0.5rem; color: #6B7280;">All Rights Reserved</p>
-  </footer>
+    <!-- How it works section -->
+    <section id="how-it-works" style="margin-top: 2rem;">
+      <h2 class="section-title">How it works</h2>
+      <div class="steps-grid">
+        <div class="panel">
+          <div class="step-number">Step 1</div>
+          <div class="step-heading">Paste your destination link</div>
+          <p class="step-text">
+            Add any URL you want to track. Smart Link Hub generates a short link instantly.
+          </p>
+        </div>
+        <div class="panel">
+          <div class="step-number">Step 2</div>
+          <div class="step-heading">Add smart rules</div>
+          <p class="step-text">
+            Configure device, campaign, or time-based routing so each user lands on the best page.
+          </p>
+        </div>
+        <div class="panel">
+          <div class="step-number">Step 3</div>
+          <div class="step-heading">Share and analyze</div>
+          <p class="step-text">
+            Share the link everywhere and open the Analytics page to see performance in real time.
+          </p>
+        </div>
+      </div>
+    </section>
 
-  <script>
-    // Link Shortener Functionality
-    document.getElementById('shortener-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const urlInput = document.getElementById('url-input');
-      const resultDiv = document.getElementById('result');
-      const shortLink = document.getElementById('short-link');
-
-      try {
-        // Connect to backend API
-        const API_URL = 'https://your-backend-url.com/api'; // Update this with actual backend URL
-
-        const response = await fetch(`${API_URL}/links`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            originalUrl: urlInput.value,
-            title: 'Quick Link'
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to shorten link');
-        }
-
-        const data = await response.json();
-        const shortUrl = `${window.location.origin}/${data.shortCode}`;
-
-        shortLink.href = shortUrl;
-        shortLink.textContent = shortUrl;
-        resultDiv.style.display = 'block';
-
-        // Optionally fetch QR code
-        try {
-          const qrResponse = await fetch(`${API_URL}/links/${data.id}/qr`);
-          if (qrResponse.ok) {
-            const qrData = await qrResponse.json();
-            console.log('QR Code:', qrData.qrCode);
-          }
-        } catch (qrError) {
-          console.log('QR generation skipped:', qrError);
-        }
-      } catch (error) {
-        alert('Error shortening link. Please try again.');
-      }
-    });
-
-    function copyLink() {
-      const shortLink = document.getElementById('short-link');
-      navigator.clipboard.writeText(shortLink.textContent);
-      alert('Link copied to clipboard!');
-    }
-
-    // Smooth scroll for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-  </script>
-
-  <!-- API Service Layer -->
-  <script src="api-service.js"></script>
+    <footer class="page-footer">
+      <span>Smart Link Hub · Advitiya x JPD Hub Hackathon 2026</span>
+      <span>Homepage shares the same modern theme as your analytics experience.</span>
+    </footer>
+  </main>
 </body>
 </html>
 
