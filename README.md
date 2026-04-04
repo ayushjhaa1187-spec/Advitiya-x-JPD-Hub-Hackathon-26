@@ -1,18 +1,53 @@
-# Advitiya x JPD Hub Hackathon-26
-**Tagline:** Collaborative innovation platform for hackathon team management and project submission syncing.
+# Smart Link Hub — Advitiya x JPD Hub Hackathon '26
 
-![build status](https://img.shields.io/badge/build-passing-brightgreen) ![license](https://img.shields.io/badge/license-MIT-blue) ![language](https://img.shields.io/badge/language-TypeScript-blue)
+> Intelligent URL management system with smart routing rules, analytics, and team collaboration.
 
-# 1. PROJECT BANNER
-- Project name: Advitiya x JPD Hub Hackathon-26
-- Tagline: Collaborative innovation platform for hackathon team management and project submission syncing.
-- Badges: build status · license · language
+![build](https://img.shields.io/badge/build-passing-brightgreen) ![license](https://img.shields.io/badge/license-MIT-blue) ![stack](https://img.shields.io/badge/stack-MERN-blueviolet)
 
-# 2. THE STORY (40-word short story — REQUIRED)
-> *"Midnight was coming. Code was broken, and teammates were in different cities. They logged into JPD Hub. One task list. One vision. Every module aligned. The submission went green with minutes to spare. The hackathon conquered. We won together. Finally."*
+## 🌐 Live Demo
+**[Launch Smart Link Hub →](https://ayushjhaa1187-spec.github.io/Advitiya-x-JPD-Hub-Hackathon-26/frontend/landing.html)**
 
-# 3. WHAT THIS DOES
-A high-velocity coordination engine designed specifically for the pressure of 48-hour sprints. It centralizes asset sharing, task delegation, and final deployment links in a unified dashboard, ensuring teams stay synced regardless of geographical distance.
+## 📖 The Story
+> *"Midnight was coming. Code was broken, and teammates were in different cities. They logged into JPD Hub. One task list. One vision. Every module aligned. The submission went green with minutes to spare."*
 
-# 4. TECH STACK
-- Next.js, Tailwind CSS, Firebase.
+## ✨ Features
+| Feature | Description |
+| :--- | :--- |
+| **Smart Rules Engine** | Configure URL routing rules based on time, geography, device type, and UTM params |
+| **Link Analytics** | Real-time click tracking, referrer tracking, and conversion metrics |
+| **Team Workspace** | Multi-user collaboration with role-based link management |
+| **Custom Domains** | Map branded short domains to your link hub instance |
+| **API Access** | RESTful API for programmatic link creation and management |
+
+## 🛠 Tech Stack
+| Layer | Technology |
+| :--- | :--- |
+| Frontend | React, Tailwind CSS |
+| Backend | Node.js, Express |
+| Database | MongoDB |
+| Deployment | GitHub Pages (frontend), Vercel (API) |
+
+## 🚀 Quick Start
+```bash
+# Clone the repository
+git clone https://github.com/ayushjhaa1187-spec/Advitiya-x-JPD-Hub-Hackathon-26.git
+
+# Install all dependencies
+npm install
+
+# Start development (frontend + backend concurrently)
+npm run dev
+```
+
+## 📁 Project Structure
+```
+├── frontend/     # React SPA with landing page and dashboard
+├── backend/      # Express API with MongoDB integration
+└── package.json  # Root orchestrator with concurrently
+```
+
+## 👥 Authors
+Built by **Ayush Jha & Jahnvi Chauhan** for the Advitiya x JPD Hub Hackathon 2026.
+
+## 📄 License
+MIT
