@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// 1. Setup Base URL (uses Vite env var or defaults to localhost)
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// 1. Setup Base URL (uses Vite env var or defaults to production)
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://advitiya-api.railway.app/api';
 
 // 2. Create Axios Instance
 const api = axios.create({
@@ -28,10 +28,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Optional: Clear storage and redirect to login if token expires
       console.warn('⚠️ Session expired or unauthorized. Please login again.');
-      // localStorage.removeItem('token'); 
-      // window.location.href = '/login'; 
     }
     return Promise.reject(error);
   }
@@ -48,16 +45,18 @@ export const authAPI = {
 
 // Manage Links
 export const linkAPI = {
-  getAll: (params) => api.get('/links', { params }), // Get all (with optional filters)
-  getByHub: (hubId) => api.get(`/links/hub/${hubId}`), // Get specifically for a Hub
+  getAll: (params) => api.get('/links', { params }),
+  getByHub: (hubId) => api.get(`/links/hub/${hubId}`),
   getOne: (id) => api.get(`/links/${id}`),
   create: (linkData) => api.post('/links', linkData),
   update: (id, linkData) => api.put(`/links/${id}`, linkData),
   delete: (id) => api.delete(`/links/${id}`),
   trackClick: (id) => api.post(`/links/${id}/click`),
+  getRedirectUrl: (id) => `${API_BASE_URL}/links/${id}/redirect`,
+  getAnalytics: (id) => api.get(`/links/${id}/analytics`),
 };
 
-// Manage Smart Rules (New)
+// Manage Smart Rules
 export const rulesAPI = {
   getByHub: (hubId) => api.get(`/rules/hub/${hubId}`),
   create: (ruleData) => api.post('/rules', ruleData),
@@ -69,16 +68,17 @@ export const rulesAPI = {
 export const hubAPI = {
   getAll: () => api.get('/hubs'),
   getDetails: (id) => api.get(`/hubs/${id}`),
-  getPublic: (slug) => api.get(`/hubs/public/${slug}`), // Public read-only view
+  getPublic: (slug) => api.get(`/hubs/public/${slug}`),
   create: (hubData) => api.post('/hubs', hubData),
-  updateSettings: (id, settingsData) => api.put(`/hubs/${id}/settings`, settingsData), // Title, Theme, Desc
+  updateSettings: (id, settingsData) => api.put(`/hubs/${id}/settings`, settingsData),
 };
 
 // Analytics & Stats
 export const analyticsAPI = {
   getHubAnalytics: (id) => api.get(`/analytics/hub/${id}`),
   getRealtime: (id) => api.get(`/analytics/realtime/${id}`),
-  getTimeline: (id, period) => api.get(`/analytics/timeline/${id}?period=${period}`), // Graph data
+  getTimeline: (id, period) => api.get(`/analytics/timeline/${id}?period=${period}`),
+  getLinkDetails: (linkId) => api.get(`/analytics/link/${linkId}`),
 };
 
 export default api;

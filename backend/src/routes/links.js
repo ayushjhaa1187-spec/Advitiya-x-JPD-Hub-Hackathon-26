@@ -8,6 +8,7 @@ const {
   updateLink,
   deleteLink,
   trackClick,
+  trackClickAndRedirect,
   toggleFavorite,
   getPopularLinks,
   searchLinks,
@@ -26,6 +27,7 @@ router.get('/', protect, getLinks);
 router.get('/:id', protect, getLinkById);
 router.put('/:id', protect, updateLink);
 router.delete('/:id', protect, deleteLink);
+router.get('/:id/redirect', trackClickAndRedirect); // NEW: Public redirect with analytics
 router.post('/:id/click', trackClick);
 router.post('/:id/favorite', protect, toggleFavorite);
 router.post('/bulk/delete', protect, bulkDelete);

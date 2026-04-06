@@ -9,38 +9,43 @@ let offlineMode = false;
 let darkMode = true;
 
 // Backend API Base URL
-const API_BASE_URL = 'https://advitiya.jpdlab.co.in/api';
+// Backend API Base URL
+const API_BASE_URL = 'https://advitiya-api.railway.app/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem('hubId', currentHubId);
     const urlDisplay = document.getElementById('publicUrl');
-    if (urlDisplay) urlDisplay.textContent = `https://smart-link-hub.vercel.app/hub/${currentHubId}`;
+    const displayId = currentHubId.length > 10 ? currentHubId.substring(0, 8) : currentHubId;
+    if (urlDisplay) urlDisplay.textContent = `https://advitiya-hub.vercel.app/hub/${displayId}`;
     
     // Initialize UI
     await loadData();
     setupEventListeners();
     
-    // Start periodic background sync
-    setInterval(loadData, 5000);
+    // Start periodic background sync (every 10s for production)
+    setInterval(loadData, 10000);
 });
-
-function setupEventListeners() {
-    // Add any manual event listeners here
-}
 
 async function loadData() {
     try {
-        const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-        const rules = JSON.parse(localStorage.getItem('rules_' + currentHubId) || '[]');
-        const stats = JSON.parse(localStorage.getItem('stats_' + currentHubId) || '{"totalClicks":0,"totalVisits":0}');
-        const quickLinks = JSON.parse(localStorage.getItem('quickLinks_' + currentHubId) || '[]');
+        // Fetch from Real Backend instead of LocalStorage
+        const linksRes = await fetch(`${API_BASE_URL}/links/hub/${currentHubId}`);
+        const links = await linksRes.json();
+        
+        const rulesRes = await fetch(`${API_BASE_URL}/rules/hub/${currentHubId}`);
+        const rules = await rulesRes.json();
+
+        const statsRes = await fetch(`${API_BASE_URL}/analytics/hub/${currentHubId}`);
+        const stats = await statsRes.json();
         
         renderLinks(links);
         renderRules(rules);
-        renderQuickLinks(quickLinks);
         updateAnalytics(stats, links, rules);
     } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Error loading data from backend:', error);
+        // Fallback to local storage if backend is unreachable
+        const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
+        renderLinks(links);
     }
 }
 
@@ -86,23 +91,31 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-function addNewLink() {
+async function addNewLink() {
     const url = prompt('Enter link URL (e.g., https://google.com):');
     if (!url || !url.startsWith('http')) return alert('Please enter a valid URL');
     
     const name = prompt('Enter link name:');
-    const links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
     
-    links.push({ 
-        id: Date.now(), 
-        name: name || new URL(url).hostname, 
-        url, 
-        clicks: 0,
-        createdAt: new Date().toISOString()
-    });
-    
-    localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
-    loadData();
+    try {
+        const response = await fetch(`${API_BASE_URL}/links`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                hubId: currentHubId,
+                title: name || new URL(url).hostname,
+                url: url
+            })
+        });
+        
+        if (response.ok) {
+            showToast('Link added to secure cloud storage!');
+            await loadData();
+        }
+    } catch (error) {
+        console.error('Failed to save to backend:', error);
+        alert('Could not sync with production cloud. Link saved locally.');
+    }
 }
 
 function addQuickLink() {
@@ -141,12 +154,15 @@ function renderLinks(links) {
     `).join('');
 }
 
-function deleteLink(id) {
+async function deleteLink(id) {
     if (confirm('Are you sure you want to delete this link?')) {
-        let links = JSON.parse(localStorage.getItem('links_' + currentHubId) || '[]');
-        links = links.filter(l => l.id !== id);
-        localStorage.setItem('links_' + currentHubId, JSON.stringify(links));
-        loadData();
+        try {
+            await fetch(`${API_BASE_URL}/links/${id}`, { method: 'DELETE' });
+            showToast('Link removed from cloud.');
+            await loadData();
+        } catch (error) {
+            console.error('Delete failed:', error);
+        }
     }
 }
 

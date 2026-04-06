@@ -79,8 +79,21 @@ const initDB = async () => {
         name VARCHAR(100),
         type VARCHAR(50),
         condition VARCHAR(100),
+        destination_url TEXT,
         priority INTEGER DEFAULT 5,
         operator VARCHAR(10) DEFAULT 'AND'
+      );
+    `);
+
+    // 5. Link Clicks (Analytics) Table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS link_clicks (
+        id SERIAL PRIMARY KEY,
+        link_id INTEGER REFERENCES links(id) ON DELETE CASCADE,
+        ip_address VARCHAR(45),
+        user_agent TEXT,
+        referrer TEXT,
+        clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
